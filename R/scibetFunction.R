@@ -1,3 +1,8 @@
+# Scibet method
+# Li, C., Liu, B., Kang, B. et al. 
+# SciBet as a portable and fast single cell type identifier.
+# Nat Commun 11, 1818 (2020). https://doi.org/10.1038/s41467-020-15523-2
+
 #' @param expr Rows should be cells and the last column should be "label".
 #' @param k Number of genes to select.
 #' @return  'out'  selected gene list(class "character)

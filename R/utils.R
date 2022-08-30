@@ -1,4 +1,3 @@
-
 get10Xpath <- function (samplePath, raw.data = F){
     prefix <- ifelse(raw.data, 'raw', 'filtered')
     cur.path <- paste0(samplePath, '/')

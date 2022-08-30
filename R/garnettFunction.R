@@ -1456,4 +1456,3 @@ tfidf <- function(input_cds) {
   tf_idf_counts <- nfreqs * log(1 + ncol(ncounts) / Matrix::rowSums(ncounts > 0))
   Matrix::t(tf_idf_counts)
 }
-
