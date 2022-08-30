@@ -1,6 +1,6 @@
 #' @export
 predSubType <- function(test_set,
-                        pretrained.path,
+                        pretrained.path = system.file("csv", package = "scCancer"),
                         save.path,
                         celltype.list = c("T.cells", "Myeloid.cells", "B.cells",
                                           "Fibroblast", "Endothelial"),
@@ -11,7 +11,7 @@ predSubType <- function(test_set,
     if(celltype %in% celltype.list){
       message(celltype)
       testdata <- test_set[which(test_set$rough.labels == celltype),]
-      folder.path <- paste0(pretrained.path, celltype, "/")
+      folder.path <- paste0(pretrained.path, "/", celltype, "/")
       file.name <- list.files(folder.path)
       file.path <- paste0(folder.path, file.name)
       # Different classification principles: Several lists of subtype
@@ -80,4 +80,5 @@ runCellSubtypeClassify <- function(expr, pretrained.path, save.path,
   dataset$rough.labels <- expr$Cell.Type
   fine.labels <- predSubType(dataset, pretrained.path, save.path, celltype.list, umap.plot = FALSE)
   Similarity_Calculation(fine.labels, save.path)
+  return(fine.labels)
 }
