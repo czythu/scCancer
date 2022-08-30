@@ -717,3 +717,188 @@ checkCombArguments <- function(argList){
         stop("The parameter 'comb.method' should be one of the c(\"Harmony\", \"NormalMNN\", \"SeuratMNN\", \"Raw\", \"Regression\", \"LIGER\").\n")
     }
 }
+
+# Update in scCancer 2.0:
+# 1. visualization functions for training and similarity calculation
+# 2. similarity calculation functions
+
+# Part1. visualization
+# --------------------------------------------------------------------
+#' Construct a convenient Seurat pipeline
+#' @name scibet_visualization
+#' @usage Scibet_visualization(dataset, label)
+#' @param dataset The expression dataframe, 
+#' with rows being cells, and columns being genes. 
+#' The last column should be "label".
+#' @param label groundtruth or output of scibet function Test.
+scibet_visualization <- function(dataset, 
+                                 label=NULL,
+                                 normalize=TRUE,
+                                 reduction="umap",
+                                 metacell=FALSE){
+  counts <- data.frame(t(dataset[, 1:dim(dataset)[2]-1]))
+  object <- CreateSeuratObject(counts = counts)
+  if(is.null(label)){
+    label <- rep("unknown cell", time=ncol(counts))
+  }
+  object$celltype <- label
+  if(normalize){
+    object <- NormalizeData(object, verbose = TRUE)
+  }
+  object <- FindVariableFeatures(object, selection.method = "vst",verbose = TRUE)
+  object <- ScaleData(object, verbose = FALSE)
+  # object <- ScaleData(object, do.scale = FALSE, do.center = TRUE, scale.max = 10)
+  object <- RunPCA(object, npcs = 30, verbose = FALSE)
+  if(reduction == "umap"){
+    object <- RunUMAP(object, reduction = "pca", dims = 1:30)
+  }
+  else{
+    object <- RunTSNE(object, reduction = "pca", dims = 1:30)
+  }
+  p <- DimPlot(object, reduction = reduction, group.by = "celltype", repel = TRUE)
+  if(metacell){
+    object <- FindNeighbors(object, dims = 1:30)
+    object <- FindClusters(object, resolution = 100)
+  }
+  return(list(object = object, plot = p))
+}
+
+#' Heatmap of classification result.
+#' @name ConfusionMatrix
+#' @usage ConfusionMatrix(label.name, label, predict)
+#' @param label.name A vector of the sorted unique labels
+#' @param label A vector of the original labels for each cell in the test set.
+#' @param predict A vector of the predicted labels for each cell in the test set.
+#' @return A heatmap for the confusion matrix of the classification result.
+#' @export
+ConfusionMatrix <- function(name.reference, name.prediction,
+                            label, predict,
+                            title='Confusion Matrix',
+                            xlab='Predicted label',
+                            ylab='True label',
+                            normalize=F,
+                            font.size=20/.pt){
+  
+  x <- matrix(nrow = length(name.prediction), ncol=length(name.reference))
+  x[is.na(x)] <- 0
+  colnames(x) <- name.reference
+  rownames(x) <- name.prediction
+  for (i in 1:length(predict)){
+    col <- which(name.reference == label[i])    #truth
+    row <- which(name.prediction == predict[i])  #predict
+    x[row, col] <- x[row, col] + 1
+  }
+  
+  if(!is.table(x)){
+    x = as.table(x)
+  }
+  if(!is.numeric(x)){
+    stop('input should be numeric, not ',mode(x),
+         call. = F)
+  }
+  
+  if(normalize){
+    # x = round(prop.table(x,1), 2)
+    x = round(prop.table(x,2), 2)
+    mar = as.data.frame(x)
+  }
+  else{
+    mar = as.data.frame(x)
+  }
+  mytheme <- theme(plot.title=element_text(
+    face="bold.italic", size=12, color="darkblue"),
+    axis.title=element_text(face="bold.italic", size=10, color="darkblue"),
+    axis.text=element_text(face="bold", size=8, color="darkblue"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.background=element_rect(fill="white",color="darkblue"),
+    panel.grid.minor.x=element_blank(),
+    legend.position="right")
+  ggplot(mar, aes(mar[,2],mar[,1])) +
+    geom_tile(aes(fill=Freq),color='black') +
+    scale_fill_gradientn(colours = c('gray98','steelblue1','midnightblue'))+
+    geom_label(aes(label = Freq), size=font.size) +
+    labs(title = title, fill='',x=xlab,y=ylab) +
+    ylim(rev(levels(mar[,2]))) +
+    scale_y_discrete(expand=c(0,0)) +
+    scale_x_discrete(expand=c(0,0)) +
+    mytheme
+}
+
+#' Correlation heatmap and hierarchical clustering
+#' @export
+SimilarityMap <- function(plot.title, reference, similarity.mar, similarity.var = NULL, 
+                          number.digits = 2, number.cex = 1, tl.cex = 1){
+  print(corrplot(similarity.mar, tl.col="black", tl.srt=45, tl.cex=tl.cex, order="hclust",
+                 number.digits=number.digits, number.cex=number.cex))
+  title(main=paste0(plot.title, "-corr heatmap, hclust order"), sub=reference, cex=1)
+  print(corrplot(similarity.mar, method="shade", shade.col=NA,
+                 tl.col="black", tl.srt=45, tl.cex=0.7, addCoef.col="black", cl.pos="n", order="AOE",
+                 col=colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))(200),
+                 number.digits=number.digits, number.cex=number.cex))
+  title(main=paste0(plot.title, "-corr heatmap, AOE order"), sub=reference, cex=1)
+  if(!is.null(similarity.var)){
+    print(corrplot(similarity.var, method="shade", shade.col=NA,
+                   tl.col="black", tl.srt=90, tl.cex=0.7, addCoef.col="black", cl.pos="n", order="AOE",
+                   col=colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))(200), 
+                   number.digits=number.digits, number.cex=number.cex))
+    title(main=paste0("Heatmap:var(corr)", "-AOE order"), sub=reference, cex=1)
+  }
+  print(plot(hclust(dist(similarity.mar, method = "euclidean"), method = "ward.D2"),
+             main = paste0(plot.title, "-hierarchical clustering\n", reference)))
+}
+# --------------------------------------------------------------------
+
+# Part2. similarity calculation
+# --------------------------------------------------------------------
+#' @export
+Jaccard <- function(cell.sets, p = 1){
+  similarity.mar <- matrix(nrow = length(cell.sets),
+                           ncol = length(cell.sets))
+  rownames(similarity.mar) <- names(cell.sets)
+  colnames(similarity.mar) <- names(cell.sets)
+  
+  for(i in 1:length(cell.sets)){
+    for(j in i:length(cell.sets)){
+      m <- intersect(cell.sets[[i]], cell.sets[[j]])
+      n <- union(cell.sets[[i]], cell.sets[[j]])
+      similarity.mar[i, j] <- length(m)^p / length(n)
+      similarity.mar[j, i] <- similarity.mar[i, j]
+    }
+  }
+  return(similarity.mar)
+}
+
+#' @export
+Spearman <- function(mean.expr){
+  similarity.mar <- matrix(nrow = length(mean.expr),
+                           ncol = length(mean.expr))
+  rownames(similarity.mar) <- names(mean.expr)
+  colnames(similarity.mar) <- names(mean.expr)
+  for(i in 1:length(mean.expr)){
+    for(j in i:length(mean.expr)){
+      common.gene <- intersect(names(mean.expr[[i]]), names(mean.expr[[j]]))
+      similarity.mar[i, j] <- cor(unname(mean.expr[[i]][common.gene]),
+                                  unname(mean.expr[[j]][common.gene]),
+                                  method = "spearman")
+      similarity.mar[j, i] <- similarity.mar[i, j]
+    }
+  }
+  return(similarity.mar)
+}
+
+#' @export
+Intergration <- function(all.matrix){
+  similarity.mean <- all.matrix[[1]]
+  similarity.var <- all.matrix[[1]]
+  for(i in 1:nrow(similarity.mean)){
+    for(j in 1:ncol(similarity.mean)){
+      values <- lapply(all.matrix, function(matrix){
+        return(matrix[i, j])
+      })
+      similarity.mean[i, j] <- mean(unlist(values))
+      similarity.var[i, j] <- var(unlist(values))
+    }
+  }
+  return(list(mean = similarity.mean, var = similarity.var))
+}
+# --------------------------------------------------------------------
