@@ -14,7 +14,7 @@ Description: The package 'scCancer' is focuses on processing and analyzing
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests: 
     rmarkdown,
     DropletUtils
@@ -43,9 +43,17 @@ Imports:
     survival,
     survminer,
     harmony,
-    liger
+    liger,
+    garnett,
+    edgeR,
+    org.Hs.eg.db,
+    magrittr,
+    viridis,
+    ggsci,
+    flexclust
 Remotes: 
     github::immunogenomics/harmony,
     github::MacoskoLab/liger
+    github::cole-trapnell-lab/garnett
 Depends: R (>= 3.5.0)
 biocViews:

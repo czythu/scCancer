@@ -31,7 +31,11 @@ runScAnnotation(
   bool.runDoublet = T,
   doublet.method = "bcds",
   bool.runCellClassify = T,
+  bool.runCellSubtypeClassify = T,
+  celltype.list = NULL,
   ct.templates = NULL,
+  pretrained.path = NULL,
+  subtype.umap = FALSE,
   coor.names = c("tSNE_1", "tSNE_2"),
   bool.runMalignancy = T,
   cnv.ref.data = NULL,
@@ -118,8 +122,17 @@ These methods are from R package "scds".}
 
 \item{bool.runCellClassify}{A logical value indicating whether to predict the usual cell type. The default is TRUE.}
 
+\item{bool.runCellSubtypeClassify}{A logical value indicating whether to predict the usual cell subtype. The default is TRUE.}
+
+\item{celltype.list}{A list of cell types for subtype annotation, which depends on either rough annotation or user's input.}
+
 \item{ct.templates}{A list of vectors of several cell type templates.
 The default is NULL and the templates prepared in this package will be used.}
+
+\item{pretrained.path}{A folder containing all models preset for cell subtype annotation(.csv file)
+The default is NULL and all models prepared in this package will be used.}
+
+\item{subtype.umap}{A logical value indicating whether to generate umap plot group by cell subtypes. The default is FALSE.}
 
 \item{coor.names}{A vector indicating the names of two-dimension coordinate used in visualization.}
 

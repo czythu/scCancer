@@ -1792,11 +1792,11 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
         }
         fine.labels <- runCellSubtypeClassify(expr = expr,
                                               pretrained.path = pretrained.path,
-                                              savePath = paste0(savePath, "/cellSubtypeAnno/")
+                                              savePath = paste0(savePath, "/cellSubtypeAnno/"),
                                               celltype.list = celltype.list,
                                               umap.plot = subtype.umap)
     }
-    
+
     ## --------- malignancy ---------
     if(bool.runMalignancy){
         message("[", Sys.time(), "] -----: cells malignancy annotation")
