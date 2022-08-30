@@ -1,9 +1,8 @@
 #' @export
 predSubType <- function(test_set,
-                        pretrained.path = system.file("csv", package = "scCancer"),
-                        save.path,
-                        celltype.list = c("T.cells", "Myeloid.cells", "B.cells",
-                                          "Fibroblast", "Endothelial"),
+                        pretrained.path,
+                        savePath,
+                        celltype.list,
                         umap.plot = FALSE){
   # Split test dataset with rough labels.
   celltypes <- sort(unique(test_set$rough.labels))
@@ -15,7 +14,7 @@ predSubType <- function(test_set,
       file.name <- list.files(folder.path)
       file.path <- paste0(folder.path, file.name)
       # Different classification principles: Several lists of subtype
-      pdf(file = paste0(save.path, celltype, ".pdf"), width = 7, height = 7)
+      pdf(file = paste0(savePath, celltype, ".pdf"), width = 7, height = 7)
       subtypes.predict <- lapply(file.path, function(model.path){
         model.ref <- read.csv(model.path)
         model.ref <- pro.core(model.ref)
@@ -41,7 +40,7 @@ predSubType <- function(test_set,
 }
 
 #' @export
-Similarity_Calculation <- function(fine.labels, save.path){
+Similarity_Calculation <- function(fine.labels, savePath){
   for(i in 1:length(fine.labels)){
     predict <- fine.labels[[i]]
     if(is.null(predict)){
@@ -65,7 +64,7 @@ Similarity_Calculation <- function(fine.labels, save.path){
     similarity.mar[is.na(similarity.mar)] <- 0
     # Heatmap and Hierarchical clustering
     plot.title <- paste0("similarity map of ", celltype)
-    pdf(file = paste0(save.path, celltype, ".pdf"), width = 12, height = 15)
+    pdf(file = paste0(savePath, celltype, ".pdf"), width = 12, height = 15)
     SimilarityMap(plot.title, "reference = ...", similarity.mar,
                   number.digits = 1, number.cex = 0.6, tl.cex = 0.7)
     dev.off()
@@ -73,12 +72,18 @@ Similarity_Calculation <- function(fine.labels, save.path){
 }
 
 #' @export
-runCellSubtypeClassify <- function(expr, pretrained.path, save.path, 
-                                   celltype.list = c("T.cells", "Myeloid.cells",
-                                                     "B.cells", "Fibroblast", "Endothelial")){
+runCellSubtypeClassify <- function(expr, 
+                                   pretrained.path, 
+                                   savePath, 
+                                   celltype.list,
+                                   umap.plot){
   dataset <- data.frame(t(expr@assays$RNA@data))
   dataset$rough.labels <- expr$Cell.Type
-  fine.labels <- predSubType(dataset, pretrained.path, save.path, celltype.list, umap.plot = FALSE)
-  Similarity_Calculation(fine.labels, save.path)
+  fine.labels <- predSubType(dataset,
+                             pretrained.path,
+                             savePath,
+                             celltype.list,
+                             umap.plot)
+  Similarity_Calculation(fine.labels, savePath)
   return(fine.labels)
 }

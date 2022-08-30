@@ -1569,8 +1569,13 @@ plotCellInteraction <- function(stat.df, cell.annotation){
 #' "cxds"(co-expression based doublet scoring) and "bcds"(binary classification based doublet scoring) are allowed.
 #' These methods are from R package "scds".
 #' @param bool.runCellClassify A logical value indicating whether to predict the usual cell type. The default is TRUE.
+#' @param bool.runCellSubtypeClassify A logical value indicating whether to predict the usual cell subtype. The default is TRUE.
+#' @param celltype.list A list of cell types for subtype annotation, which depends on either rough annotation or user's input.
 #' @param ct.templates A list of vectors of several cell type templates.
 #' The default is NULL and the templates prepared in this package will be used.
+#' @param pretrained.path A folder containing all models preset for cell subtype annotation(.csv file)
+#' The default is NULL and all models prepared in this package will be used.
+#' @param subtype.umap A logical value indicating whether to generate umap plot group by cell subtypes. The default is FALSE.
 #' @param coor.names A vector indicating the names of two-dimension coordinate used in visualization.
 #' @param bool.runMalignancy A logical value indicating whether to estimate malignancy.
 #' @param cnv.ref.data An expression matrix of gene by cell, which is used as the normal reference during estimating malignancy.
@@ -1623,7 +1628,11 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
                             bool.runDoublet = T,
                             doublet.method = "bcds",
                             bool.runCellClassify = T,
+                            bool.runCellSubtypeClassify = T,
+                            celltype.list = NULL,
                             ct.templates = NULL,
+                            pretrained.path = NULL,
+                            subtype.umap = FALSE,
                             coor.names = c("tSNE_1", "tSNE_2"),
                             bool.runMalignancy = T,
                             cnv.ref.data = NULL,
@@ -1772,7 +1781,22 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
         rm(t.results)
     }
 
-
+    ## --------- cell subtype ---------
+    if(bool.runCellSubtypeClassify){
+        if(is.null(celltype.list)){
+            default.list <- c("T.cells", "Myeloid.cells", "B.cells", "Fibroblast", "Endothelial")
+            celltype.list <- intersect(unique(unname(cell.annotation$Cell.Type)), default.list)
+        }
+        if(is.null(pretrained.path)){
+            pretrained.path <- system.file("csv", package = "scCancer")
+        }
+        fine.labels <- runCellSubtypeClassify(expr = expr,
+                                              pretrained.path = pretrained.path,
+                                              savePath = paste0(savePath, "/cellSubtypeAnno/")
+                                              celltype.list = celltype.list,
+                                              umap.plot = subtype.umap)
+    }
+    
     ## --------- malignancy ---------
     if(bool.runMalignancy){
         message("[", Sys.time(), "] -----: cells malignancy annotation")
