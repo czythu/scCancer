@@ -1004,6 +1004,7 @@ get_negative_markers <- function(cell_type,
 #'
 #' @export
 #'
+#' @import garnett
 select_fine_samples <- function(cds,                                  marker_file,
                                 db,
                                 cds_gene_id_type = "ENSEMBL",

@@ -6,6 +6,7 @@
 #' @param expr Rows should be cells and the last column should be "label".
 #' @param k Number of genes to select.
 #' @return  'out'  selected gene list(class "character)
+#' @export
 Entropy_test <- function(expr, k = 1000) {
   labels <- factor(expr$label)
   labels_set <- levels(labels)
@@ -33,6 +34,7 @@ Entropy_test <- function(expr, k = 1000) {
 #' @param expr Rows should be cells and the last column should be "label".
 #' @param k Number of genes to select.
 #' @return  'out'  selected gene list(class "character)
+#' @export
 HRG <- function(counts, k = 1000) {
   object.seurat <- CreateSeuratObject(counts)
   all.genes = rownames(object.seurat)

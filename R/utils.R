@@ -742,17 +742,17 @@ scibet_visualization <- function(dataset,
   }
   object$celltype <- label
   if(normalize){
-    object <- NormalizeData(object, verbose = TRUE)
+    object <- NormalizeData(object, verbose = FALSE)
   }
-  object <- FindVariableFeatures(object, selection.method = "vst",verbose = TRUE)
+  object <- FindVariableFeatures(object, selection.method = "vst", verbose = FALSE)
   object <- ScaleData(object, verbose = FALSE)
   # object <- ScaleData(object, do.scale = FALSE, do.center = TRUE, scale.max = 10)
   object <- RunPCA(object, npcs = 30, verbose = FALSE)
   if(reduction == "umap"){
-    object <- RunUMAP(object, reduction = "pca", dims = 1:30)
+    object <- RunUMAP(object, reduction = "pca", dims = 1:30, verbose = FALSE)
   }
   else{
-    object <- RunTSNE(object, reduction = "pca", dims = 1:30)
+    object <- RunTSNE(object, reduction = "pca", dims = 1:30, verbose = FALSE)
   }
   p <- DimPlot(object, reduction = reduction, group.by = "celltype", repel = TRUE)
   if(metacell){
@@ -825,6 +825,8 @@ ConfusionMatrix <- function(name.reference, name.prediction,
 
 #' Correlation heatmap and hierarchical clustering
 #' @export
+#' 
+#' @import corrplot
 SimilarityMap <- function(plot.title, reference, similarity.mar, similarity.var = NULL, 
                           number.digits = 2, number.cex = 1, tl.cex = 1){
   print(corrplot(similarity.mar, tl.col="black", tl.srt=45, tl.cex=tl.cex, order="hclust",

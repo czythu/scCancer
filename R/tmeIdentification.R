@@ -64,7 +64,7 @@ Similarity_Calculation <- function(fine.labels, savePath){
     similarity.mar[is.na(similarity.mar)] <- 0
     # Heatmap and Hierarchical clustering
     plot.title <- paste0("similarity map of ", celltype)
-    pdf(file = paste0(savePath, celltype, ".pdf"), width = 12, height = 15)
+    pdf(file = paste0(savePath, "similarity-", celltype, ".pdf"), width = 12, height = 15)
     SimilarityMap(plot.title, "reference = ...", similarity.mar,
                   number.digits = 1, number.cex = 0.6, tl.cex = 0.7)
     dev.off()

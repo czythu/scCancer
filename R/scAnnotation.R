@@ -1785,12 +1785,18 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
     if(bool.runCellSubtypeClassify){
         if(is.null(celltype.list)){
             default.list <- c("T.cells", "Myeloid.cells", "B.cells", "Fibroblast", "Endothelial")
-            celltype.list <- intersect(unique(unname(cell.annotation$Cell.Type)), default.list)
+            expr$Cell.Type %>%
+                gsub("T.cells.CD4", "T.cells", .) %>%
+                gsub("T.cells.CD8", "T.cells", .) -> expr$Cell.Type
+            celltype.list <- intersect(unique(expr$Cell.Type), default.list)
         }
         if(is.null(pretrained.path)){
             pretrained.path <- system.file("csv", package = "scCancer")
         }
-        fine.labels <- runCellSubtypeClassify(expr = expr,
+        if(!dir.exists(file.path(savePath, "cellSubtypeAnno"))){
+            dir.create(file.path(savePath, "cellSubtypeAnno"), recursive = T)
+        }
+        results[["fine.labels"]] <- runCellSubtypeClassify(expr = expr,
                                               pretrained.path = pretrained.path,
                                               savePath = paste0(savePath, "/cellSubtypeAnno/"),
                                               celltype.list = celltype.list,
