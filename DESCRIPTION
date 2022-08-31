@@ -43,17 +43,9 @@ Imports:
     survival,
     survminer,
     harmony,
-    liger,
-    garnett,
-    edgeR,
-    org.Hs.eg.db,
-    magrittr,
-    viridis,
-    ggsci,
-    flexclust
+    liger
 Remotes: 
     github::immunogenomics/harmony,
     github::MacoskoLab/liger
-    github::cole-trapnell-lab/garnett
 Depends: R (>= 3.5.0)
 biocViews:
