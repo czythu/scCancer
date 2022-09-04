@@ -15,7 +15,6 @@ After the computational analyses, detailed and graphical reports were generated 
 
 ([Click to view larger workflow picture](http://lifeome.net/software/sccancer/scCancer-workflow.png))
 
-
 ## System Requirements
 * R version: >= 3.5.0 (**suggest:** R 3.6, **not 4.0**)
 * **Hint:  For R (version>=4.0) under Windows system**, the Rtools needs to be updated to version 4.0 from https://cran.r-project.org/bin/windows/Rtools/. So, if you are not familiar with R environment configuration, we **don't** suggest to use R (>=4.0).
