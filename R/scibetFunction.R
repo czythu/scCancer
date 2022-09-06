@@ -106,9 +106,8 @@ SelectCells <- function(object, marker_file_path,
 Train <- function(expr, geneset=NULL){
   if(is.null(geneset)){
     print("All scRNA-seq features...")
-    path <- "D:/FinalProject/scCancer_MicroEnv/single_cell_features.tsv"
-    gene.list <- read_tsv(path)
-    gene.list <- gene.list$`MIR1302-10`
+    path <- paste0(system.file("txt", package = "scCancer"), "/single_cell_features.tsv")
+    gene.list <- read.table(path)$V2
     index_remain <- which(colnames(expr) %in% intersect(colnames(expr), gene.list))
     geneset <- colnames(expr)[index_remain]
   }
@@ -121,8 +120,7 @@ Train <- function(expr, geneset=NULL){
   # Calculate zero-ratio lambda for every possible cell type.
   dropout.ratio <- c()
   for(j in 1:dim(expr_select)[2]){
-    dropout.ratio <- c(dropout.ratio, 
-                       length(which(expr_select[,j] == 0)) / dim(expr_select)[1])
+    dropout.ratio <- c(dropout.ratio, length(which(expr_select[,j] == 0)) / dim(expr_select)[1])
   }
   
   # all possible labels
