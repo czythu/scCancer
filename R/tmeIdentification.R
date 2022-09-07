@@ -1,4 +1,70 @@
 #' @export
+trainAnnoModel <- function(expr,
+                           label,
+                           markers.Path,
+                           model.savePath,
+                           gene.method = "Entropy",
+                           gene.length = 2000,
+                           garnett.cutoff = 0.7,
+                           train.ratio = 0.8,
+                           repeat.times = 1,
+                           dropout.modeling = FALSE,
+                           metacell.anno = FALSE){
+  cnt <- 0
+  repeat{
+    cnt <- cnt + 1
+    if(cnt > repeat.times) {
+      break
+    }
+    set.seed(unclass(Sys.time()))
+    ID <- sort(sample(nrow(data), train.ratio * nrow(data)))
+    data <- data.frame(t(expr@assays$RNA@data))
+    data$label <- label
+    train_set <- data[ID,]      #construct reference set
+    test_set <- data[-ID,]      #construct query set
+    object <- scibet_visualization(train_set, train_set$label)[["object"]]
+    object <- as.CellDataSet(object)
+    object <- estimateSizeFactors(object)
+    # sample selection
+    result <- SelectCells(object,
+                          cutoff = garnett.cutoff,
+                          marker_file_path = markers.Path)
+    representative.index <- result[["index"]]
+    markers <- result[["markers"]]
+    # feature selection
+    geneset <- SelectGenes(train_set[representative.index,], 
+                           method = gene.method,
+                           k = gene.length)
+    # training process
+    result <- Train(train_set[representative.index,], union(geneset, markers$marker_gene))
+    label.name <- sort(unique(data$label))
+    prob <- result[,1:length(label.name)]
+    lambda <- result[,(length(label.name)+1):dim(result)[2]]
+    model.save <- data.frame(t(prob))
+    # label prediction
+    result <- MarkerScore(test_set,
+                          marker_file_path,
+                          cutoff=.70,
+                          metacell = metacell.anno)
+    predict <- Test(prob, lambda, test_set,
+                    weighted.markers = result[["markers"]],
+                    dropout.modeling = dropout.modeling,
+                    average.expr = result[["average"]])
+    if(metacell.anno){
+      predict <- predict[result[["clustering"]]]
+    }
+    correct <- 0
+    for (i in 1:length(predict)){
+      if (test_set$label[i] == predict[i]){
+        correct <- correct + 1
+      }
+    }
+    message("Accuracy: ", correct / length(predict))
+    saveRDS(model.save, paste0(model.savePath, "model-", cnt ,".rds"))
+  }
+}
+
+#' @export
 predSubType <- function(test_set,
                         pretrained.path,
                         savePath,
@@ -40,7 +106,7 @@ predSubType <- function(test_set,
 }
 
 #' @export
-Similarity_Calculation <- function(fine.labels, savePath){
+similarityCalculation <- function(fine.labels, savePath){
   for(i in 1:length(fine.labels)){
     predict <- fine.labels[[i]]
     if(is.null(predict)){
@@ -77,6 +143,7 @@ runCellSubtypeClassify <- function(expr,
                                    savePath, 
                                    celltype.list,
                                    umap.plot){
+  message("[", Sys.time(), "] -----: TME cell subtypes annotation")
   dataset <- data.frame(t(expr@assays$RNA@data))
   dataset$rough.labels <- expr$Cell.Type
   fine.labels <- predSubType(dataset,
@@ -84,6 +151,6 @@ runCellSubtypeClassify <- function(expr,
                              savePath,
                              celltype.list,
                              umap.plot)
-  Similarity_Calculation(fine.labels, savePath)
+  similarityCalculation(fine.labels, savePath)
   return(fine.labels)
 }

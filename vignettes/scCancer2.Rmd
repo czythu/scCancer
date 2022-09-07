@@ -1,0 +1,85 @@
+---
+title: "scCancer2-TMEIdentification"
+author: "Zeyu Chen"
+date: '2022-09-07'
+output: html_document
+---
+
+# Import Packages
+```{r}
+suppressMessages(library(Seurat))
+suppressMessages(library(garnett))
+suppressMessages(library(org.Hs.eg.db))
+suppressMessages(library(ggplot2))
+suppressMessages(library(ggsci))
+suppressMessages(library(cowplot))
+suppressMessages(library(viridis))
+suppressMessages(library(magrittr))
+suppressMessages(library(dplyr))
+suppressMessages(library(edgeR))
+suppressMessages(library(corrplot))
+suppressMessages(library(flexclust))
+```
+
+```{r}
+library(devtools)
+load_all()
+# document()
+library(scCancer2)
+```
+# Training
+```{r}
+trainAnnoModel(expr,
+               label,
+               markers.Path,
+               model.savePath,
+               train.ratio = 0.8,
+               repeat.times = 1)
+```
+
+# scAnnotation
+```{r}
+path <- "D:/scCancer-data/Demo-pipeline/KC-example/"
+dataPath <- paste0(path, "data")    
+# A path containing the scStatistics results
+statPath <- paste0(path, "result")
+# The sample name
+sampleName <- "KC-example"
+# The author name or a string used to mark the report.
+authorName <- "G-Lab@THU"    
+# A path used to save the results files
+savePath <- paste0(path, "result")
+
+# Run scStatistics
+stat.results <- runScStatistics(
+    dataPath = dataPath,
+    savePath = savePath,
+    sampleName = sampleName,
+    authorName = authorName
+)
+# Run scAnnotation(annotation only)
+anno.results <- runScAnnotation(
+    dataPath = dataPath,
+    statPath = statPath,
+    savePath = savePath,
+    authorName = authorName,
+    sampleName = sampleName,
+    geneSet.method = "average",
+    bool.runDiffExpr = T,
+    bool.runCellClassify = T,
+    bool.runCellSubtypeClassify = T,
+    celltype.list = NULL,
+    ct.templates = NULL,
+    pretrained.path = NULL,
+    subtype.umap = T,
+    bool.runMalignancy = F,
+    bool.intraTumor = F,
+    bool.runCellCycle = F,
+    bool.runStemness = F,
+    bool.runGeneSets = F,
+    bool.runExprProgram = F,
+    bool.runInteraction = F,
+    genReport = F
+)
+```
+

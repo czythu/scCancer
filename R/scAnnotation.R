@@ -1791,7 +1791,8 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
             celltype.list <- intersect(unique(expr$Cell.Type), default.list)
         }
         if(is.null(pretrained.path)){
-            pretrained.path <- system.file("csv", package = "scCancer")
+            # pretrained.path <- system.file("csv", package = "scCancer")
+            pretrained.path <- system.file("csv", package = "scCancer2")
         }
         if(!dir.exists(file.path(savePath, "cellSubtypeAnno"))){
             dir.create(file.path(savePath, "cellSubtypeAnno"), recursive = T)
