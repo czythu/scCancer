@@ -1,5 +1,5 @@
 # Scibet method
-# Li, C., Liu, B., Kang, B. et al. 
+# Li, C., Liu, B., Kang, B. et al.
 # SciBet as a portable and fast single cell type identifier.
 # Nat Commun 11, 1818 (2020). https://doi.org/10.1038/s41467-020-15523-2
 
@@ -38,9 +38,9 @@ Entropy_test <- function(expr, k = 1000) {
 HRG <- function(counts, k = 1000) {
   object.seurat <- CreateSeuratObject(counts)
   all.genes = rownames(object.seurat)
-  object.seurat <- ScaleData(object.seurat, features=all.genes, 
+  object.seurat <- ScaleData(object.seurat, features=all.genes,
                              verbose=FALSE)
-  object.seurat <- RunPCA(object.seurat, features=all.genes, 
+  object.seurat <- RunPCA(object.seurat, features=all.genes,
                           verbose=FALSE)
   object.seurat <- FindRegionalGenes(object.seurat,dims=1:10,
                                      nfeatures=k, overlap_stop=0.99)
@@ -71,14 +71,14 @@ SelectGenes <- function(expr, method="Entropy", k = 2000){
 #' @param object Seurat object of training set.
 #' @return representative.index A user-defined set of cells for training.
 #' @export
-SelectCells <- function(object, marker_file_path, 
+SelectCells <- function(object, marker_file_path,
                         cutoff = .80, database = org.Hs.eg.db){
-  marker_check <- check_markers(object, marker_file_path, 
-                                db=database, 
-                                cds_gene_id_type = "SYMBOL", 
+  marker_check <- check_markers(object, marker_file_path,
+                                db=database,
+                                cds_gene_id_type = "SYMBOL",
                                 marker_file_gene_id_type = "SYMBOL")
   # print(plot_markers(marker_check))
-  
+
   # select representative samples for training
   set.seed(unclass(Sys.time()))
   training_sample <- select_fine_samples(cds = object,
@@ -117,13 +117,13 @@ Train <- function(expr, geneset=NULL){
   expr_select <- expr[,geneset]
   label_total <- matrix(0, length(geneset), 1)
   lambda_all <- matrix(0, length(geneset), 1)
-  
+
   # Calculate zero-ratio lambda for every possible cell type.
   dropout.ratio <- c()
   for(j in 1:dim(expr_select)[2]){
     dropout.ratio <- c(dropout.ratio, length(which(expr_select[,j] == 0)) / dim(expr_select)[1])
   }
-  
+
   # all possible labels
   for(i in label.level){
     label_TPM <- expr_select[labels == i,]
@@ -166,7 +166,7 @@ Dropout_Sampling <- function(lambda){
   z <- c()
   for(i in 1:nrow(nondropout)){
     pos.prob <- nondropout[i,1]
-    newz <- sample(0:1, ncol(nondropout), replace = TRUE, 
+    newz <- sample(0:1, ncol(nondropout), replace = TRUE,
                    prob = c(1 - pos.prob, pos.prob))
     z <- rbind(z, newz)
   }
@@ -181,7 +181,7 @@ Dropout_Sampling <- function(lambda){
 #' and columns should be cell types.The genes must be matched with test_r
 #' @param ret_tab   return list or matrix
 #' @return  'cellType'  or matrix
-MLEstimate <- function(test, prob, lambda, 
+MLEstimate <- function(test, prob, lambda,
                        weighted.markers=NULL,
                        dropout.modeling=FALSE,
                        ret_tab=FALSE){
@@ -189,7 +189,7 @@ MLEstimate <- function(test, prob, lambda,
   if (length(weighted.markers) > 0){
     markers <- names(weighted.markers)
     weight <- unname(weighted.markers)
-    prob[which(rownames(prob) %in% markers),] <- 2 * prob[which(rownames(prob) %in% markers),] 
+    prob[which(rownames(prob) %in% markers),] <- 2 * prob[which(rownames(prob) %in% markers),]
   }
   if (dropout.modeling){
     # z~Bernoulli(1-lambda)
@@ -229,8 +229,8 @@ Test <- function(prob, lambda, test_set,
     genes <- rownames(prob)
     common.genes <- intersect(genes, colnames(test))
     test.normalized <- log1p(as.matrix(test[,common.genes])) / log(2)
-    predict <- MLEstimate(test.normalized, prob[common.genes, ], 
-                          lambda[common.genes, ], 
+    predict <- MLEstimate(test.normalized, prob[common.genes, ],
+                          lambda[common.genes, ],
                           weighted.markers,
                           dropout.modeling, FALSE)
     names(predict) <- seq(from = 0, to = length(predict) - 1)
@@ -241,8 +241,8 @@ Test <- function(prob, lambda, test_set,
     genes <- rownames(prob)
     common.genes <- intersect(genes, colnames(test))
     test.normalized <- log1p(as.matrix(test[,common.genes])) / log(2)
-    predict <- MLEstimate(test.normalized, prob[common.genes, ], 
-                          lambda[common.genes, ], 
+    predict <- MLEstimate(test.normalized, prob[common.genes, ],
+                          lambda[common.genes, ],
                           weighted.markers,
                           dropout.modeling, FALSE)
     correct <- 0
@@ -251,7 +251,7 @@ Test <- function(prob, lambda, test_set,
         correct <- correct + 1
       }
     }
-    print(correct / length(predict))
+    message("Accuracy: ", correct / length(predict))
     return(predict)
   }
 }
@@ -287,9 +287,9 @@ MarkerScore <- function(test_set, marker_file_path,
   object <- as.CellDataSet(object)
   object <- estimateSizeFactors(object)
   # adjust cutoff parameter
-  marker_check <- check_markers(object, marker_file_path, 
-                                db=database, 
-                                cds_gene_id_type = "SYMBOL", 
+  marker_check <- check_markers(object, marker_file_path,
+                                db=database,
+                                cds_gene_id_type = "SYMBOL",
                                 marker_file_gene_id_type = "SYMBOL")
   weighted.markers <- 1 + log(1 + marker_check$marker_score)
   names(weighted.markers) <- marker_check$marker_gene

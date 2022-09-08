@@ -1628,6 +1628,7 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
                             bool.runDoublet = T,
                             doublet.method = "bcds",
                             bool.runCellClassify = T,
+                            roughlabel.input = NULL,
                             bool.runCellSubtypeClassify = T,
                             celltype.list = NULL,
                             ct.templates = NULL,
@@ -1785,10 +1786,16 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
     if(bool.runCellSubtypeClassify){
         if(is.null(celltype.list)){
             default.list <- c("T.cells", "Myeloid.cells", "B.cells", "Fibroblast", "Endothelial")
-            expr$Cell.Type %>%
-                gsub("T.cells.CD4", "T.cells", .) %>%
-                gsub("T.cells.CD8", "T.cells", .) -> expr$Cell.Type
+            if(bool.runCellClassify){
+                expr$Cell.Type %>%
+                    gsub("T.cells.CD4", "T.cells", .) %>%
+                    gsub("T.cells.CD8", "T.cells", .) -> expr$Cell.Type
+            }
+            else{
+                expr$Cell.Type <- roughlabel.input
+            }
             celltype.list <- intersect(unique(expr$Cell.Type), default.list)
+
         }
         if(is.null(pretrained.path)){
             # pretrained.path <- system.file("csv", package = "scCancer")

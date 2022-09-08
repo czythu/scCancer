@@ -1,21 +1,20 @@
 #' @export
-trainAnnoModel <- function(expr,
-                           input.type = "Seurat",
-                           label,
-                           markers.Path,
-                           model.savePath,
-                           gene.method = "Entropy",
-                           gene.length = 2000,
-                           garnett.cutoff = 0.7,
-                           train.ratio = 0.8,
-                           repeat.times = 1,
-                           dropout.modeling = FALSE,
-                           metacell.anno = FALSE){
-    if(input.type == "Seurat"){
-        data <- data.frame(t(expr@assays$RNA@data))
-    }
+trainSubAnnoModel <- function(data,
+                              label,
+                              markers.Path,
+                              model.savePath,
+                              gene.method,
+                              gene.length,
+                              garnett.cutoff,
+                              train.ratio,
+                              repeat.times,
+                              umap.visualization,
+                              confusion.matrix,
+                              dropout.modeling,
+                              metacell.anno){
     data$label <- label
     cnt <- 0
+    models <- c()
     repeat{
         cnt <- cnt + 1
         if(cnt > repeat.times) {
@@ -47,7 +46,7 @@ trainAnnoModel <- function(expr,
         # label prediction
         result <- MarkerScore(test_set,
                               marker_file_path,
-                              cutoff=.70,
+                              cutoff = garnett.cutoff,
                               metacell = metacell.anno)
         predict <- Test(prob, lambda, test_set,
                         weighted.markers = result[["markers"]],
@@ -63,8 +62,67 @@ trainAnnoModel <- function(expr,
             }
         }
         message("Accuracy: ", correct / length(predict))
-        saveRDS(model.save, paste0(model.savePath, "model-", cnt ,".rds"))
+        predict.unknown <- AssignUnknown(predict, result[["unknown"]])
+        # umap visualization
+        if(umap.visualization){
+            print(scibet_visualization(test_set, predict))
+            print(scibet_visualization(test_set, predict.unknown))
+        }
+        # confusion matrix for analysis
+        if(confusion.matrix){
+            print(ConfusionMatrix(label.name, label.name,
+                                  test_set$label, predict,
+                                  xlab='Reference',ylab='Prediction', normalize=F))
+            print(ConfusionMatrix(label.name, c(label.name, "unknown"),
+                                  test_set$label, predict.unknown,
+                                  xlab='Reference',ylab='Prediction', normalize=F))
+        }
+        models <- c(models, model.save)
+        write.csv(model.save, paste0(model.savePath, "model-", cnt ,".csv"))
     }
+    return(models)
+}
+
+#' @export
+trainAnnoModel <- function(expr,
+                           rough.label,
+                           fine.label,
+                           markers.Path,
+                           model.savePath,
+                           input.type = "Seurat",
+                           gene.method = "Entropy",
+                           gene.length = 2000,
+                           garnett.cutoff = 0.7,
+                           train.ratio = 0.8,
+                           repeat.times = 1,
+                           umap.visualization = TRUE,
+                           confusion.matrix = TRUE,
+                           dropout.modeling = FALSE,
+                           metacell.anno = FALSE){
+    if(input.type == "Seurat"){
+        data <- data.frame(t(expr@assays$RNA@data))
+    }
+    celltype <- sort(unique(rough.label))
+    allmodels <- list()
+    for(i in 1:length(celltype)){
+        subtype.label <- fine.label[which(rough.label == celltype[i])]
+        save.folder <- paste0(model.savePath, "/", celltype[i], "/")
+        models <- trainSubAnnoModel(data = data,
+                                    label = subtype.label,
+                                    markers.Path = markers.Path,
+                                    model.savePath = save.folder,
+                                    gene.method = gene.method,
+                                    gene.length = gene.length,
+                                    garnett.cutoff = garnett.cutoff,
+                                    train.ratio = train.ratio,
+                                    repeat.times = repeat.times,
+                                    umap.visualization = umap.visualization,
+                                    confusion.matrix = confusion.matrix,
+                                    dropout.modeling = dropout.modeling,
+                                    metacell.anno = metacell.anno)
+        allmodels[[celltype[i]]] <- models
+    }
+    return(allmodels)
 }
 
 #' @export
@@ -73,36 +131,33 @@ predSubType <- function(test_set,
                         savePath,
                         celltype.list,
                         umap.plot = FALSE){
-  # Split test dataset with rough labels.
-    celltypes <- sort(unique(test_set$rough.labels))
-    finelabels.list <- lapply(celltypes, function(celltype){
-        if(celltype %in% celltype.list){
-            message(celltype)
-            testdata <- test_set[which(test_set$rough.labels == celltype),]
-            folder.path <- paste0(pretrained.path, "/", celltype, "/")
-            file.name <- list.files(folder.path)
-            file.path <- paste0(folder.path, file.name)
-            # Different classification principles: Several lists of subtype
-            pdf(file = paste0(savePath, celltype, ".pdf"), width = 7, height = 7)
-            subtypes.predict <- lapply(file.path, function(model.path){
-                model.ref <- read.csv(model.path)
-                model.ref <- pro.core(model.ref)
-                # Return a list of subtype
-                label.predict <- CrossTest(model.ref, testdata)
-                label.predict <- paste0(label.predict, "[", which(file.path == model.path), "]")
-                if(umap.plot){
-                    print(scibet_visualization(testdata, label.predict)[[2]])
-                }
-                return(label.predict)
-            })
-            dev.off()
-            message("Classification finished.")
-            subtypes.predict <- data.frame(matrix(unlist(subtypes.predict),
-                                                  nrow = length(subtypes.predict),
-                                                  byrow = T))
-            names(subtypes.predict) <- rownames(testdata)
-            return(subtypes.predict)
-        }
+    # Split test dataset with rough labels.
+    finelabels.list <- lapply(celltype.list, function(celltype){
+        message(celltype)
+        testdata <- test_set[which(test_set$rough.labels == celltype),]
+        folder.path <- paste0(pretrained.path, "/", celltype, "/")
+        file.name <- list.files(folder.path)
+        file.path <- paste0(folder.path, file.name)
+        # Different classification principles: Several lists of subtype
+        pdf(file = paste0(savePath, celltype, ".pdf"), width = 7, height = 7)
+        subtypes.predict <- lapply(file.path, function(model.path){
+            model.ref <- read.csv(model.path)
+            model.ref <- pro.core(model.ref)
+            # Return a list of subtype
+            label.predict <- CrossTest(model.ref, testdata)
+            label.predict <- paste0(label.predict, "[", which(file.path == model.path), "]")
+            if(umap.plot){
+                print(scibet_visualization(testdata, label.predict)[[2]])
+            }
+            return(label.predict)
+        })
+        dev.off()
+        message("Classification finished.")
+        subtypes.predict <- data.frame(matrix(unlist(subtypes.predict),
+                                              nrow = length(subtypes.predict),
+                                              byrow = T))
+        names(subtypes.predict) <- rownames(testdata)
+        return(subtypes.predict)
     })
     names(finelabels.list) <- celltypes
     return(finelabels.list)
