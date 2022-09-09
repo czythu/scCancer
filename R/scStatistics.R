@@ -722,7 +722,7 @@ runScStatistics <- function(dataPath, savePath,
     }
 
 
-    message("[", Sys.time(), "] -----: resutls saving")
+    message("[", Sys.time(), "] -----: results saving")
     filter.thres <- list(
         Index = c("nUMI", "nGene", "mito.percent", "ribo.percent", "diss.percent"),
         Low.threshold = c(0, 200, -Inf, -Inf, -Inf),

@@ -92,7 +92,7 @@ trainAnnoModel <- function(expr,
                            input.type = "Seurat",
                            gene.method = "Entropy",
                            gene.length = 2000,
-                           garnett.cutoff = 0.7,
+                           garnett.cutoff = 0.75,
                            train.ratio = 0.8,
                            repeat.times = 1,
                            umap.visualization = TRUE,
@@ -127,39 +127,49 @@ trainAnnoModel <- function(expr,
 
 #' @export
 predSubType <- function(test_set,
-                        pretrained.path,
+                        submodel.path,
+                        markers.path,
                         savePath,
                         celltype.list,
+                        unknown.cutoff = 0.3,
                         umap.plot = FALSE){
     # Split test dataset with rough labels.
     finelabels.list <- lapply(celltype.list, function(celltype){
-        message(celltype)
         testdata <- test_set[which(test_set$rough.labels == celltype),]
-        folder.path <- paste0(pretrained.path, "/", celltype, "/")
-        file.name <- list.files(folder.path)
-        file.path <- paste0(folder.path, file.name)
+        folder.path1 <- paste0(submodel.path, "/", celltype, "/")
+        folder.path2 <- paste0(markers.path, "/", celltype, "/")
+        file.path1 <- paste0(folder.path1, list.files(folder.path1))
+        file.path2 <- paste0(folder.path2, list.files(folder.path2))
         # Different classification principles: Several lists of subtype
         pdf(file = paste0(savePath, celltype, ".pdf"), width = 7, height = 7)
-        subtypes.predict <- lapply(file.path, function(model.path){
+        subtypes.predict <- lapply(file.path1, function(model.path){
+            index <- which(file.path == model.path)
             model.ref <- read.csv(model.path)
             model.ref <- pro.core(model.ref)
             # Return a list of subtype
-            label.predict <- CrossTest(model.ref, testdata)
-            label.predict <- paste0(label.predict, "[", which(file.path == model.path), "]")
+            result <- MarkerScore(testdata,
+                                  marker_file_path = file.path2[index],
+                                  cutoff = unknown.cutoff)
+            label.predict <- Test(model.ref, lambda, testdata,
+                            weighted.markers = result[["markers"]],
+                            dropout.modeling = dropout.modeling,
+                            average.expr = result[["average"]])
+            label.predict <- paste0(label.predict, "[", index, "]")
+            label.predict <- AssignUnknown(label.predict, result[["unknown"]])
             if(umap.plot){
-                print(scibet_visualization(testdata, label.predict)[[2]])
+                print(scibet_visualization(testdata, label.predict)[["plot"]])
             }
             return(label.predict)
         })
         dev.off()
-        message("Classification finished.")
+        message("[", Sys.time(), "] -----: ", celltype, " subtype annotation finished.")
         subtypes.predict <- data.frame(matrix(unlist(subtypes.predict),
                                               nrow = length(subtypes.predict),
                                               byrow = T))
         names(subtypes.predict) <- rownames(testdata)
         return(subtypes.predict)
     })
-    names(finelabels.list) <- celltypes
+    names(finelabels.list) <- celltype.list
     return(finelabels.list)
 }
 
@@ -188,16 +198,26 @@ similarityCalculation <- function(fine.labels, savePath){
         similarity.mar[is.na(similarity.mar)] <- 0
         # Heatmap and Hierarchical clustering
         plot.title <- paste0("similarity map of ", celltype)
-        pdf(file = paste0(savePath, "similarity-", celltype, ".pdf"), width = 12, height = 15)
-        SimilarityMap(plot.title, "reference = ...", similarity.mar,
-                      number.digits = 1, number.cex = 0.6, tl.cex = 0.7)
+        # small similarity map
+        if(dim(similarity.mar)[1] <= 4^2){
+            pdf(file = paste0(savePath, "similarity-", celltype, ".pdf"), width = 6, height = 8)
+            SimilarityMap(plot.title, "reference = ...", similarity.mar,
+                          number.digits = 2, number.cex = 1, tl.cex = 1)
+        }
+        # huge similarity map
+        else{
+            pdf(file = paste0(savePath, "similarity-", celltype, ".pdf"), width = 12, height = 15)
+            SimilarityMap(plot.title, "reference = ...", similarity.mar,
+                          number.digits = 1, number.cex = 0.6, tl.cex = 0.7)
+        }
         dev.off()
     }
 }
 
 #' @export
 runCellSubtypeClassify <- function(expr,
-                                   pretrained.path,
+                                   submodel.path,
+                                   markers.path,
                                    savePath,
                                    celltype.list,
                                    umap.plot){
@@ -205,7 +225,8 @@ runCellSubtypeClassify <- function(expr,
     dataset <- data.frame(t(expr@assays$RNA@data))
     dataset$rough.labels <- expr$Cell.Type
     fine.labels <- predSubType(dataset,
-                               pretrained.path,
+                               submodel.path,
+                               markers.path,
                                savePath,
                                celltype.list,
                                umap.plot)

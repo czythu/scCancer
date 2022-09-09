@@ -2,7 +2,7 @@
 # Hannah A. Pliner, Jay Shendure & Cole Trapnell (2019).
 # Supervised classification enables rapid annotation of cell atlases. Nature Methods
 
-# Function select_fine_samples is modified for: 
+# Function select_fine_samples is modified for:
 # 1. selecting core dataset for model training(at least 1 marker expressing)
 # 2. assigning unknown label(no marker expressing)
 
@@ -148,7 +148,7 @@ Parser <- R6::R6Class(
     tokens = c("KEYWORD", "NAME", "NEWLINE",
                "SIMP_KEY", "NUM"),
     literals = c(">", ":", ","),
-    
+
     # Parsing rules
     linenum = 1,
     p_file_1 = function(doc="file : NEWLINE file", p) {
@@ -189,7 +189,7 @@ Parser <- R6::R6Class(
       }
       p$set(1, ct)
     },
-    
+
     p_header_1 = function(doc="header : header_start NEWLINE", p) {
       self[["linenum"]] <- self[["linenum"]] + 1
       p$set(1, p$get(2))
@@ -200,7 +200,7 @@ Parser <- R6::R6Class(
     p_celltype_2 = function(doc="celltype : celltype rule", p) {
       ct <- p$get(2)
       rule <- p$get(3)
-      
+
       if (rule[[1]] == "exp") {
         ct@expressed <- c(ct@expressed, rule[2:length(rule)])
       } else if (rule[[1]] == "nexp") {
@@ -302,7 +302,7 @@ Parser <- R6::R6Class(
         p$set(1, c(p$get(2)[1:(length(p$get(2)) - 1)],
                    paste(p$get(2)[length(p$get(2))], p$get(3))))
       }
-      
+
     },
     p_expression_3 = function(doc="expression : expression ',' NAME
                                               | expression ',' NUM", p) {
@@ -370,7 +370,7 @@ cds_to_other_id <- function(cds,
                             verbose = FALSE) {
   matrix <- exprs(cds)
   fdata <- fData(cds)
-  
+
   new_g <- convert_gene_ids(row.names(fdata),
                             db,
                             input_file_gene_id_type,
@@ -386,12 +386,12 @@ cds_to_other_id <- function(cds,
                                               "types and the correct db?"))
   if(verbose) message(paste("After converting CDS to", new_gene_id_type,"IDs,",
                             lstart - lend, "IDs were lost"))
-  
+
   matrix <- matrix[names(new_g),]
   fdata <- fdata[names(new_g),, drop=FALSE]
   row.names(matrix) <- new_g
   row.names(fdata) <- new_g
-  
+
   pd = new("AnnotatedDataFrame", data = pData(cds))
   fd = new("AnnotatedDataFrame", data = fdata)
   cds = suppressWarnings(newCellDataSet(matrix,
@@ -399,7 +399,7 @@ cds_to_other_id <- function(cds,
                                         featureData=fd,
                                         expressionFamily=cds@expressionFamily,
                                         lowerDetectionLimit=cds@lowerDetectionLimit))
-  
+
   return(cds)
 }
 
@@ -407,7 +407,7 @@ convert_gene_ids <- function(gene_list,
                              db,
                              start_type,
                              end_type) {
-  
+
   tryCatch({suppressMessages(AnnotationDbi::mapIds(db, keys = gene_list,
                                                    column = end_type, start_type))},
            error = function(e) {
@@ -480,14 +480,14 @@ new_garnett_classifier <- function()
 {
   garc <- new( "garnett_classifier",
                classification_tree = igraph::graph.empty())
-  
+
   root_node_id <- "root"
-  
+
   garc@classification_tree <- garc@classification_tree +
     igraph::vertex(root_node_id,
                    classify_func=list(function(x) {rep(TRUE, ncol(x))}),
                    model = NULL)
-  
+
   return(garc)
 }
 
@@ -499,11 +499,11 @@ add_cell_type <- function(classifier,
   if (cell_type_name %in% igraph::V(classifier@classification_tree)$name){
     stop(paste("Error: cell type",cell_type_name, "already exists."))
   }
-  
+
   classifier@classification_tree <- classifier@classification_tree +
     igraph::vertex(cell_type_name, classify_func=list(classify_func),
                    model=NULL)
-  
+
   classifier@classification_tree <- classifier@classification_tree +
     igraph::edge(parent_cell_type_name, cell_type_name)
   return (classifier)
@@ -516,7 +516,7 @@ make_predictions <- function(cds,
                              cores = 1,
                              s) {
   cvfit <- igraph::V(classifier@classification_tree)[curr_node]$model[[1]]
-  
+
   predictions <- tryCatch({
     if(is.null(cvfit)) {
       child_cell_types <- igraph::V(classifier@classification_tree)[
@@ -540,63 +540,63 @@ make_predictions <- function(cds,
                                               "correct db?"))
       x <- Matrix::t(exprs(cds[intersect(row.names(exprs(cds)),
                                          candidate_model_genes),])) #slow
-      
+
       extra <- as(matrix(0, nrow = nrow(x),
                          ncol = length(setdiff(candidate_model_genes,
                                                colnames(x)))), "sparseMatrix")
       row.names(extra) <- row.names(x)
       colnames(extra) <- setdiff(candidate_model_genes, colnames(x))
-      
+
       x <- cbind(x, extra)
       x <- x[,candidate_model_genes]
-      
+
       # predict probabilities using fitted model
       nonz <- Matrix::rowSums(do.call(cbind,
                                       glmnet:::coef.glmnet(cvfit,
                                                            s="lambda.min")))
       nonz <- nonz[2:length(nonz)]
       nonz <- names(nonz[nonz != 0])
-      
+
       if (sum(!nonz %in% row.names(exprs(cds))) > 0) {
         warning(paste("The following genes used in the classifier are not",
                       "present in the input CDS. Interpret with caution.",
                       nonz[!nonz %in% row.names(exprs(cds))]))
       }
-      
+
       temp <- stats::predict(cvfit, #slow
                              newx = x,
                              s = s,
                              type = "response")
       temp[is.nan(temp)] <- 0
       prediction_probs <- as.matrix(as.data.frame(temp))
-      
+
       # normalize probabilities by dividing by max
       prediction_probs <- prediction_probs/Biobase::rowMax(prediction_probs)
-      
+
       prediction_probs[is.nan(prediction_probs)] <- 0
-      
+
       # find the odds ratio of top prob over second best
       prediction_probs <- apply(prediction_probs, 1, function(x) {
         m <- names(which.max(x))
         s <- sort(x, decreasing = T)
         c(cell_type = m, odds_ratio = s[1]/s[2])
       })
-      
+
       prediction_probs <- as.data.frame(t(prediction_probs))
       prediction_probs$cell_name <- row.names(prediction_probs)
       names(prediction_probs) <- c("cell_type", "odds_ratio", "cell_name")
       prediction_probs$odds_ratio <-
         as.numeric(as.character(prediction_probs$odds_ratio))
-      
+
       # odds ratio has to be larger than rank_prob_ratio
       assignments <- prediction_probs[prediction_probs$odds_ratio >
                                         rank_prob_ratio,]
-      
+
       # odds ratio also must be larger than expected by random guess
       # (1/number of cell types)
       random_guess_thresh <- 1.0 / length(cvfit$glmnet.fit$beta)
       assignments <- assignments[assignments$odds_ratio > random_guess_thresh,]
-      
+
       not_assigned <- row.names(pData(cds))[ !row.names(pData(cds)) %in%
                                                assignments$cell_name]
       if(length(not_assigned) > 0) {
@@ -604,17 +604,17 @@ make_predictions <- function(cds,
                              data.frame(cell_name = not_assigned,
                                         cell_type = NA, odds_ratio = NA))
       }
-      
+
       assignments$cell_type <- stringr::str_replace_all(assignments$cell_type,
                                                         "\\.1",
                                                         "")
-      
+
       # reformat predictions
       predictions <- reshape2::dcast(assignments, cell_name ~ cell_type,
                                      value.var = "odds_ratio")
       predictions <- predictions[!is.na(predictions$cell_name),]
       row.names(predictions) <- predictions$cell_name
-      
+
       if (ncol(predictions) > 2){
         predictions <- predictions[,setdiff(colnames(predictions), "NA")]
         predictions <- predictions[,-1, drop=FALSE]
@@ -623,11 +623,11 @@ make_predictions <- function(cds,
         predictions[is.na(predictions)] <- FALSE
         predictions[predictions != 0] <- TRUE
         cell_type_names <- colnames(predictions)
-        
+
         predictions <- split(predictions, rep(1:ncol(predictions),
                                               each = nrow(predictions)))
         names(predictions) <- cell_type_names
-        
+
       } else {
         cell_type_names <- names(cvfit$glmnet.fit$beta)
         one_type <- names(predictions)[2]
@@ -640,14 +640,14 @@ make_predictions <- function(cds,
                               dimnames=list(row.names(pData(cds)),
                                             cell_type_names))
         predictions[,one_type] <- TRUE
-        
+
         predictions <- split(predictions, rep(1:ncol(predictions),
                                               each = nrow(predictions)))
         names(predictions) <- cell_type_names
       }
       predictions
     }
-    
+
   },
   #warning = function(w) print(w),
   error = function(e) {
@@ -666,13 +666,13 @@ make_predictions <- function(cds,
     names(predictions) <- cell_type_names
     predictions
   })
-  
+
   for (i in 1:length(predictions)){
     p <- as(as(predictions[[i]], "sparseVector"), "sparseMatrix")
     row.names(p) <- row.names(pData(cds))
     predictions[[i]] <- p
   }
-  
+
   return(predictions)
 }
 # --------------------------------------------------------------------
@@ -694,9 +694,9 @@ get_training_sample <- function(cds,
                                 training_cutoff,
                                 marker_scores,
                                 return_initial_assign) {
-  
+
   ##### Find type assignment from expressed/not expressed #####
-  
+
   child_cell_types <- igraph::V(classifier@classification_tree)[
     suppressWarnings(outnei(curr_node)) ]$name
   parent <- igraph::V(classifier@classification_tree)[curr_node]$name
@@ -713,28 +713,28 @@ get_training_sample <- function(cds,
       return(assigns)
     }
   }
-  
+
   assigns <- as.data.frame(assigns)
-  
+
   names(assigns) <- "assigns"
   pData(orig_cds)$assigns <- assigns[row.names(pData(orig_cds)),"assigns"]
   pData(orig_cds)$assigns <- as.character(pData(orig_cds)$assigns)
   pData(orig_cds)$assigns[is.na(pData(orig_cds)$assigns)] <- "None"
-  
+
   ##### Exclude possibles using other definitions #####
   child_rules <- list()
   for (child in child_cell_types) {
     cell_class_func <-
       igraph::V(classifier@classification_tree)[child]$classify_func[[1]]
-    
+
     parent <- environment(cell_class_func)
     if (is.null(parent))
       parent <- emptyenv()
     e1 <- new.env(parent=parent)
-    
+
     Biobase::multiassign(names(pData(orig_cds)), pData(orig_cds), envir=e1)
     environment(cell_class_func) <- e1
-    
+
     type_res <- cell_class_func(exprs(orig_cds))
     if (length(type_res)!= ncol(orig_cds)){
       message(paste("Error: classification function for",
@@ -742,21 +742,21 @@ get_training_sample <- function(cds,
                     "returned a malformed result."))
       stop()
     }
-    
+
     type_res <- as(as(type_res,"sparseVector"), "sparseMatrix")
     row.names(type_res) <- row.names(pData(orig_cds))
     colnames(type_res) <- child
     child_rules[[ child ]] <- type_res
   }
-  
-  
+
+
   # Assign cell types by classifier rules and check for conflicts
   ctf_cell_type <- rep("Unknown", length(child_rules[[1]]))
   names(ctf_cell_type) <- row.names(child_rules[[1]])
   for (child in child_cell_types) {
     ctf_cell_type[Matrix::which(as.matrix(child_rules[child][[1]]))] <- child
   }
-  
+
   # Find training sample cells and downsample if necessary
   good_cell_type <- ctf_cell_type[ctf_cell_type %in% child_cell_types]
   obs_counts <- table(good_cell_type)
@@ -767,29 +767,29 @@ get_training_sample <- function(cds,
     training_sample <- append(training_sample, obs_for_type_i)
   }
   training_sample <- good_cell_type[training_sample]
-  
+
   # Find outgroup samples and downsample if necessary
   outgroup_samples <- !ctf_cell_type %in% child_cell_types
-  
+
   if (length(outgroup_samples) > 0){
     outgroup_samples <- ctf_cell_type[outgroup_samples]
-    
+
     out_group_cds <- cds[,names(outgroup_samples)]
     out_group_cds <- out_group_cds[,sample(row.names(pData(out_group_cds)),
                                            min(nrow(pData(out_group_cds)),
                                                num_unknown * 10),
                                            replace = F)]
-    
+
     out_group_cds <- get_communities(out_group_cds)
-    
+
     per_clust <-
       floor(num_unknown/length(unique(pData(out_group_cds)$louv_cluster)))
-    
+
     outg <- lapply(unique(pData(out_group_cds)$louv_cluster), function(x) {
       sub <- pData(out_group_cds)[pData(out_group_cds)$louv_cluster == x,]
       sample(row.names(sub), min(nrow(sub), per_clust))
     })
-    
+
     outg <- unlist(outg)
     if(length(outg) < min(length(outgroup_samples), num_unknown)) {
       to_get <- min(length(outgroup_samples), num_unknown)
@@ -800,10 +800,10 @@ get_training_sample <- function(cds,
     names(outgroup) <- outg
     training_sample <- append(training_sample, outgroup)
   }
-  
+
   training_sample <- factor(training_sample)
   training_sample <- droplevels(training_sample)
-  
+
   return(training_sample)
 }
 
@@ -811,7 +811,7 @@ assign_type <- function(total_vals,
                         training_cutoff,
                         return_initial_assign) {
   cutoffs <- apply(total_vals, 2, stats::quantile, probs = training_cutoff)
-  
+
   q <- as.data.frame(t(t(total_vals) > cutoffs))
   q$total <- rowSums(q)
   q$assign <- sapply(q$total, function(x) {
@@ -837,14 +837,14 @@ assign_type <- function(total_vals,
     q$assign <- NULL
     return(q)
   }
-  
+
   out <- q[q$assign != "Assign",]$assign
   names(out) <- q[q$assign != "Assign",]$cell
   sub <- q[q$assign == "Assign",]
   sub$total <- NULL
   sub$assign <- NULL
   sub <- reshape2::melt(sub, id.vars = "cell")
-  
+
   sub <- sub[sub$value,]
   out2 <- as.character(sub$variable)
   names(out2) <- sub$cell
@@ -862,12 +862,12 @@ aggregate_positive_markers <- function(cell_type,
   bad_genes <- gene_table[!gene_table$in_cds,]$orig_fgenes
   gene_list <- gene_list[!gene_list %in% bad_genes]
   gene_list <- gene_table$fgenes[match(gene_list,gene_table$orig_fgenes)]
-  
+
   rel <- intersect(unlist(gene_list), colnames(tf_idf))
   rel <- unique(rel)
   rel_genes <- tf_idf[,rel, drop=FALSE]
   if(length(rel) == 0) return(NULL)
-  
+
   if(length(unlist(gene_list)) == 1) {
     background_cutoff <- back_cutoff * stats::quantile(rel_genes[,1],
                                                        prob = .95)
@@ -877,11 +877,11 @@ aggregate_positive_markers <- function(cell_type,
     background_cutoff <- back_cutoff * apply(rel_genes, 2,
                                              stats::quantile,
                                              prob = .95)
-    
+
     temp <- Matrix::t(rel_genes)
     temp[temp < background_cutoff] <- 0
     rel_genes <- Matrix::t(temp)
-    
+
     if(agg) {
       agg <-  (Matrix::rowSums(rel_genes))
     } else {
@@ -904,7 +904,7 @@ get_negative_markers <- function(cell_type,
     rel <- unique(rel)
     rel_genes <- tf_idf[,rel, drop=FALSE]
     if(length(rel) == 0) return("")
-    
+
     if(length(unlist(not_list)) == 1) {
       background_cutoff <- back_cutoff * stats::quantile(rel_genes[,1],
                                                          prob = .95)
@@ -913,7 +913,7 @@ get_negative_markers <- function(cell_type,
       background_cutoff <- back_cutoff * apply(rel_genes, 2,
                                                stats::quantile,
                                                prob = .95)
-      
+
       temp <- Matrix::t(rel_genes)
       temp <- temp > background_cutoff
       temp <- Matrix::t(temp)
@@ -1005,7 +1005,8 @@ get_negative_markers <- function(cell_type,
 #' @export
 #'
 #' @import garnett
-select_fine_samples <- function(cds,                                  marker_file,
+select_fine_samples <- function(cds,
+                                marker_file,
                                 db,
                                 cds_gene_id_type = "ENSEMBL",
                                 marker_file_gene_id_type = "SYMBOL",
@@ -1014,11 +1015,11 @@ select_fine_samples <- function(cds,                                  marker_fil
                                 max_training_samples = 500,
                                 num_unknown = 500,
                                 propogate_markers = TRUE,
-                                cores=1,
+                                cores = 1,
                                 lambdas = NULL,
                                 classifier_gene_id_type = "ENSEMBL",
                                 return_initial_assign = TRUE) {
-  
+
   ##### Check inputs #####
   assertthat::assert_that(is(cds, "CellDataSet"))
   assertthat::assert_that(assertthat::has_name(pData(cds), "Size_Factor"),
@@ -1058,7 +1059,7 @@ select_fine_samples <- function(cds,                                  marker_fil
   if (!is.null(lambdas)) {
     assertthat::assert_that(is.numeric(lambdas))
   }
-  
+
   ##### Set internal parameters #####
   rel_gene_quantile <- .9 # exclusion criterion for genes expressed at greater
   # than rel_gene_quantile in all training cell subsets
@@ -1068,7 +1069,7 @@ select_fine_samples <- function(cds,                                  marker_fil
   # included in glmnet training
   training_cutoff <- cutoff # percentile of marker score required for training
   # assignment
-  
+
   ##### Normalize and rename CDS #####
   if (!is(exprs(cds), "dgCMatrix")) {
     sf <- pData(cds)$Size_Factor
@@ -1079,12 +1080,12 @@ select_fine_samples <- function(cds,                                  marker_fil
                                            featureData = fd))
     pData(cds)$Size_Factor <- sf
   }
-  
+
   pData(cds)$num_genes_expressed <- Matrix::colSums(as(exprs(cds),
                                                        "lgCMatrix"))
   cell_totals <-  Matrix::colSums(exprs(cds))
   sf <- pData(cds)$Size_Factor
-  
+
   pd <- new("AnnotatedDataFrame", data = pData(cds))
   fd <- new("AnnotatedDataFrame", data = fData(cds))
   temp <- exprs(cds)
@@ -1099,52 +1100,52 @@ select_fine_samples <- function(cds,                                  marker_fil
                                 classifier_gene_id_type)
   }
   pData(norm_cds)$Size_Factor <- sf
-  
-  
+
+
   ##### Parse Marker File #####
   file_str = paste0(readChar(marker_file, file.info(marker_file)$size),"\n")
-  
+
   parse_list <- parse_input(file_str)
   orig_name_order <- unlist(parse_list[["name_order"]])
   rm("name_order", envir=parse_list)
-  
+
   # Check and order subtypes
   ranks <- lapply(orig_name_order, function(i) parse_list[[i]]@parenttype)
   names(ranks) <- orig_name_order
-  
+
   if(length(unlist(unique(ranks[which(!ranks %in% names(ranks) & lengths(ranks) != 0L)])) != 0)) {
     stop(paste("Subtype", unlist(unique(ranks[which(!ranks %in% names(ranks) & lengths(ranks) != 0L)])), "is not defined in marker file."))
   }
-  
+
   if(any(names(ranks) == ranks)) {
     bad <- ranks[names(ranks) == ranks]
     stop(paste0("'", bad,
                 "' cannot be a subtype of itself. Please modify marker file."))
   }
-  
+
   name_order <- names(ranks[lengths(ranks) == 0L])
   ranks <- ranks[!names(ranks) %in% name_order]
   while(length(ranks) != 0) {
     name_order <- c(name_order, names(ranks)[ranks %in% name_order])
     ranks <- ranks[!names(ranks) %in% name_order]
   }
-  
-  
+
+
   if(is.null(parse_list)) stop("Parse failed!")
   message(paste("There are", length(parse_list), "cell type definitions"))
-  
+
   # Check gene names and keywords
   gene_table <- make_name_map(parse_list,
                               as.character(row.names(fData(norm_cds))),
                               classifier_gene_id_type,
                               marker_file_gene_id_type,
                               db)
-  
+
   ##### Make garnett_classifier #####
   classifier <- new_garnett_classifier()
   classifier@gene_id_type <- classifier_gene_id_type
   if(is(db, "character") && db == "none") classifier@gene_id_type <- "custom"
-  
+
   for(i in name_order) {
     # check meta data exists
     if (nrow(parse_list[[i]]@meta) != 0) {
@@ -1159,21 +1160,21 @@ select_fine_samples <- function(cds,                                  marker_fil
     logic_list <- assemble_logic(parse_list[[i]], gene_table)
     classifier <- add_cell_rule(parse_list[[i]], classifier, logic_list)
   }
-  
+
   classifier@cell_totals <- exp(mean(log(cell_totals)))/
     stats::median(pData(norm_cds)$num_genes_expressed)
-  
+
   ##### Create transformed marker table #####
   if(propogate_markers) {
     root <- propogate_func(curr_node = "root", parse_list, classifier)
   }
-  
+
   tf_idf <- tfidf(norm_cds) #slow
-  
-  
+
+
   ### Aggregate markers ###
   marker_scores <- data.frame(cell = row.names(tf_idf))
-  
+
   for (i in name_order) {
     agg <- aggregate_positive_markers(parse_list[[i]], tf_idf,
                                       gene_table, back_cutoff)
@@ -1193,7 +1194,7 @@ select_fine_samples <- function(cds,                                  marker_fil
   for (v in igraph::V(classifier@classification_tree)){
     child_cell_types <- igraph::V(classifier@classification_tree)[
       suppressWarnings(outnei(v))]$name
-    
+
     if(length(child_cell_types) > 0) {
       ### Get CDS subset for training ###
       message(igraph::V(classifier@classification_tree) [ v ]$name)
@@ -1229,7 +1230,7 @@ select_fine_samples <- function(cds,                                  marker_fil
         cds_sub <- norm_cds[,good_cells]
         orig_sub <- orig_cds[,good_cells]
       }
-      
+
       ### Get training sample ###
       sample <- get_training_sample(cds = cds_sub,
                                     orig_cds = orig_sub,
@@ -1245,7 +1246,7 @@ select_fine_samples <- function(cds,                                  marker_fil
                                     training_cutoff,
                                     marker_scores,
                                     return_initial_assign)
-      
+
       if(return_initial_assign) {
         return(sample)
       }
@@ -1260,7 +1261,7 @@ parse_input <- function(file_str,
   lexer  <- rly::lex(Lexer, debug=debug)
   parser <- rly::yacc(Parser, debug=debug)
   parse_list <- parser$parse(file_str, lexer)
-  
+
   parse_list
 }
 
@@ -1290,7 +1291,7 @@ make_name_map <- function(parse_list,
   } else {
     gene_table$cds <- gene_table$fgenes
   }
-  
+
   if(cds_gene_id_type == "ENSEMBL" | marker_file_gene_id_type == "ENSEMBL") {
     gene_table$cds <- NULL
     possibles <- data.frame(cds = possible_genes,
@@ -1304,10 +1305,10 @@ make_name_map <- function(parse_list,
   } else {
     gene_table$cds <- gene_table$fgenes
   }
-  
+
   gene_table$in_cds <- gene_table$f %in% possible_genes
   gene_table$in_cds[is.na(gene_table$in_cds)] <- FALSE
-  
+
   bad_genes <- gene_table$orig_fgenes[!gene_table$in_cds]
   if (length(bad_genes) > 0) warning(strwrap("The following genes from
                                              the cell type definition file are
@@ -1317,10 +1318,10 @@ make_name_map <- function(parse_list,
                                              will continue, ignoring these
                                              genes."), "\n",
                                      paste0(bad_genes, collapse="\n"))
-  
+
   gene_table$fgenes <- as.character(gene_table$fgenes)
   gene_table$cds <- as.character(gene_table$cds)
-  
+
   gene_table
 }
 
@@ -1334,19 +1335,19 @@ add_cell_rule <- function(cell_type,
   # subtype of
   if (length(cell_type@parenttype) > 1) stop("only 1 parenttype allowed")
   parent_type <- as.character(cell_type@parenttype)
-  
+
   # references
   if (length(cell_type@references) > 0) {
     if (length(classifier@references) == 0) {
       classifier@references <- list()
     }
-    
+
     classifier@references <- c(classifier@references,
                                list(cell_type@references))
     names(classifier@references)[length(classifier@references)] <-
       cell_type@name
   }
-  
+
   if (length(logic_list) == 0) {
     warning (paste("Cell type", cell_type@name,
                    "has no valid rules and will be skipped"))
@@ -1356,13 +1357,13 @@ add_cell_rule <- function(cell_type,
     return(classifier)
   }
   logic <- paste(unlist(logic_list), collapse = ' & ')
-  
+
   tryCatch(
     if(nchar(logic) == 0) {
       classifier <- add_cell_type(classifier, cell_type@name,
                                   classify_func = function(x) {FALSE},
                                   parent_type)
-      
+
     } else {
       classifier <- add_cell_type(classifier, cell_type@name,
                                   classify_func = function(x) {
@@ -1381,11 +1382,11 @@ add_cell_rule <- function(cell_type,
 
 assemble_logic <- function(cell_type,
                            gene_table) {
-  
+
   logic = ""
   logic_list = list()
   bad_genes <- gene_table[!gene_table$in_cds,]$orig_fgenes
-  
+
   # expressed/not expressed
   logic_list <- lapply(cell_type@gene_rules, function(rule) {
     log_piece <- ""
@@ -1403,10 +1404,10 @@ assemble_logic <- function(cell_type,
   if (length(cell_type@expressed) > 0 | length(cell_type@not_expressed) > 0) {
     logic_list <- list(logic_list, paste0("assigns == '", cell_type@name, "'"))
   }
-  
+
   if(length(logic_list) == 0) warning(paste("Cell type", cell_type@name,
                                             "has no valid expression rules."))
-  
+
   # meta data
   if (nrow(cell_type@meta) > 0) {
     mlogic <- plyr::dlply(cell_type@meta, plyr::.(name), function(x) {
@@ -1430,7 +1431,7 @@ propogate_func <- function(curr_node,
                            classifier) {
   children <- igraph::V(classifier@classification_tree)[
     suppressWarnings(outnei(curr_node))]$name
-  
+
   if(length(children) == 0) {
     return(parse_list[[curr_node]]@expressed)
   } else {

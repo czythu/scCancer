@@ -71,8 +71,10 @@ SelectGenes <- function(expr, method="Entropy", k = 2000){
 #' @param object Seurat object of training set.
 #' @return representative.index A user-defined set of cells for training.
 #' @export
-SelectCells <- function(object, marker_file_path,
-                        cutoff = .80, database = org.Hs.eg.db){
+SelectCells <- function(object,
+                        marker_file_path,
+                        cutoff = 0.75,
+                        database = org.Hs.eg.db){
   marker_check <- check_markers(object, marker_file_path,
                                 db=database,
                                 cds_gene_id_type = "SYMBOL",
@@ -179,12 +181,10 @@ Dropout_Sampling <- function(lambda){
 #' @param test Rows should be cells and columns should be genes.
 #' @param prob trained scibet model  Rows should be genes
 #' and columns should be cell types.The genes must be matched with test_r
-#' @param ret_tab   return list or matrix
 #' @return  'cellType'  or matrix
 MLEstimate <- function(test, prob, lambda,
                        weighted.markers=NULL,
-                       dropout.modeling=FALSE,
-                       ret_tab=FALSE){
+                       dropout.modeling=FALSE){
   #\sigma yi*logpi (log(p1p2) = logp1 + logp2, log(p^y) = ylogp)
   if (length(weighted.markers) > 0){
     markers <- names(weighted.markers)
@@ -207,9 +207,6 @@ MLEstimate <- function(test, prob, lambda,
     cellType <- c(cellType,colnames(likelihoods)[index])
   }
   out <- likelihoods/rowSums(likelihoods)
-  if(ret_tab){
-    return(out)
-  }
   return(cellType)
 }
 
@@ -229,10 +226,11 @@ Test <- function(prob, lambda, test_set,
     genes <- rownames(prob)
     common.genes <- intersect(genes, colnames(test))
     test.normalized <- log1p(as.matrix(test[,common.genes])) / log(2)
-    predict <- MLEstimate(test.normalized, prob[common.genes, ],
+    predict <- MLEstimate(test.normalized,
+                          prob[common.genes, ],
                           lambda[common.genes, ],
                           weighted.markers,
-                          dropout.modeling, FALSE)
+                          dropout.modeling)
     names(predict) <- seq(from = 0, to = length(predict) - 1)
     return(predict)
   }
@@ -241,10 +239,11 @@ Test <- function(prob, lambda, test_set,
     genes <- rownames(prob)
     common.genes <- intersect(genes, colnames(test))
     test.normalized <- log1p(as.matrix(test[,common.genes])) / log(2)
-    predict <- MLEstimate(test.normalized, prob[common.genes, ],
+    predict <- MLEstimate(test.normalized,
+                          prob[common.genes, ],
                           lambda[common.genes, ],
                           weighted.markers,
-                          dropout.modeling, FALSE)
+                          dropout.modeling)
     correct <- 0
     for (i in 1:length(predict)){
       if (test_set$label[i] == predict[i]){
@@ -272,8 +271,10 @@ CrossTest <- function(prob, test_set){
   return(predict)
 }
 
-MarkerScore <- function(test_set, marker_file_path,
-                        cutoff=.30, database = org.Hs.eg.db,
+MarkerScore <- function(test_set,
+                        marker_file_path,
+                        cutoff = 0.3,
+                        database = org.Hs.eg.db,
                         metacell = FALSE){
   # check markers on test set, set unknown labels
   set.seed(unclass(Sys.time()))
@@ -287,8 +288,9 @@ MarkerScore <- function(test_set, marker_file_path,
   object <- as.CellDataSet(object)
   object <- estimateSizeFactors(object)
   # adjust cutoff parameter
-  marker_check <- check_markers(object, marker_file_path,
-                                db=database,
+  marker_check <- check_markers(object,
+                                marker_file_path,
+                                db = database,
                                 cds_gene_id_type = "SYMBOL",
                                 marker_file_gene_id_type = "SYMBOL")
   weighted.markers <- 1 + log(1 + marker_check$marker_score)

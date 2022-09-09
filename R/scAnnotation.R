@@ -1573,8 +1573,10 @@ plotCellInteraction <- function(stat.df, cell.annotation){
 #' @param celltype.list A list of cell types for subtype annotation, which depends on either rough annotation or user's input.
 #' @param ct.templates A list of vectors of several cell type templates.
 #' The default is NULL and the templates prepared in this package will be used.
-#' @param pretrained.path A folder containing all models preset for cell subtype annotation(.csv file)
+#' @param submodel.path A folder containing all models preset for cell subtype annotation(.csv file)
 #' The default is NULL and all models prepared in this package will be used.
+#' @param markers.path A folder containing all marker files preset for cell subtype annotation(.txt file)
+#' The default is NULL and all marker files prepared in this package will be used.
 #' @param subtype.umap A logical value indicating whether to generate umap plot group by cell subtypes. The default is FALSE.
 #' @param coor.names A vector indicating the names of two-dimension coordinate used in visualization.
 #' @param bool.runMalignancy A logical value indicating whether to estimate malignancy.
@@ -1632,7 +1634,8 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
                             bool.runCellSubtypeClassify = T,
                             celltype.list = NULL,
                             ct.templates = NULL,
-                            pretrained.path = NULL,
+                            submodel.path = NULL,
+                            markers.path = NULL,
                             subtype.umap = FALSE,
                             coor.names = c("tSNE_1", "tSNE_2"),
                             bool.runMalignancy = T,
@@ -1797,18 +1800,23 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
             celltype.list <- intersect(unique(expr$Cell.Type), default.list)
 
         }
-        if(is.null(pretrained.path)){
-            # pretrained.path <- system.file("csv", package = "scCancer")
-            pretrained.path <- system.file("csv", package = "scCancer2")
+        if(is.null(submodel.path)){
+            # submodel.path <- system.file("csv", package = "scCancer")
+            submodel.path <- system.file("csv", package = "scCancer2")
+        }
+        if(is.null(markers.path)){
+            # markers.path <- system.file("txt", package = "scCancer")
+            markers.path <- system.file("txt", package = "scCancer2")
         }
         if(!dir.exists(file.path(savePath, "cellSubtypeAnno"))){
             dir.create(file.path(savePath, "cellSubtypeAnno"), recursive = T)
         }
         results[["fine.labels"]] <- runCellSubtypeClassify(expr = expr,
-                                              pretrained.path = pretrained.path,
-                                              savePath = paste0(savePath, "/cellSubtypeAnno/"),
-                                              celltype.list = celltype.list,
-                                              umap.plot = subtype.umap)
+                                                           submodel.path = submodel.path,
+                                                           markers.path = markers.path,
+                                                           savePath = paste0(savePath, "/cellSubtypeAnno/"),
+                                                           celltype.list = celltype.list,
+                                                           umap.plot = subtype.umap)
     }
 
     ## --------- malignancy ---------
