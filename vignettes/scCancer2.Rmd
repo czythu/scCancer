@@ -5,7 +5,14 @@ date: '2022-09-07'
 output: html_document
 ---
 
+```{r}
+rm(list = ls())
+gc()
+options(stringsAsFactors = F)
+```
+
 # Import Packages
+
 ```{r}
 suppressMessages(library(Seurat))
 suppressMessages(library(garnett))
@@ -24,20 +31,32 @@ suppressMessages(library(flexclust))
 ```{r}
 library(devtools)
 load_all()
-# document()
+document()
 library(scCancer2)
 ```
+
 # Training
+
 ```{r}
-trainAnnoModel(expr,
-               label,
-               markers.Path,
-               model.savePath,
-               train.ratio = 0.8,
-               repeat.times = 1)
+allmodels <- trainAnnoModel(expr,
+                            rough.label,
+                            fine.label,
+                            markers.Path,
+                            model.savePath,
+                            input.type = "Seurat",
+                            gene.method = "Entropy",
+                            gene.length = 2000,
+                            garnett.cutoff = 0.7,
+                            train.ratio = 0.8,
+                            repeat.times = 1,
+                            umap.visualization = TRUE,
+                            confusion.matrix = TRUE,
+                            dropout.modeling = FALSE,
+                            metacell.anno = FALSE)
 ```
 
 # scAnnotation
+
 ```{r}
 path <- "D:/scCancer-data/Demo-pipeline/KC-example/"
 dataPath <- paste0(path, "data")    
@@ -57,6 +76,8 @@ stat.results <- runScStatistics(
     sampleName = sampleName,
     authorName = authorName
 )
+```
+```{r}
 # Run scAnnotation(annotation only)
 anno.results <- runScAnnotation(
     dataPath = dataPath,
@@ -65,12 +86,15 @@ anno.results <- runScAnnotation(
     authorName = authorName,
     sampleName = sampleName,
     geneSet.method = "average",
-    bool.runDiffExpr = T,
+    bool.runDiffExpr = F,
     bool.runCellClassify = T,
+    roughlabel.input = NULL,
     bool.runCellSubtypeClassify = T,
     celltype.list = NULL,
     ct.templates = NULL,
     pretrained.path = NULL,
+    markers.path = NULL,
+    unknown.cutoff = 0.3,
     subtype.umap = T,
     bool.runMalignancy = F,
     bool.intraTumor = F,

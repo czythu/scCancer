@@ -220,6 +220,7 @@ runCellSubtypeClassify <- function(expr,
                                    markers.path,
                                    savePath,
                                    celltype.list,
+                                   unknown.cutoff,
                                    umap.plot){
     message("[", Sys.time(), "] -----: TME cell subtypes annotation")
     dataset <- data.frame(t(expr@assays$RNA@data))
@@ -229,6 +230,7 @@ runCellSubtypeClassify <- function(expr,
                                markers.path,
                                savePath,
                                celltype.list,
+                               unknown.cutoff,
                                umap.plot)
     similarityCalculation(fine.labels, savePath)
     return(fine.labels)

@@ -1636,6 +1636,7 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
                             ct.templates = NULL,
                             submodel.path = NULL,
                             markers.path = NULL,
+                            unknown.cutoff = 0.3,
                             subtype.umap = FALSE,
                             coor.names = c("tSNE_1", "tSNE_2"),
                             bool.runMalignancy = T,
@@ -1816,6 +1817,7 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
                                                            markers.path = markers.path,
                                                            savePath = paste0(savePath, "/cellSubtypeAnno/"),
                                                            celltype.list = celltype.list,
+                                                           unknown.cutoff = unknown.cutoff,
                                                            umap.plot = subtype.umap)
     }
 
