@@ -15,8 +15,9 @@ options(stringsAsFactors = F)
 
 ```{r}
 suppressMessages(library(Seurat))
-suppressMessages(library(garnett))
 suppressMessages(library(org.Hs.eg.db))
+suppressMessages(library(garnett))
+suppressMessages(library(xgboost))
 suppressMessages(library(ggplot2))
 suppressMessages(library(ggsci))
 suppressMessages(library(cowplot))
@@ -58,7 +59,7 @@ allmodels <- trainAnnoModel(expr,
 # scAnnotation
 
 ```{r}
-path <- "D:/scCancer-data/Demo-pipeline/KC-example/"
+path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/KC-example/"
 dataPath <- paste0(path, "data")    
 # A path containing the scStatistics results
 statPath <- paste0(path, "result")
@@ -77,6 +78,8 @@ stat.results <- runScStatistics(
     authorName = authorName
 )
 ```
+
+
 ```{r}
 # Run scAnnotation(annotation only)
 anno.results <- runScAnnotation(

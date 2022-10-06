@@ -235,3 +235,24 @@ runCellSubtypeClassify <- function(expr,
     similarityCalculation(fine.labels, savePath)
     return(fine.labels)
 }
+
+#' @export
+#' @import xgboost
+predMalignantCell <- function(expr,
+                              THRESHOLD = 0.5,
+                              model.path = NULL,
+                              genes.path = NULL){
+    model.path <- paste0(system.file("txt", package = "scCancer2"), "/sc_xgboost.model")
+    genes.path <- paste0(system.file("txt", package = "scCancer2"), "/selectGenesByVar.txt")
+    model.ref <- xgb.load(model.path)
+    genes.preselected <- read.table(genes.path)$V1
+    # expr <- readRDS("D:/scCancer-data/SubtypeAnno/Demo-pipeline/KC-example/result-all/expr.RDS")
+    testdata <- t(as.matrix(expr@assays$RNA@data))
+    testdata <- testdata[,which(colnames(testdata) %in% genes.preselected)]
+    testdata <- xgb.DMatrix(testdata)
+    predict.label <- predict(model.ref, testdata)
+    predict.label[which(predict.label > THRESHOLD)] <- "malignant"
+    predict.label[which(predict.label <= THRESHOLD)] <- "nonMalignant"
+    # expr$Malign.typenew <- predict.label
+    # DimPlot(expr, reduction = "tsne", group.by = "Malign.typenew")
+}
