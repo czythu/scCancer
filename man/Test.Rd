@@ -2,7 +2,7 @@
 % Please edit documentation in R/scibetFunction.R
 \name{Test}
 \alias{Test}
-\title{Predict cell type and show accuracy}
+\title{Test}
 \usage{
 Test(prob, test, result="list")
 }
@@ -15,5 +15,5 @@ Test(prob, test, result="list")
 cellType prediction result
 }
 \description{
-Predict cell type and show accuracy
+Test
 }

@@ -173,8 +173,15 @@ predSubType <- function(test_set,
     return(finelabels.list)
 }
 
+#' similarityCalculation
+#' @param fine.labels annotation results (barcode-subtype) of function"predSubType"
+#' @inheritParams runScAnnotation
+#'
+#' @return similarity matrixes of all possible celltypes
 #' @export
-similarityCalculation <- function(fine.labels, savePath){
+similarityCalculation <- function(fine.labels,
+                                  savePath){
+    all.matrix <- list()
     for(i in 1:length(fine.labels)){
         predict <- fine.labels[[i]]
         if(is.null(predict)){
@@ -211,11 +218,20 @@ similarityCalculation <- function(fine.labels, savePath){
                           number.digits = 1, number.cex = 0.6, tl.cex = 0.7)
         }
         dev.off()
+        all.matrix[[celltype]] <- similarity.mar
     }
+    return(all.matrix)
 }
 
+#' runCellSubtypeClassify
+#' @param expr A Seurat object.
+#' @param cell.annotation A data.frame of cells' annotation.
+#' @inheritParams runScAnnotation
+#'
+#' @return A list of updated Seurat object, cell.annotation.
 #' @export
 runCellSubtypeClassify <- function(expr,
+                                   cell.annotation,
                                    submodel.path,
                                    markers.path,
                                    savePath,
@@ -232,14 +248,30 @@ runCellSubtypeClassify <- function(expr,
                                celltype.list,
                                unknown.cutoff,
                                umap.plot)
-    similarityCalculation(fine.labels, savePath)
-    return(fine.labels)
+    similarity.matrix <- similarityCalculation(cell.annotation$fine.labels,
+                                               savePath)
+    expr$cell.subtype <- fine.labels
+    cell.annotation$fine.labels <- fine.labels
+    cell.annotation$similarity.matrix <- similarity.matrix
+    return(list(expr = expr,
+                cell.annotation = cell.annotation))
 }
 
+#' predMalignantCell
+#' @param expr A Seurat object.
+#' @param cell.annotation A data.frame of cells' annotation.
+#' @param MALIGNANT.THRES A threshold of xgboost score
+#' to decide whether a cell is malignant. Default is 0.5.
+#' @inheritParams runScAnnotation
+#'
+#' @return A list of cell.annotation and malignancy plots
 #' @export
 #' @import xgboost
 predMalignantCell <- function(expr,
-                              THRESHOLD = 0.5,
+                              cell.annotation,
+                              savePath,
+                              coor.names = c("tSNE_1", "tSNE_2"),
+                              MALIGNANT.THRES = 0.5,
                               model.path = NULL,
                               genes.path = NULL){
     model.path <- paste0(system.file("txt", package = "scCancer2"), "/sc_xgboost.model")
@@ -251,8 +283,25 @@ predMalignantCell <- function(expr,
     testdata <- testdata[,which(colnames(testdata) %in% genes.preselected)]
     testdata <- xgb.DMatrix(testdata)
     predict.label <- predict(model.ref, testdata)
-    predict.label[which(predict.label > THRESHOLD)] <- "malignant"
-    predict.label[which(predict.label <= THRESHOLD)] <- "nonMalignant"
-    # expr$Malign.typenew <- predict.label
-    # DimPlot(expr, reduction = "tsne", group.by = "Malign.typenew")
+
+    # store results
+    cell.annotation$Malign.score <- predict.label
+    # expr$Malign.score <- predict.label
+    predict.label[which(predict.label > MALIGNANT.THRES)] <- "malignant"
+    predict.label[which(predict.label <= MALIGNANT.THRES)] <- "nonMalignant"
+    cell.annotation$Malign.score <- predict.label
+    # expr$Malign.type <- predict.label
+    # p1 <- DimPlot(expr, reduction = "tsne", group.by = "Malign.score")
+    # p2 <- DimPlot(expr, reduction = "tsne", group.by = "Malign.type")
+
+    # plot
+    p.results <- plotMalignancy(cell.annotation = cell.annotation,
+                                coor.names = coor.names,
+                                savePath = savePath)
+    p.results[["p.malignScore"]] <- p.malignScore
+    ggsave(filename = file.path(savePath, "figures/malignScore.png"),
+           p.malignScore, width = 5, height = 4, dpi = 500)
+
+    return(list(cell.annotation = cell.annotation,
+                plot = p.results))
 }

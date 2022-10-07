@@ -2,7 +2,7 @@
 % Please edit documentation in R/scibetFunction.R
 \name{pro.core}
 \alias{pro.core}
-\title{Process scibet.core}
+\title{pro.core}
 \usage{
 pro.core(scibet.core)
 }
@@ -13,5 +13,5 @@ pro.core(scibet.core)
 A processed SciBet core
 }
 \description{
-Process scibet.core
+pro.core
 }

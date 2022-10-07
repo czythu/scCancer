@@ -2,7 +2,7 @@
 % Please edit documentation in R/scibetFunction.R
 \name{CrossTest}
 \alias{CrossTest}
-\title{Predict cell type and show accuracy}
+\title{CrossTest}
 \usage{
 CrossTest(prob, test_set)
 }
@@ -15,5 +15,5 @@ CrossTest(prob, test_set)
 cellType prediction result
 }
 \description{
-Predict cell type and show accuracy
+CrossTest
 }

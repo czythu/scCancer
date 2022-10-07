@@ -1640,6 +1640,7 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
                             subtype.umap = FALSE,
                             coor.names = c("tSNE_1", "tSNE_2"),
                             bool.runMalignancy = T,
+                            malignancy.method = "xgboost",
                             cnv.ref.data = NULL,
                             cnv.referAdjMat = NULL,
                             cutoff = 0.1,
@@ -1812,13 +1813,17 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
         if(!dir.exists(file.path(savePath, "cellSubtypeAnno"))){
             dir.create(file.path(savePath, "cellSubtypeAnno"), recursive = T)
         }
-        results[["fine.labels"]] <- runCellSubtypeClassify(expr = expr,
-                                                           submodel.path = submodel.path,
-                                                           markers.path = markers.path,
-                                                           savePath = paste0(savePath, "/cellSubtypeAnno/"),
-                                                           celltype.list = celltype.list,
-                                                           unknown.cutoff = unknown.cutoff,
-                                                           umap.plot = subtype.umap)
+        t.results <- runCellSubtypeClassify(expr = expr,
+                                            cell.annotation = cell.annotation,
+                                            submodel.path = submodel.path,
+                                            markers.path = markers.path,
+                                            savePath = paste0(savePath, "/cellSubtypeAnno/"),
+                                            celltype.list = celltype.list,
+                                            unknown.cutoff = unknown.cutoff,
+                                            umap.plot = subtype.umap)
+        expr <- t.results$expr
+        cell.annotation <- t.results$cell.annotation
+        rm(t.results)
     }
 
     ## --------- malignancy ---------
@@ -1830,27 +1835,38 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
         # }else{
         #
         # }
-        t.results <- runMalignancy(expr = expr,
-                                   gene.manifest = gene.manifest,
-                                   cell.annotation = cell.annotation,
-                                   savePath = savePath,
-                                   cutoff = cutoff, minCell = 3,
-                                   p.value.cutoff = p.value.cutoff,
-                                   coor.names = coor.names,
-                                   ref.data = cnv.ref.data,
-                                   referAdjMat = cnv.referAdjMat,
-                                   species = species,
-                                   genome = genome,
-                                   hg.mm.mix = hg.mm.mix)
-        expr <- t.results$expr
-        cell.annotation <- t.results$cell.annotation
-        results[["cnvList"]] <- t.results$cnvList
-        results[["referScore"]] <- t.results$referScore
-        results[["ju.exist.malign"]] <- t.results$ju.exist.malign
-        results[["malign.thres"]] <- t.results$malign.thres
-        # results[["bimodal.pvalue"]] <- t.results$bimodal.pvalue
-        results[["malign.plot"]] <- t.results$p.results
-        rm(t.results)
+        if(malignancy.method == "inferCNV"){
+            t.results <- runMalignancy(expr = expr,
+                                       gene.manifest = gene.manifest,
+                                       cell.annotation = cell.annotation,
+                                       savePath = savePath,
+                                       cutoff = cutoff, minCell = 3,
+                                       p.value.cutoff = p.value.cutoff,
+                                       coor.names = coor.names,
+                                       ref.data = cnv.ref.data,
+                                       referAdjMat = cnv.referAdjMat,
+                                       species = species,
+                                       genome = genome,
+                                       hg.mm.mix = hg.mm.mix)
+            expr <- t.results$expr
+            cell.annotation <- t.results$cell.annotation
+            results[["cnvList"]] <- t.results$cnvList
+            results[["referScore"]] <- t.results$referScore
+            results[["ju.exist.malign"]] <- t.results$ju.exist.malign
+            results[["malign.thres"]] <- t.results$malign.thres
+            # results[["bimodal.pvalue"]] <- t.results$bimodal.pvalue
+            results[["malign.plot"]] <- t.results$p.results
+            rm(t.results)
+        }
+        else if(malignancy.method == "xgboost"){
+            t.results <- predMalignantCell(expr = expr,
+                                           cell.annotation = cell.annotation,
+                                           savePath = savePath,
+                                           MALIGNANT.THRES = 0.5)
+            cell.annotation <- t.results$cell.annotation
+            results[["malign.plot"]] <- t.results$plot
+            rm(t.results)
+        }
     }
 
 

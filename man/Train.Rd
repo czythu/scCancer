@@ -2,7 +2,7 @@
 % Please edit documentation in R/scibetFunction.R
 \name{Train}
 \alias{Train}
-\title{Train SciBet model and return cellType-genes prob-matrix}
+\title{Train}
 \usage{
 Train(expr, geneset, k=1000)
 }
@@ -15,5 +15,5 @@ Train(expr, geneset, k=1000)
 reference model(cellType-genes prob-matrix)
 }
 \description{
-Train SciBet model and return cellType-genes prob-matrix
+Train
 }

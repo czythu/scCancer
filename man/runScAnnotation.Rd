@@ -41,6 +41,7 @@ runScAnnotation(
   subtype.umap = FALSE,
   coor.names = c("tSNE_1", "tSNE_2"),
   bool.runMalignancy = T,
+  malignancy.method = "xgboost",
   cnv.ref.data = NULL,
   cnv.referAdjMat = NULL,
   cutoff = 0.1,
