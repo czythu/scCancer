@@ -12,6 +12,3 @@ expressed: INSR, HSPG2
 
 >EPCs
 expressed: TYROBP, C1QB
-
->Proliferative ECs
-expressed: BIRC5, CKS1B

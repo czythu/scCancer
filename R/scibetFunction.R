@@ -114,48 +114,48 @@ SelectCells <- function(object,
 #' @export
 #'
 Train <- function(expr, geneset=NULL){
-  if(is.null(geneset)){
-    print("All scRNA-seq features...")
-    # path <- paste0(system.file("txt", package = "scCancer"), "/single_cell_features.tsv")
-    path <- paste0(system.file("txt", package = "scCancer2"), "/single_cell_features.tsv")
-    gene.list <- read.table(path)$V2
-    index_remain <- which(colnames(expr) %in% intersect(colnames(expr), gene.list))
-    geneset <- colnames(expr)[index_remain]
-  }
-  labels <- factor(expr$label)
-  label.level <- levels(labels)
-  expr_select <- expr[,geneset]
-  label_total <- matrix(0, length(geneset), 1)
-  lambda_all <- matrix(0, length(geneset), 1)
+    if(is.null(geneset)){
+        print("All scRNA-seq features...")
+        # path <- paste0(system.file("txt", package = "scCancer"), "/single_cell_features.tsv")
+        path <- paste0(system.file("txt", package = "scCancer2"), "/single_cell_features.tsv")
+        gene.list <- read.table(path)$V2
+        index_remain <- which(colnames(expr) %in% intersect(colnames(expr), gene.list))
+        geneset <- colnames(expr)[index_remain]
+    }
+    labels <- factor(expr$label)
+    label.level <- levels(labels)
+    expr_select <- expr[,geneset]
+    label_total <- matrix(0, length(geneset), 1)
+    lambda_all <- matrix(0, length(geneset), 1)
 
-  # Calculate zero-ratio lambda for every possible cell type.
-  dropout.ratio <- c()
-  for(j in 1:dim(expr_select)[2]){
-    dropout.ratio <- c(dropout.ratio, length(which(expr_select[,j] == 0)) / dim(expr_select)[1])
-  }
+    # Calculate zero-ratio lambda for every possible cell type.
+    dropout.ratio <- c()
+    for(j in 1:dim(expr_select)[2]){
+        dropout.ratio <- c(dropout.ratio, length(which(expr_select[,j] == 0)) / dim(expr_select)[1])
+    }
 
-  # all possible labels
-  for(i in label.level){
-    label_TPM <- expr_select[labels == i,]
-    # Calculate average expression.
-    label_mean <- colSums(log2(label_TPM + 1)) # log normalization
-    temp <- t(matrix(label_mean, 1))
-    colnames(temp) <- i
-    label_total <- cbind(label_total, temp)
-    temp <- t(matrix(dropout.ratio, 1))
-    colnames(temp) <- i
-    lambda_all <- cbind(lambda_all, temp)
-  }
-  label_total <- label_total[,-1]
-  rownames(label_total) <- geneset
-  lambda_all <- lambda_all[,-1]
-  rownames(lambda_all) <- geneset
-  # calculate probability and log transform
-  label_t <- t(label_total)
-  # log2[(X + 1) / sum(X + 1)]
-  prob <- log2(label_t + 1) - log2(rowSums(label_t) + length(geneset))
-  prob <- t(prob)
-  return(cbind(prob, lambda_all))
+    # all possible labels
+    for(i in label.level){
+        label_TPM <- expr_select[labels == i,]
+        # Calculate average expression.
+        label_mean <- colSums(log2(label_TPM + 1)) # log normalization
+        temp <- t(matrix(label_mean, 1))
+        colnames(temp) <- i
+        label_total <- cbind(label_total, temp)
+        temp <- t(matrix(dropout.ratio, 1))
+        colnames(temp) <- i
+        lambda_all <- cbind(lambda_all, temp)
+    }
+    label_total <- label_total[,-1]
+    rownames(label_total) <- geneset
+    lambda_all <- lambda_all[,-1]
+    rownames(lambda_all) <- geneset
+    # calculate probability and log transform
+    label_t <- t(label_total)
+    # log2[(X + 1) / sum(X + 1)]
+    prob <- log2(label_t + 1) - log2(rowSums(label_t) + length(geneset))
+    prob <- t(prob)
+    return(cbind(prob, lambda_all))
 }
 
 #' pro.core
@@ -165,24 +165,24 @@ Train <- function(expr, geneset=NULL){
 #' @return A processed SciBet core
 #' @export
 pro.core <- function(scibet.core){
-  cell.type <- unname(unlist(scibet.core[,1]))
-  scibet.core <- as.data.frame(t(scibet.core[,-1]))
-  colnames(scibet.core) <- cell.type
-  return(as.matrix(scibet.core))
+    cell.type <- unname(unlist(scibet.core[,1]))
+    scibet.core <- as.data.frame(t(scibet.core[,-1]))
+    colnames(scibet.core) <- cell.type
+    return(as.matrix(scibet.core))
 }
 
 Dropout_Sampling <- function(lambda){
-  nondropout <- as.matrix(1 - lambda)
-  z <- c()
-  for(i in 1:nrow(nondropout)){
-    pos.prob <- nondropout[i,1]
-    newz <- sample(0:1, ncol(nondropout), replace = TRUE,
-                   prob = c(1 - pos.prob, pos.prob))
-    z <- rbind(z, newz)
-  }
-  rownames(z) <- rownames(nondropout)
-  colnames(z) <- colnames(nondropout)
-  return(as.matrix(z))
+    nondropout <- as.matrix(1 - lambda)
+    z <- c()
+    for(i in 1:nrow(nondropout)){
+        pos.prob <- nondropout[i,1]
+        newz <- sample(0:1, ncol(nondropout), replace = TRUE,
+                       prob = c(1 - pos.prob, pos.prob))
+        z <- rbind(z, newz)
+    }
+    rownames(z) <- rownames(nondropout)
+    colnames(z) <- colnames(nondropout)
+    return(as.matrix(z))
 }
 
 #' MLEstimate
@@ -191,32 +191,34 @@ Dropout_Sampling <- function(lambda){
 #' @param prob trained scibet model  Rows should be genes
 #' and columns should be cell types.The genes must be matched with test_r
 #' @return  'cellType'  or matrix
-MLEstimate <- function(test, prob, lambda,
-                       weighted.markers=NULL,
-                       dropout.modeling=FALSE){
-  #\sigma yi*logpi (log(p1p2) = logp1 + logp2, log(p^y) = ylogp)
-  if (length(weighted.markers) > 0){
-    markers <- names(weighted.markers)
-    weight <- unname(weighted.markers)
-    prob[which(rownames(prob) %in% markers),] <- 2 * prob[which(rownames(prob) %in% markers),]
-  }
-  if (dropout.modeling){
-    # z~Bernoulli(1-lambda)
-    # z <- Dropout_Sampling(lambda)
-    # likelihoods <- as.matrix(test) %*% (as.matrix(prob) * z)
-    # Expectation of log-likelihoods.
-    likelihoods <- as.matrix(test) %*% (as.matrix(prob) * as.matrix(1 - lambda))
-  }
-  else{
-    likelihoods <- as.matrix(test) %*% as.matrix(prob)
-  }
-  cellType <- c()
-  for(i in 1:nrow(likelihoods)){
-    index <- which.max(likelihoods[i,])
-    cellType <- c(cellType,colnames(likelihoods)[index])
-  }
-  out <- likelihoods/rowSums(likelihoods)
-  return(cellType)
+MLEstimate <- function(test,
+                       prob,
+                       lambda = NULL,
+                       weighted.markers = NULL,
+                       dropout.modeling = FALSE){
+    #\sigma yi*logpi (log(p1p2) = logp1 + logp2, log(p^y) = ylogp)
+    if (length(weighted.markers) > 0){
+        markers <- names(weighted.markers)
+        weight <- unname(weighted.markers)
+        prob[which(rownames(prob) %in% markers),] <- 2 * prob[which(rownames(prob) %in% markers),]
+    }
+    if (dropout.modeling){
+        # z~Bernoulli(1-lambda)
+        # z <- Dropout_Sampling(lambda)
+        # likelihoods <- as.matrix(test) %*% (as.matrix(prob) * z)
+        # Expectation of log-likelihoods.
+        likelihoods <- as.matrix(test) %*% (as.matrix(prob) * as.matrix(1 - lambda))
+    }
+    else{
+        likelihoods <- as.matrix(test) %*% as.matrix(prob)
+    }
+    cellType <- c()
+    for(i in 1:nrow(likelihoods)){
+        index <- which.max(likelihoods[i,])
+        cellType <- c(cellType,colnames(likelihoods)[index])
+    }
+    out <- likelihoods/rowSums(likelihoods)
+    return(cellType)
 }
 
 #' Test
@@ -227,41 +229,41 @@ MLEstimate <- function(test, prob, lambda,
 #' @return cellType prediction result
 #' @export
 Test <- function(prob, lambda, test_set,
-                 weighted.markers=NULL,
-                 dropout.modeling=FALSE,
-                 average.expr=NULL){
-  if(!is.null(average.expr)){
-    test <- average.expr
-    genes <- rownames(prob)
-    common.genes <- intersect(genes, colnames(test))
-    test.normalized <- log1p(as.matrix(test[,common.genes])) / log(2)
-    predict <- MLEstimate(test.normalized,
-                          prob[common.genes, ],
-                          lambda[common.genes, ],
-                          weighted.markers,
-                          dropout.modeling)
-    names(predict) <- seq(from = 0, to = length(predict) - 1)
-    return(predict)
-  }
-  else{
-    test <- test_set[,-ncol(test_set)]
-    genes <- rownames(prob)
-    common.genes <- intersect(genes, colnames(test))
-    test.normalized <- log1p(as.matrix(test[,common.genes])) / log(2)
-    predict <- MLEstimate(test.normalized,
-                          prob[common.genes, ],
-                          lambda[common.genes, ],
-                          weighted.markers,
-                          dropout.modeling)
-    correct <- 0
-    for (i in 1:length(predict)){
-      if (test_set$label[i] == predict[i]){
-        correct <- correct + 1
-      }
+                 weighted.markers = NULL,
+                 dropout.modeling = FALSE,
+                 average.expr = NULL){
+    # metacell
+    if(!is.null(average.expr)){
+        test <- average.expr
     }
-    message("Accuracy: ", correct / length(predict))
+    else{
+        test <- test_set[,-ncol(test_set)]
+    }
+    genes <- rownames(prob)
+    common.genes <- intersect(genes, colnames(test))
+    test.normalized <- log1p(as.matrix(test[,common.genes])) / log(2)
+    predict <- MLEstimate(test = test.normalized,
+                          prob = prob[common.genes, ],
+                          lambda = lambda[common.genes, ],
+                          weighted.markers = weighted.markers,
+                          dropout.modeling = dropout.modeling)
+    # name by clusters
+    if(!is.null(average.expr)){
+        names(predict) <- seq(from = 0, to = length(predict) - 1)
+    }
+    # calculate accuracy if possible
+    else{
+        if(!is.null(test_set$label)){
+            correct <- 0
+            for (i in 1:length(predict)){
+                if (test_set$label[i] == predict[i]){
+                    correct <- correct + 1
+                }
+            }
+            message("Accuracy: ", correct / length(predict))
+        }
+    }
     return(predict)
-  }
 }
 
 #' CrossTest
@@ -272,12 +274,12 @@ Test <- function(prob, lambda, test_set,
 #' @return cellType prediction result
 #' @export
 CrossTest <- function(prob, test_set){
-  # test <- test_set[,-ncol(test_set)]
-  genes <- rownames(prob)
-  common.genes <- intersect(genes, colnames(test_set))
-  testa <- log1p(as.matrix(test_set[,common.genes])) / log(2)
-  predict <- MLEstimate(testa, prob[common.genes, ], FALSE)
-  return(predict)
+    # test <- test_set[,-ncol(test_set)]
+    genes <- rownames(prob)
+    common.genes <- intersect(genes, colnames(test_set))
+    testa <- log1p(as.matrix(test_set[,common.genes])) / log(2)
+    predict <- MLEstimate(testa, prob[common.genes, ])
+    return(predict)
 }
 
 MarkerScore <- function(test_set,
@@ -285,53 +287,46 @@ MarkerScore <- function(test_set,
                         cutoff = 0.3,
                         database = org.Hs.eg.db,
                         metacell = FALSE){
-  # check markers on test set, set unknown labels
-  set.seed(unclass(Sys.time()))
-  object <- scibet_visualization(test_set, metacell = metacell)[["object"]]
-  average.expr <- NULL
-  clustering <- NULL
-  if(metacell){
-    average.expr <- data.frame(t(AverageExpression(object)[[1]]))
-    clustering <- as.character(object@meta.data[["RNA_snn_res.100"]])
-  }
-  object <- as.CellDataSet(object)
-  object <- estimateSizeFactors(object)
-  # adjust cutoff parameter
-  marker_check <- check_markers(object,
-                                marker_file_path,
-                                db = database,
-                                cds_gene_id_type = "SYMBOL",
-                                marker_file_gene_id_type = "SYMBOL")
-  weighted.markers <- 1 + log(1 + marker_check$marker_score)
-  names(weighted.markers) <- marker_check$marker_gene
-  result <- select_fine_samples(cds = object,
-                                marker_file = marker_file_path,
-                                db=database,
-                                cds_gene_id_type = "SYMBOL",
-                                cutoff = cutoff,
-                                num_unknown = 50,
-                                marker_file_gene_id_type = "SYMBOL",
-                                return_initial_assign = TRUE)
-  unknown.index <- which(result$Assignment == "None")
-  return(list(average = average.expr,
-              clustering = clustering,
-              unknown = unknown.index,
-              markers = weighted.markers))
+    # check markers on test set, set unknown labels
+    set.seed(unclass(Sys.time()))
+    object <- scibet_visualization(test_set, metacell = metacell)[["object"]]
+    average.expr <- NULL
+    clustering <- NULL
+    if(metacell){
+        average.expr <- data.frame(t(AverageExpression(object)[[1]]))
+        clustering <- as.character(object@meta.data[["RNA_snn_res.100"]])
+    }
+    object <- as.CellDataSet(object)
+    object <- estimateSizeFactors(object)
+    # adjust cutoff parameter
+    marker_check <- check_markers(object,
+                                  marker_file_path,
+                                  db = database,
+                                  cds_gene_id_type = "SYMBOL",
+                                  marker_file_gene_id_type = "SYMBOL")
+    weighted.markers <- 1 + log(1 + marker_check$marker_score)
+    names(weighted.markers) <- marker_check$marker_gene
+    result <- select_fine_samples(cds = object,
+                                  marker_file = marker_file_path,
+                                  db=database,
+                                  cds_gene_id_type = "SYMBOL",
+                                  cutoff = cutoff,
+                                  num_unknown = 50,
+                                  marker_file_gene_id_type = "SYMBOL",
+                                  return_initial_assign = TRUE)
+    unknown.index <- which(result$Assignment == "None")
+    return(list(average = average.expr,
+                clustering = clustering,
+                unknown = unknown.index,
+                markers = weighted.markers))
 }
 
 AssignUnknown <- function(predict, unknown.index){
-  # calculate accuracy after "unknown"s are excluded
-  correct <- 0
-  predict.unknown <- predict
-  for (i in 1:length(predict)){
-    if (i %in% unknown.index){
-      predict.unknown[i] <- "unknown"
-      next
+    predict.unknown <- predict
+    for (i in 1:length(predict)){
+        if (i %in% unknown.index){
+            predict.unknown[i] <- "unknown"
+        }
     }
-    if (test_set$label[i] == predict[i]){
-      correct <- correct + 1
-    }
-  }
-  print(correct / (length(predict.unknown) - length(unknown.index)))
-  return(predict.unknown)
+    return(predict.unknown)
 }

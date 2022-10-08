@@ -1580,6 +1580,8 @@ plotCellInteraction <- function(stat.df, cell.annotation){
 #' @param subtype.umap A logical value indicating whether to generate umap plot group by cell subtypes. The default is FALSE.
 #' @param coor.names A vector indicating the names of two-dimension coordinate used in visualization.
 #' @param bool.runMalignancy A logical value indicating whether to estimate malignancy.
+#' @param malignancy.method The method to be used in malignant cell identification.
+#' inferCNV and xgboost are allowed. The default is xgboost.
 #' @param cnv.ref.data An expression matrix of gene by cell, which is used as the normal reference during estimating malignancy.
 #' The default is NULL, and an immune cells or bone marrow cells expression matrix will be used for human or mouse species, respectively.
 #' @param cnv.referAdjMat An adjacent matrix for the normal reference data.
@@ -1819,6 +1821,7 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
                                             markers.path = markers.path,
                                             savePath = paste0(savePath, "/cellSubtypeAnno/"),
                                             celltype.list = celltype.list,
+                                            dropout.modeling = FALSE,
                                             unknown.cutoff = unknown.cutoff,
                                             umap.plot = subtype.umap)
         expr <- t.results$expr

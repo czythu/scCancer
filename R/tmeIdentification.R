@@ -125,13 +125,22 @@ trainAnnoModel <- function(expr,
     return(allmodels)
 }
 
+#' predMalignantCell
+#' @param test_set An expression matrix.
+#' Rows should be cells and the last column should be "rough label".
+#' @param cell.annotation A data.frame of cells' annotation.
+#' @param unknown.cutoff A threshold for assignment of unknown label. Default is 0.3.
+#' @inheritParams runScAnnotation
+#'
+#' @return A list of fine.labels containing all possible celltypes
 #' @export
 predSubType <- function(test_set,
                         submodel.path,
                         markers.path,
                         savePath,
                         celltype.list,
-                        unknown.cutoff = 0.3,
+                        dropout.modeling,
+                        unknown.cutoff,
                         umap.plot = FALSE){
     # Split test dataset with rough labels.
     finelabels.list <- lapply(celltype.list, function(celltype){
@@ -143,11 +152,11 @@ predSubType <- function(test_set,
         # Different classification principles: Several lists of subtype
         pdf(file = paste0(savePath, celltype, ".pdf"), width = 7, height = 7)
         subtypes.predict <- lapply(file.path1, function(model.path){
-            index <- which(file.path == model.path)
+            index <- which(file.path1 == model.path)
             model.ref <- read.csv(model.path)
             model.ref <- pro.core(model.ref)
             # Return a list of subtype
-            result <- MarkerScore(testdata,
+            result <- MarkerScore(test_set = testdata,
                                   marker_file_path = file.path2[index],
                                   cutoff = unknown.cutoff)
             label.predict <- Test(model.ref, lambda, testdata,
@@ -236,18 +245,20 @@ runCellSubtypeClassify <- function(expr,
                                    markers.path,
                                    savePath,
                                    celltype.list,
+                                   dropout.modeling,
                                    unknown.cutoff,
                                    umap.plot){
     message("[", Sys.time(), "] -----: TME cell subtypes annotation")
-    dataset <- data.frame(t(expr@assays$RNA@data))
-    dataset$rough.labels <- expr$Cell.Type
-    fine.labels <- predSubType(dataset,
-                               submodel.path,
-                               markers.path,
-                               savePath,
-                               celltype.list,
-                               unknown.cutoff,
-                               umap.plot)
+    test_set <- data.frame(t(expr@assays$RNA@data))
+    test_set$rough.labels <- expr$Cell.Type
+    fine.labels <- predSubType(test_set = test_set,
+                               submodel.path = submodel.path,
+                               markers.path = markers.path,
+                               savePath = savePath,
+                               celltype.list = celltype.list,
+                               dropout.modeling = dropout.modeling,
+                               unknown.cutoff = unknown.cutoff,
+                               umap.plot = umap.plot)
     similarity.matrix <- similarityCalculation(cell.annotation$fine.labels,
                                                savePath)
     expr$cell.subtype <- fine.labels
@@ -299,7 +310,7 @@ predMalignantCell <- function(expr,
                                 coor.names = coor.names,
                                 savePath = savePath)
     p.results[["p.malignScore"]] <- p.malignScore
-    ggsave(filename = file.path(savePath, "figures/malignScore.png"),
+    ggsave(filename = file.path(savePath, "figures/malignScore-xgboost.png"),
            p.malignScore, width = 5, height = 4, dpi = 500)
 
     return(list(cell.annotation = cell.annotation,
