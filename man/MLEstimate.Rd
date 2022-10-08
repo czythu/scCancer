@@ -7,7 +7,7 @@
 MLEstimate(
   test,
   prob,
-  lambda,
+  lambda = NULL,
   weighted.markers = NULL,
   dropout.modeling = FALSE
 )

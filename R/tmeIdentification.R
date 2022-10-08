@@ -151,14 +151,15 @@ predSubType <- function(test_set,
         file.path2 <- paste0(folder.path2, list.files(folder.path2))
         # Different classification principles: Several lists of subtype
         pdf(file = paste0(savePath, celltype, ".pdf"), width = 7, height = 7)
+
         subtypes.predict <- lapply(file.path1, function(model.path){
             index <- which(file.path1 == model.path)
             model.ref <- read.csv(model.path)
             model.ref <- pro.core(model.ref)
-            # Return a list of subtype
             result <- MarkerScore(test_set = testdata,
                                   marker_file_path = file.path2[index],
                                   cutoff = unknown.cutoff)
+            # Return a list of subtype
             label.predict <- Test(model.ref, lambda, testdata,
                             weighted.markers = result[["markers"]],
                             dropout.modeling = dropout.modeling,
@@ -190,9 +191,8 @@ predSubType <- function(test_set,
 #' @export
 similarityCalculation <- function(fine.labels,
                                   savePath){
-    all.matrix <- list()
-    for(i in 1:length(fine.labels)){
-        predict <- fine.labels[[i]]
+    all.matrix <- lapply(names(fine.labels), function(celltype){
+        predict <- fine.labels[[celltype]]
         if(is.null(predict)){
             next
         }
@@ -202,7 +202,6 @@ similarityCalculation <- function(fine.labels,
             all.results <- c(all.results, predict[j, ])
             all.labels <- c(all.labels, unique(as.list(predict[j, ])))
         }
-        celltype <- names(fine.labels)[i]
         cell.sets <- lapply(all.labels, function(label){
             index <- which(all.results == label)
             cells <- names(all.results)[index]
@@ -227,20 +226,19 @@ similarityCalculation <- function(fine.labels,
                           number.digits = 1, number.cex = 0.6, tl.cex = 0.7)
         }
         dev.off()
-        all.matrix[[celltype]] <- similarity.mar
-    }
+        return(similarity.mar)
+    })
+    names(all.matrix) <- names(fine.labels)
     return(all.matrix)
 }
 
 #' runCellSubtypeClassify
 #' @param expr A Seurat object.
-#' @param cell.annotation A data.frame of cells' annotation.
 #' @inheritParams runScAnnotation
 #'
-#' @return A list of updated Seurat object, cell.annotation.
+#' @return A list of fine.labels and similarity matrix
 #' @export
 runCellSubtypeClassify <- function(expr,
-                                   cell.annotation,
                                    submodel.path,
                                    markers.path,
                                    savePath,
@@ -259,13 +257,11 @@ runCellSubtypeClassify <- function(expr,
                                dropout.modeling = dropout.modeling,
                                unknown.cutoff = unknown.cutoff,
                                umap.plot = umap.plot)
-    similarity.matrix <- similarityCalculation(cell.annotation$fine.labels,
+    similarity.matrix <- similarityCalculation(fine.labels,
                                                savePath)
-    expr$cell.subtype <- fine.labels
-    cell.annotation$fine.labels <- fine.labels
-    cell.annotation$similarity.matrix <- similarity.matrix
-    return(list(expr = expr,
-                cell.annotation = cell.annotation))
+
+    return(list(fine.labels = fine.labels,
+                similarity.matrix = similarity.matrix))
 }
 
 #' predMalignantCell
@@ -300,19 +296,16 @@ predMalignantCell <- function(expr,
     # expr$Malign.score <- predict.label
     predict.label[which(predict.label > MALIGNANT.THRES)] <- "malignant"
     predict.label[which(predict.label <= MALIGNANT.THRES)] <- "nonMalignant"
-    cell.annotation$Malign.score <- predict.label
+    cell.annotation$Malign.type <- predict.label
     # expr$Malign.type <- predict.label
     # p1 <- DimPlot(expr, reduction = "tsne", group.by = "Malign.score")
     # p2 <- DimPlot(expr, reduction = "tsne", group.by = "Malign.type")
 
     # plot
+    saveRDS(cell.annotation, "E:/scCancer2/vignettes/temp-cellannotation.rds")
     p.results <- plotMalignancy(cell.annotation = cell.annotation,
                                 coor.names = coor.names,
                                 savePath = savePath)
-    p.results[["p.malignScore"]] <- p.malignScore
-    ggsave(filename = file.path(savePath, "figures/malignScore-xgboost.png"),
-           p.malignScore, width = 5, height = 4, dpi = 500)
-
     return(list(cell.annotation = cell.annotation,
                 plot = p.results))
 }

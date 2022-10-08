@@ -1816,7 +1816,6 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
             dir.create(file.path(savePath, "cellSubtypeAnno"), recursive = T)
         }
         t.results <- runCellSubtypeClassify(expr = expr,
-                                            cell.annotation = cell.annotation,
                                             submodel.path = submodel.path,
                                             markers.path = markers.path,
                                             savePath = paste0(savePath, "/cellSubtypeAnno/"),
@@ -1824,8 +1823,8 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
                                             dropout.modeling = FALSE,
                                             unknown.cutoff = unknown.cutoff,
                                             umap.plot = subtype.umap)
-        expr <- t.results$expr
-        cell.annotation <- t.results$cell.annotation
+        results[["fine.labels"]] <- t.results[["fine.labels"]]
+        results[["similarity.matrix"]] <- t.results[["similarity.matrix"]]
         rm(t.results)
     }
 

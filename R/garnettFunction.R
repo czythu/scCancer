@@ -1019,7 +1019,7 @@ select_fine_samples <- function(cds,
                                 lambdas = NULL,
                                 classifier_gene_id_type = "ENSEMBL",
                                 return_initial_assign = TRUE) {
-
+  # sink("E:/scCancer2/vignettes/garnett-output.txt", append = TRUE, split = FALSE)
   ##### Check inputs #####
   assertthat::assert_that(is(cds, "CellDataSet"))
   assertthat::assert_that(assertthat::has_name(pData(cds), "Size_Factor"),
@@ -1248,6 +1248,7 @@ select_fine_samples <- function(cds,
                                     return_initial_assign)
 
       if(return_initial_assign) {
+        # sink()
         return(sample)
       }
     }

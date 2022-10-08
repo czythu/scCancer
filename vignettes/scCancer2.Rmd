@@ -56,7 +56,7 @@ allmodels <- trainAnnoModel(expr,
                             metacell.anno = FALSE)
 ```
 
-# scAnnotation
+# scStatistics
 
 ```{r}
 path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/KC-example/"
@@ -95,18 +95,18 @@ anno.results <- runScAnnotation(
     bool.runCellSubtypeClassify = T,
     celltype.list = NULL,
     ct.templates = NULL,
-    pretrained.path = NULL,
+    submodel.path = NULL,
     markers.path = NULL,
     unknown.cutoff = 0.3,
     subtype.umap = T,
-    bool.runMalignancy = F,
+    bool.runMalignancy = T,
     bool.intraTumor = F,
     bool.runCellCycle = F,
     bool.runStemness = F,
     bool.runGeneSets = F,
     bool.runExprProgram = F,
     bool.runInteraction = F,
-    genReport = F
+    genReport = T
 )
 ```
 

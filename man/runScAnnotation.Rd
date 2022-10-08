@@ -145,6 +145,9 @@ The default is NULL and all marker files prepared in this package will be used.}
 
 \item{bool.runMalignancy}{A logical value indicating whether to estimate malignancy.}
 
+\item{malignancy.method}{The method to be used in malignant cell identification.
+inferCNV and xgboost are allowed. The default is xgboost.}
+
 \item{cnv.ref.data}{An expression matrix of gene by cell, which is used as the normal reference during estimating malignancy.
 The default is NULL, and an immune cells or bone marrow cells expression matrix will be used for human or mouse species, respectively.}
 
