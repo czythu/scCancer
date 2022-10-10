@@ -79,6 +79,7 @@ stat.results <- runScStatistics(
 )
 ```
 
+# scAnnotation
 
 ```{r}
 # Run scAnnotation(annotation only)

@@ -333,7 +333,7 @@ runSeurat <- function(expr,
 
 
 singleGenePlot <- function(expr.data, gene,
-                           coor.df, coor.names = c("tSNE_1", "tSNE_2"),
+                           coor.df, coor.names = c("UMAP_1", "UMAP_2"),
                            color = "blue", font.size = 8,
                            legend = F, axis = F){
     minx <- min(coor.df[, coor.names[1]])
@@ -398,7 +398,7 @@ singleGenePlot <- function(expr.data, gene,
 #' @return A list of ggplot obejects for each maker genes.
 #' @export
 #'
-markerPlot <- function(expr.data, coor.df, coor.names = c("tSNE_1", "tSNE_2"),
+markerPlot <- function(expr.data, coor.df, coor.names = c("UMAP_1", "UMAP_2"),
                        features = NULL, add = T,
                        species = "human",
                        font.size = 4, color = "blue"){
@@ -442,7 +442,7 @@ markerPlot <- function(expr.data, coor.df, coor.names = c("tSNE_1", "tSNE_2"),
 #'
 pointDRPlot <- function(cell.annotation, value,
                         sel.clusters = NULL,
-                        coor.names = c("tSNE_1", "tSNE_2"),
+                        coor.names = c("UMAP_1", "UMAP_2"),
                         colors = NULL,
                         discrete = T,
                         limit.quantile = 0,
@@ -654,7 +654,7 @@ preDEheatmap <- function(expr, cell.annotation, genes = NULL, cells = NULL,
 plotSeurat <- function(expr,
                        cell.annotation = cell.annotation,
                        show.features = NULL, bool.add.features = T,
-                       coor.names = c("tSNE_1", "tSNE_2"),
+                       coor.names = c("UMAP_1", "UMAP_2"),
                        bool.plotHVG = T,
                        bool.runDiffExpr = T,
                        diff.expr.genes = NULL, n.markers = 5,
@@ -902,7 +902,7 @@ predCellType <- function(X.test, ct.templates = NULL, species = "human"){
 #' @return A list of updated Seurat object, cell.annotation, and the plots for cell type annotation.
 #' @export
 #'
-runCellClassify <- function(expr, cell.annotation, coor.names = c("tSNE_1", "tSNE_2"),
+runCellClassify <- function(expr, cell.annotation, coor.names = c("UMAP_1", "UMAP_2"),
                             savePath, ct.templates = NULL, species = "human"){
     if(!("Cell.Type" %in% names(cell.annotation))){
         message("[", Sys.time(), "] -----: TME cell types annotation")
@@ -1640,7 +1640,7 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
                             markers.path = NULL,
                             unknown.cutoff = 0.3,
                             subtype.umap = FALSE,
-                            coor.names = c("tSNE_1", "tSNE_2"),
+                            coor.names = c("UMAP_1", "UMAP_2"),
                             bool.runMalignancy = T,
                             malignancy.method = "xgboost",
                             cnv.ref.data = NULL,
@@ -1825,6 +1825,8 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
                                             umap.plot = subtype.umap)
         results[["fine.labels"]] <- t.results[["fine.labels"]]
         results[["similarity.matrix"]] <- t.results[["similarity.matrix"]]
+        saveRDS(t.results[["fine.labels"]], paste0(savePath, "fine-labels.RDS"))
+        saveRDS(t.results[["similarity.matrix"]], paste0(savePath, "similarity-matrix.RDS"))
         rm(t.results)
     }
 
