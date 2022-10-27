@@ -92,7 +92,7 @@ dataPath <- paste0(path, "data")
 # A path containing the scStatistics results
 statPath <- paste0(path, "result")
 # The sample name
-sampleName <- "KC-example"
+sampleName <- "GSE146771"
 # The author name or a string used to mark the report.
 authorName <- "G-Lab@THU"    
 # A path used to save the results files
@@ -119,8 +119,8 @@ anno.results <- runScAnnotation(
     sampleName = sampleName,
     geneSet.method = "average",
     bool.runDiffExpr = F,
-    bool.runCellClassify = T,
-    roughlabel.input = NULL,
+    bool.runCellClassify = F,
+    roughlabel.path = file.path(savePath, "rough-labels.RDS"),
     bool.runCellSubtypeClassify = T,
     celltype.list = NULL,
     ct.templates = NULL,
