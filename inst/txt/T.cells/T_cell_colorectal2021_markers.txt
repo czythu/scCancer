@@ -23,7 +23,7 @@ expressed: IL7R, TCF7
 expressed: GZMK, GZMH
 
 >CD8+ CXCL13+
-expressed: TIGHT, PDCD1
+expressed: TIGIT, PDCD1
 
 >gd-like T
 expressed: TRGC1, KLRC2

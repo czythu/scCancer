@@ -299,21 +299,21 @@ MarkerScore <- function(test_set,
     object <- as.CellDataSet(object)
     object <- estimateSizeFactors(object)
     # adjust cutoff parameter
-    marker_check <- check_markers(object,
+    suppressWarnings(marker_check <- check_markers(object,
                                   marker_file_path,
                                   db = database,
                                   cds_gene_id_type = "SYMBOL",
-                                  marker_file_gene_id_type = "SYMBOL")
+                                  marker_file_gene_id_type = "SYMBOL"))
     weighted.markers <- 1 + log(1 + marker_check$marker_score)
     names(weighted.markers) <- marker_check$marker_gene
-    result <- select_fine_samples(cds = object,
+    suppressWarnings(result <- select_fine_samples(cds = object,
                                   marker_file = marker_file_path,
                                   db=database,
                                   cds_gene_id_type = "SYMBOL",
                                   cutoff = cutoff,
                                   num_unknown = 50,
                                   marker_file_gene_id_type = "SYMBOL",
-                                  return_initial_assign = TRUE)
+                                  return_initial_assign = TRUE))
     unknown.index <- which(result$Assignment == "None")
     return(list(average = average.expr,
                 clustering = clustering,

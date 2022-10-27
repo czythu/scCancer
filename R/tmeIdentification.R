@@ -146,8 +146,13 @@ predSubType <- function(expr,
     test_set$rough.labels <- expr$Cell.Type
     finelabels.list <- lapply(celltype.list, function(celltype){
         t.expr <- expr
+        message(celltype)
         # Split test dataset with rough labels
         testdata <- test_set[which(test_set$rough.labels == celltype),]
+        if(dim(testdata)[1] < 100){
+            message(celltype, " not enough for subtype annotation. Skip!")
+            return(NULL)
+        }
         barcodes <- rownames(testdata)
         folder.path1 <- paste0(submodel.path, "/", celltype, "/")
         folder.path2 <- paste0(markers.path, "/", celltype, "/")
@@ -156,12 +161,13 @@ predSubType <- function(expr,
         # Different classification principles: Several lists of subtype
         pdf(file = paste0(savePath, "umap-", celltype, ".pdf"), width = 7, height = 7)
         subtypes.predict <- lapply(file.path1, function(model.path){
+            message(model.path)
             index <- which(file.path1 == model.path)
             model.ref <- read.csv(model.path)
             model.ref <- pro.core(model.ref)
-            result <- MarkerScore(test_set = testdata,
+            suppressWarnings(result <- MarkerScore(test_set = testdata,
                                   marker_file_path = file.path2[index],
-                                  cutoff = unknown.cutoff)
+                                  cutoff = unknown.cutoff))
             # Return a list of subtype
             label.predict <- Test(model.ref, lambda, testdata,
                             weighted.markers = result[["markers"]],
@@ -174,7 +180,8 @@ predSubType <- function(expr,
                 t.expr <- AddMetaData(object = t.expr,
                                     metadata = label.predict,
                                     col.name = "cell.subtype")
-                print(DimPlot(t.expr, group.by = "cell.subtype", repel = TRUE))
+                print(DimPlot(t.expr, group.by = "cell.subtype",
+                              repel = TRUE, label.size = 2))
                 rm(t.expr)
                 # print(scibet_visualization(testdata, label.predict)[["plot"]])
             }
@@ -202,41 +209,40 @@ similarityCalculation <- function(fine.labels,
                                   savePath){
     all.matrix <- lapply(names(fine.labels), function(celltype){
         predict <- fine.labels[[celltype]]
-        if(is.null(predict)){
-            next
+        if(!is.null(predict)){
+            all.results <- c()
+            all.labels <- c()
+            for(j in 1:dim(predict)[1]){
+                all.results <- c(all.results, predict[j, ])
+                all.labels <- c(all.labels, unique(as.list(predict[j, ])))
+            }
+            all.labels <- all.labels[-which(all.labels == "unknown")]
+            cell.sets <- lapply(all.labels, function(label){
+                index <- which(all.results == label)
+                cells <- names(all.results)[index]
+                return(cells)
+            })
+            names(cell.sets) <- all.labels
+            # Jaccard similarity calculation.
+            similarity.mar <- Jaccard(cell.sets)
+            similarity.mar[is.na(similarity.mar)] <- 0
+            # Heatmap and Hierarchical clustering
+            plot.title <- paste0("similarity map of ", celltype)
+            # small similarity map
+            if(dim(similarity.mar)[1] <= 4^2){
+                pdf(file = paste0(savePath, "similarity-", celltype, ".pdf"), width = 8, height = 8)
+                SimilarityMap(plot.title, "reference = ...", similarity.mar,
+                              number.digits = 2, number.cex = 1, tl.cex = 1)
+            }
+            # huge similarity map
+            else{
+                pdf(file = paste0(savePath, "similarity-", celltype, ".pdf"), width = 15, height = 15)
+                SimilarityMap(plot.title, "reference = ...", similarity.mar,
+                              number.digits = 1, number.cex = 0.6, tl.cex = 0.7)
+            }
+            dev.off()
+            return(similarity.mar)
         }
-        all.results <- c()
-        all.labels <- c()
-        for(j in 1:dim(predict)[1]){
-            all.results <- c(all.results, predict[j, ])
-            all.labels <- c(all.labels, unique(as.list(predict[j, ])))
-        }
-        all.labels <- all.labels[-which(all.labels == "unknown")]
-        cell.sets <- lapply(all.labels, function(label){
-            index <- which(all.results == label)
-            cells <- names(all.results)[index]
-            return(cells)
-        })
-        names(cell.sets) <- all.labels
-        # Jaccard similarity calculation.
-        similarity.mar <- Jaccard(cell.sets)
-        similarity.mar[is.na(similarity.mar)] <- 0
-        # Heatmap and Hierarchical clustering
-        plot.title <- paste0("similarity map of ", celltype)
-        # small similarity map
-        if(dim(similarity.mar)[1] <= 4^2){
-            pdf(file = paste0(savePath, "similarity-", celltype, ".pdf"), width = 7, height = 8)
-            SimilarityMap(plot.title, "reference = ...", similarity.mar,
-                          number.digits = 2, number.cex = 1, tl.cex = 1)
-        }
-        # huge similarity map
-        else{
-            pdf(file = paste0(savePath, "similarity-", celltype, ".pdf"), width = 13, height = 15)
-            SimilarityMap(plot.title, "reference = ...", similarity.mar,
-                          number.digits = 1, number.cex = 0.6, tl.cex = 0.7)
-        }
-        dev.off()
-        return(similarity.mar)
     })
     names(all.matrix) <- names(fine.labels)
     return(all.matrix)

@@ -1571,6 +1571,7 @@ plotCellInteraction <- function(stat.df, cell.annotation){
 #' "cxds"(co-expression based doublet scoring) and "bcds"(binary classification based doublet scoring) are allowed.
 #' These methods are from R package "scds".
 #' @param bool.runCellClassify A logical value indicating whether to predict the usual cell type. The default is TRUE.
+#' @param roughlabel.path Path for generated rough label, useful when bool.runCellClassify = FALSE.
 #' @param bool.runCellSubtypeClassify A logical value indicating whether to predict the usual cell subtype. The default is TRUE.
 #' @param celltype.list A list of cell types for subtype annotation, which depends on either rough annotation or user's input.
 #' @param ct.templates A list of vectors of several cell type templates.
@@ -1611,7 +1612,9 @@ plotCellInteraction <- function(stat.df, cell.annotation){
 #' @importFrom pheatmap pheatmap
 #' @importFrom stringr str_c
 #'
-runScAnnotation <- function(dataPath, statPath, savePath = NULL,
+runScAnnotation <- function(dataPath,
+                            statPath,
+                            savePath = NULL,
                             authorName = NULL,
                             sampleName = "sc",
                             bool.filter.cell = T,
@@ -1635,7 +1638,7 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
                             bool.runDoublet = T,
                             doublet.method = "bcds",
                             bool.runCellClassify = T,
-                            roughlabel.input = NULL,
+                            roughlabel.path = NULL,
                             bool.runCellSubtypeClassify = T,
                             celltype.list = NULL,
                             ct.templates = NULL,
@@ -1789,25 +1792,25 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
                                      species = species)
         expr <- t.results$expr
         cell.annotation <- t.results$cell.annotation
-        saveRDS(t.results$cell.annotation, file = file.path(savePath, "rough-labels.RDS"))
         results[["cellType.plot"]] <- t.results$p.results
         rm(t.results)
     }
 
     ## --------- cell subtype ---------
+    if(bool.runCellClassify){
+        expr$Cell.Type %>%
+            gsub("T.cells.CD4", "T.cells", .) %>%
+            gsub("T.cells.CD8", "T.cells", .) -> expr$Cell.Type
+        saveRDS(expr, file = file.path(savePath, "expr-rough.RDS"))
+        saveRDS(expr$Cell.Type, file = file.path(savePath, "rough-labels.RDS"))
+    }
+    else{
+        expr$Cell.Type <- readRDS(roughlabel.path)
+    }
     if(bool.runCellSubtypeClassify){
         if(is.null(celltype.list)){
             default.list <- c("T.cells", "Myeloid.cells", "B.cells", "Fibroblast", "Endothelial")
-            if(bool.runCellClassify){
-                expr$Cell.Type %>%
-                    gsub("T.cells.CD4", "T.cells", .) %>%
-                    gsub("T.cells.CD8", "T.cells", .) -> expr$Cell.Type
-            }
-            else{
-                expr$Cell.Type <- roughlabel.input
-            }
             celltype.list <- intersect(unique(expr$Cell.Type), default.list)
-
         }
         if(is.null(submodel.path)){
             # submodel.path <- system.file("csv", package = "scCancer")
