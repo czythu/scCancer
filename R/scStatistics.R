@@ -229,7 +229,7 @@ prepareData <- function(samplePath,
 
 
 cellsPlot <- function(cell.manifest, plot.type = "histogram") {
-    cur.color <- c("empty" = '#aeacac', "cell" = '#825f87')
+    cur.color <- c("cell" = '#825f87', "empty" = '#aeacac')
 
     if(plot.type == "histogram"){
         p <- ggplot() +
@@ -242,12 +242,12 @@ cellsPlot <- function(cell.manifest, plot.type = "histogram") {
                 mapping = aes(x = nUMI, fill = "cell"),
                 bins = 200, alpha = 0.7) +
             geom_freqpoly(data = cell.manifest, mapping = aes(x = nUMI), bins = 200) +
-            labs(y = "Droplets number") +
+            labs(y = "Droplet number") +
             scale_fill_manual(
-                name = 'Droplets type',
+                name = 'Droplet type',
                 guide = 'legend',
-                values = cur.color,
-                labels = c("cell", "empty")) +
+                # labels = c("cell", "empty"),
+                values = cur.color) +
             scale_x_continuous(trans = 'log10') + scale_y_continuous(trans = 'log10') +
             guides(fill = guide_legend(override.aes = list(size = 1, alpha = 0.7))) +
             ggplot_config(base.size = 6) +
@@ -260,7 +260,7 @@ cellsPlot <- function(cell.manifest, plot.type = "histogram") {
         p <- ggplot(tmp.df, aes(x = xi, y = nUMI, color = droplet.type)) +
             geom_point(cex = 1, alpha = 0.5) +
             labs(x = "Droplets", y = "nUMI") +
-            scale_color_manual(values = cur.color, name = "Droplets type") +
+            scale_color_manual(values = cur.color, name = "Droplet type") +
             scale_x_continuous(trans = 'log10') + scale_y_continuous(trans = 'log10') +
             guides(color = guide_legend(override.aes = list(size = 5))) +
             ggplot_config(base.size = 6) +
@@ -613,11 +613,11 @@ runScStatistics <- function(dataPath, savePath,
         p.cells.2 <- cellsPlot(cell.manifest, plot.type = "rankplot")
         suppressWarnings(
             ggsave(filename = file.path(savePath, "figures/cells-distr-hist.png"),
-                   p.cells.1, dpi = 500, height = 3, width = 4)
+                   p.cells.1, dpi = 300, height = 3, width = 4)
         )
         suppressWarnings(
             ggsave(filename = file.path(savePath, "figures/cells-distr-rank.png"),
-               p.cells.2, dpi = 500, height = 3, width = 4)
+               p.cells.2, dpi = 300, height = 3, width = 4)
         )
     }else{
         p.cells.1 <- NULL
@@ -633,9 +633,9 @@ runScStatistics <- function(dataPath, savePath,
     p.nUMI <- histPlot(cell.manifest, value = "nUMI", xlines = c(cell.threshold$nUMI))
     p.nGene <- histPlot(cell.manifest, value = "nGene", xlines = c(200, cell.threshold$nGene))
     ggsave(filename = file.path(savePath, "figures/nUMI-distr.png"),
-           p.nUMI, dpi = 500, height = 2.5, width = 4)
+           p.nUMI, dpi = 300, height = 2.5, width = 4)
     ggsave(filename = file.path(savePath, "figures/nGene-distr.png"),
-           p.nGene, dpi = 500, height = 2.5, width = 4)
+           p.nGene, dpi = 300, height = 2.5, width = 4)
 
 
     message("[", Sys.time(), "] -----: mito & ribo & diss distribution plot")
@@ -646,11 +646,11 @@ runScStatistics <- function(dataPath, savePath,
     p.diss <- marginPlot(cell.manifest, value = "diss.percent", color = "#94c08e",
                          xlines = c(cell.threshold$nUMI), ylines = c(cell.threshold$diss.percent))
     ggsave(filename = file.path(savePath, "figures/mito-distr.png"),
-           p.mito, dpi = 500, height = 4, width = 4)
+           p.mito, dpi = 300, height = 4, width = 4)
     ggsave(filename = file.path(savePath, "figures/ribo-distr.png"),
-           p.ribo, dpi = 500, height = 4, width = 4)
+           p.ribo, dpi = 300, height = 4, width = 4)
     ggsave(filename = file.path(savePath, "figures/diss-distr.png"),
-           p.diss, dpi = 500, height = 4, width = 4)
+           p.diss, dpi = 300, height = 4, width = 4)
 
 
     message("[", Sys.time(), "] -----: gene statistics")
@@ -675,7 +675,7 @@ runScStatistics <- function(dataPath, savePath,
     )
     suppressWarnings(
         ggsave(filename = file.path(savePath, "figures/geneProp.png"),
-               p.geneProp, dpi = 500, height = 8, width = 8)
+               p.geneProp, dpi = 300, height = 8, width = 8)
     )
 
     if(!is.null(bg.percent) && raw.data){
@@ -683,11 +683,11 @@ runScStatistics <- function(dataPath, savePath,
         p.bg.detect <- bgDetScatter(gene.manifest)
         suppressWarnings(
             ggsave(filename = file.path(savePath, "figures/bg-cell-scatter.png"),
-                   p.bg.cell, dpi = 500, height = 4, width = 4)
+                   p.bg.cell, dpi = 300, height = 4, width = 4)
         )
         suppressWarnings(
             ggsave(filename = file.path(savePath, "figures/bg-detect-scatter.png"),
-                   p.bg.detect, dpi = 500, height = 4, width = 4)
+                   p.bg.detect, dpi = 300, height = 4, width = 4)
         )
     }else{
         p.bg.cell <- NULL
