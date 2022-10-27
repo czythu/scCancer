@@ -134,7 +134,7 @@ trainAnnoModel <- function(expr,
 #'
 #' @return A list of fine.labels containing all possible celltypes
 #' @export
-predSubType <- function(test_set,
+predSubType <- function(expr,
                         submodel.path,
                         markers.path,
                         savePath,
@@ -142,16 +142,19 @@ predSubType <- function(test_set,
                         dropout.modeling,
                         unknown.cutoff,
                         umap.plot = FALSE){
-    # Split test dataset with rough labels.
+    test_set <- data.frame(t(expr@assays$RNA@data))
+    test_set$rough.labels <- expr$Cell.Type
     finelabels.list <- lapply(celltype.list, function(celltype){
+        t.expr <- expr
+        # Split test dataset with rough labels
         testdata <- test_set[which(test_set$rough.labels == celltype),]
+        barcodes <- rownames(testdata)
         folder.path1 <- paste0(submodel.path, "/", celltype, "/")
         folder.path2 <- paste0(markers.path, "/", celltype, "/")
         file.path1 <- paste0(folder.path1, list.files(folder.path1))
         file.path2 <- paste0(folder.path2, list.files(folder.path2))
         # Different classification principles: Several lists of subtype
-        pdf(file = paste0(savePath, celltype, ".pdf"), width = 7, height = 7)
-
+        pdf(file = paste0(savePath, "umap-", celltype, ".pdf"), width = 7, height = 7)
         subtypes.predict <- lapply(file.path1, function(model.path){
             index <- which(file.path1 == model.path)
             model.ref <- read.csv(model.path)
@@ -167,7 +170,13 @@ predSubType <- function(test_set,
             label.predict <- paste0(label.predict, "[", index, "]")
             label.predict <- AssignUnknown(label.predict, result[["unknown"]])
             if(umap.plot){
-                print(scibet_visualization(testdata, label.predict)[["plot"]])
+                names(label.predict) <- barcodes
+                t.expr <- AddMetaData(object = t.expr,
+                                    metadata = label.predict,
+                                    col.name = "cell.subtype")
+                print(DimPlot(t.expr, group.by = "cell.subtype", repel = TRUE))
+                rm(t.expr)
+                # print(scibet_visualization(testdata, label.predict)[["plot"]])
             }
             return(label.predict)
         })
@@ -176,7 +185,7 @@ predSubType <- function(test_set,
         subtypes.predict <- data.frame(matrix(unlist(subtypes.predict),
                                               nrow = length(subtypes.predict),
                                               byrow = T))
-        names(subtypes.predict) <- rownames(testdata)
+        names(subtypes.predict) <- barcodes
         return(subtypes.predict)
     })
     names(finelabels.list) <- celltype.list
@@ -202,6 +211,7 @@ similarityCalculation <- function(fine.labels,
             all.results <- c(all.results, predict[j, ])
             all.labels <- c(all.labels, unique(as.list(predict[j, ])))
         }
+        all.labels <- all.labels[-which(all.labels == "unknown")]
         cell.sets <- lapply(all.labels, function(label){
             index <- which(all.results == label)
             cells <- names(all.results)[index]
@@ -215,13 +225,13 @@ similarityCalculation <- function(fine.labels,
         plot.title <- paste0("similarity map of ", celltype)
         # small similarity map
         if(dim(similarity.mar)[1] <= 4^2){
-            pdf(file = paste0(savePath, "similarity-", celltype, ".pdf"), width = 6, height = 8)
+            pdf(file = paste0(savePath, "similarity-", celltype, ".pdf"), width = 7, height = 8)
             SimilarityMap(plot.title, "reference = ...", similarity.mar,
                           number.digits = 2, number.cex = 1, tl.cex = 1)
         }
         # huge similarity map
         else{
-            pdf(file = paste0(savePath, "similarity-", celltype, ".pdf"), width = 12, height = 15)
+            pdf(file = paste0(savePath, "similarity-", celltype, ".pdf"), width = 13, height = 15)
             SimilarityMap(plot.title, "reference = ...", similarity.mar,
                           number.digits = 1, number.cex = 0.6, tl.cex = 0.7)
         }
@@ -247,9 +257,7 @@ runCellSubtypeClassify <- function(expr,
                                    unknown.cutoff,
                                    umap.plot){
     message("[", Sys.time(), "] -----: TME cell subtypes annotation")
-    test_set <- data.frame(t(expr@assays$RNA@data))
-    test_set$rough.labels <- expr$Cell.Type
-    fine.labels <- predSubType(test_set = test_set,
+    fine.labels <- predSubType(expr = expr,
                                submodel.path = submodel.path,
                                markers.path = markers.path,
                                savePath = savePath,
@@ -285,7 +293,6 @@ predMalignantCell <- function(expr,
     genes.path <- paste0(system.file("txt", package = "scCancer2"), "/selectGenesByVar.txt")
     model.ref <- xgb.load(model.path)
     genes.preselected <- read.table(genes.path)$V1
-    # expr <- readRDS("D:/scCancer-data/SubtypeAnno/Demo-pipeline/KC-example/result-all/expr.RDS")
     testdata <- t(as.matrix(expr@assays$RNA@data))
     testdata <- testdata[,which(colnames(testdata) %in% genes.preselected)]
     testdata <- xgb.DMatrix(testdata)
@@ -302,7 +309,7 @@ predMalignantCell <- function(expr,
     # p2 <- DimPlot(expr, reduction = "tsne", group.by = "Malign.type")
 
     # plot
-    saveRDS(cell.annotation, "E:/scCancer2/vignettes/temp-cellannotation.rds")
+    # saveRDS(cell.annotation, "E:/scCancer2/vignettes/temp-cellannotation.rds")
     p.results <- plotMalignancy(cell.annotation = cell.annotation,
                                 coor.names = coor.names,
                                 savePath = savePath)

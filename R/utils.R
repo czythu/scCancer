@@ -726,11 +726,11 @@ checkCombArguments <- function(argList){
 #' Construct a convenient Seurat pipeline
 #' @name scibet_visualization
 #' @usage Scibet_visualization(dataset, label)
-#' @param dataset The expression dataframe, 
-#' with rows being cells, and columns being genes. 
+#' @param dataset The expression dataframe,
+#' with rows being cells, and columns being genes.
 #' The last column should be "label".
 #' @param label groundtruth or output of scibet function Test.
-scibet_visualization <- function(dataset, 
+scibet_visualization <- function(dataset,
                                  label=NULL,
                                  normalize=TRUE,
                                  reduction="umap",
@@ -777,7 +777,7 @@ ConfusionMatrix <- function(name.reference, name.prediction,
                             ylab='True label',
                             normalize=F,
                             font.size=20/.pt){
-  
+
   x <- matrix(nrow = length(name.prediction), ncol=length(name.reference))
   x[is.na(x)] <- 0
   colnames(x) <- name.reference
@@ -787,7 +787,7 @@ ConfusionMatrix <- function(name.reference, name.prediction,
     row <- which(name.prediction == predict[i])  #predict
     x[row, col] <- x[row, col] + 1
   }
-  
+
   if(!is.table(x)){
     x = as.table(x)
   }
@@ -795,7 +795,7 @@ ConfusionMatrix <- function(name.reference, name.prediction,
     stop('input should be numeric, not ',mode(x),
          call. = F)
   }
-  
+
   if(normalize){
     # x = round(prop.table(x,1), 2)
     x = round(prop.table(x,2), 2)
@@ -825,9 +825,10 @@ ConfusionMatrix <- function(name.reference, name.prediction,
 
 #' Correlation heatmap and hierarchical clustering
 #' @export
-#' 
+#'
 #' @import corrplot
-SimilarityMap <- function(plot.title, reference, similarity.mar, similarity.var = NULL, 
+#' @import flexclust
+SimilarityMap <- function(plot.title, reference, similarity.mar, similarity.var = NULL,
                           number.digits = 2, number.cex = 1, tl.cex = 1){
   print(corrplot(similarity.mar, tl.col="black", tl.srt=45, tl.cex=tl.cex, order="hclust",
                  number.digits=number.digits, number.cex=number.cex))
@@ -840,12 +841,16 @@ SimilarityMap <- function(plot.title, reference, similarity.mar, similarity.var 
   if(!is.null(similarity.var)){
     print(corrplot(similarity.var, method="shade", shade.col=NA,
                    tl.col="black", tl.srt=90, tl.cex=0.7, addCoef.col="black", cl.pos="n", order="AOE",
-                   col=colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))(200), 
+                   col=colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))(200),
                    number.digits=number.digits, number.cex=number.cex))
     title(main=paste0("Heatmap:var(corr)", "-AOE order"), sub=reference, cex=1)
   }
   print(plot(hclust(dist(similarity.mar, method = "euclidean"), method = "ward.D2"),
              main = paste0(plot.title, "-hierarchical clustering\n", reference)))
+}
+
+SimilarityHeatmap <- function(similarity.mar){
+
 }
 # --------------------------------------------------------------------
 
@@ -857,7 +862,7 @@ Jaccard <- function(cell.sets, p = 1){
                            ncol = length(cell.sets))
   rownames(similarity.mar) <- names(cell.sets)
   colnames(similarity.mar) <- names(cell.sets)
-  
+
   for(i in 1:length(cell.sets)){
     for(j in i:length(cell.sets)){
       m <- intersect(cell.sets[[i]], cell.sets[[j]])

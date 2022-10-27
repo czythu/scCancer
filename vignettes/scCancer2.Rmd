@@ -57,10 +57,38 @@ allmodels <- trainAnnoModel(expr,
 ```
 
 # scStatistics
-
+## GSE140228:.mtx, .tsv.gz file
 ```{r}
-path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/KC-example/"
-dataPath <- paste0(path, "data")    
+path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE140228/"
+matrix <- readMM(paste0(path, "data/ori/matrix.mtx"))
+gene.info <- read.table(paste0(path, "data/ori/features.tsv"))[-1,1:2]
+generate10Xdata(matrix = matrix,
+                gene.info = gene.info, 
+                outPath = paste0(path, "data/"))
+# add file "barcode.tsv.gz"  manually
+```
+
+## GSE146771:.txt file
+```{r}
+path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
+matrix <- read.table(gzfile(paste0(path, "data/ori/GSE146771_CRC.Leukocyte.10x.TPM.txt.gz")))
+saveRDS(matrix, paste0(path, "data/ori/GSE146771_CRC_data.rds"))
+```
+```{r}
+matrix <- readRDS(paste0(path, "data/ori/GSE146771_CRC_data.rds"))
+gene.list <- read.table(paste0(system.file("txt", package = "scCancer2"), "/single_cell_features.tsv"))[,1:2]
+index <- which(rownames(matrix) %in% gene.list$V2)
+matrix.sub <- matrix[index,]
+geneset <- gene.list[match(rownames(matrix.sub), gene.list$V2),]
+generate10Xdata(matrix = matrix.sub,
+                gene.info = geneset, 
+                outPath = paste0(path, "data/"))
+```
+
+## runScStatistics
+```{r}
+path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
+dataPath <- paste0(path, "data")
 # A path containing the scStatistics results
 statPath <- paste0(path, "result")
 # The sample name

@@ -1785,6 +1785,7 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
                                      species = species)
         expr <- t.results$expr
         cell.annotation <- t.results$cell.annotation
+        saveRDS(t.results$cell.annotation, file = file.path(savePath, "rough-labels.RDS"))
         results[["cellType.plot"]] <- t.results$p.results
         rm(t.results)
     }
@@ -1825,9 +1826,9 @@ runScAnnotation <- function(dataPath, statPath, savePath = NULL,
                                             umap.plot = subtype.umap)
         results[["fine.labels"]] <- t.results[["fine.labels"]]
         results[["similarity.matrix"]] <- t.results[["similarity.matrix"]]
-        saveRDS(t.results[["fine.labels"]], paste0(savePath, "fine-labels.RDS"))
-        saveRDS(t.results[["similarity.matrix"]], paste0(savePath, "similarity-matrix.RDS"))
         rm(t.results)
+        saveRDS(results[["fine.labels"]], file = file.path(savePath, "/cellSubtypeAnno/fine-labels.RDS"))
+        saveRDS(results[["similarity.matrix"]], file = file.path(savePath, "/cellSubtypeAnno/similarity-matrix.RDS"))
     }
 
     ## --------- malignancy ---------
