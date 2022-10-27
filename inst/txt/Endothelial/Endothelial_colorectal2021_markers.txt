@@ -1,11 +1,17 @@
->Tip-like ECs
-expressed: RGCC, RAMP3
+>Endo arterial
+expressed: LTC4S, PCSK5, BMX
 
->Stalk-like ECs
-expressed: ACKR1, SELP
+>Endo capillary
+expressed: SLC14A1, TMEM88, CD36
 
->Lymphatic ECs
-expressed: LYVE1, PROX1
+>Endo lymphatic
+expressed: CCL21, LYVE1, MMRN1
 
->Proliferative ECs
-expressed: BIRC5, CKS1B
+>Endo proif
+expressed: STMN1, HMGN2, HMGB2
+
+>Endo tip cells
+expressed: ANGPT2, ESM1, APLN
+
+>Endo venous
+expressed: CPE, ADGRG6, MADCAM1
