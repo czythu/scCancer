@@ -291,7 +291,7 @@ runCellSubtypeClassify <- function(expr,
 predMalignantCell <- function(expr,
                               cell.annotation,
                               savePath,
-                              coor.names = c("tSNE_1", "tSNE_2"),
+                              coor.names = c("UMAP_1", "UMAP_2"),
                               MALIGNANT.THRES = 0.5,
                               model.path = NULL,
                               genes.path = NULL){
