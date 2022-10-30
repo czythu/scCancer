@@ -849,8 +849,25 @@ SimilarityMap <- function(plot.title, reference, similarity.mar, similarity.var 
              main = paste0(plot.title, "-hierarchical clustering\n", reference)))
 }
 
-SimilarityHeatmap <- function(similarity.mar){
-
+SimilarityHeatmap <- function(similarity.mar,
+                              celltype,
+                              reference.list){
+    p1 <- pheatmap(similarity.mar,
+                   angle_col = 45,
+                   clustering_method = "ward.D",
+                   color=colorRampPalette(c("#FFFFD4", "#FED98E", "#FE9929", "#D95F0E"))(50),
+                   main = paste0(celltype, " similarity map"),
+                   display_numbers = TRUE,
+                   number_format = "%.2f")
+    distance <- dist(similarity.mar, p = 2)
+    mds_x <- cmdscale(distance)
+    mds_x <- data.frame(mds_x)
+    labels <- rownames(mds_x)
+    ref <- lapply((str_extract_all(labels, "\\d")), as.numeric)
+    ref <- unlist(lapply(ref, function(i){return((reference.list[[i]]))}))
+    p2 <- ggplot(mds_x, aes(x=X1, y=X2, color = ref))
+        + geom_label_repel(aes(label = rownames(mds_x)), size = 12)
+    return(p.heatmap = p1, p.MDS = p2)
 }
 # --------------------------------------------------------------------
 
