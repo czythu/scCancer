@@ -190,7 +190,7 @@ Dropout_Sampling <- function(lambda){
 #' @param test Rows should be cells and columns should be genes.
 #' @param prob trained scibet model  Rows should be genes
 #' and columns should be cell types.The genes must be matched with test_r
-#' @return  'cellType'  or matrix
+#' @return  'cellType' and 'cell*label' likelihood matrix
 MLEstimate <- function(test,
                        prob,
                        lambda = NULL,
@@ -217,8 +217,8 @@ MLEstimate <- function(test,
         index <- which.max(likelihoods[i,])
         cellType <- c(cellType,colnames(likelihoods)[index])
     }
-    out <- likelihoods/rowSums(likelihoods)
-    return(cellType)
+    return(list(cellType = cellType,
+                likelihoods = likelihoods))
 }
 
 #' Test
@@ -242,11 +242,13 @@ Test <- function(prob, lambda, test_set,
     genes <- rownames(prob)
     common.genes <- intersect(genes, colnames(test))
     test.normalized <- log1p(as.matrix(test[,common.genes])) / log(2)
-    predict <- MLEstimate(test = test.normalized,
+    result <- MLEstimate(test = test.normalized,
                           prob = prob[common.genes, ],
                           lambda = lambda[common.genes, ],
                           weighted.markers = weighted.markers,
                           dropout.modeling = dropout.modeling)
+    predict <- result[["cellType"]]
+    likelihoods <- result[["likelihoods"]]
     # name by clusters
     if(!is.null(average.expr)){
         names(predict) <- seq(from = 0, to = length(predict) - 1)
@@ -263,7 +265,7 @@ Test <- function(prob, lambda, test_set,
             message("Accuracy: ", correct / length(predict))
         }
     }
-    return(predict)
+    return(list(predict = predict, likelihoods = likelihoods))
 }
 
 #' CrossTest

@@ -1801,7 +1801,7 @@ runScAnnotation <- function(dataPath,
         expr$Cell.Type %>%
             gsub("T.cells.CD4", "T.cells", .) %>%
             gsub("T.cells.CD8", "T.cells", .) -> expr$Cell.Type
-        saveRDS(expr, file = file.path(savePath, "expr-rough.RDS"))
+        # saveRDS(expr, file = file.path(savePath, "expr-rough.RDS"))
         saveRDS(expr$Cell.Type, file = file.path(savePath, "rough-labels.RDS"))
     }
     else{

@@ -169,17 +169,22 @@ predSubType <- function(expr,
                                   marker_file_path = file.path2[index],
                                   cutoff = unknown.cutoff))
             # Return a list of subtype
-            label.predict <- Test(model.ref, lambda, testdata,
-                            weighted.markers = result[["markers"]],
-                            dropout.modeling = dropout.modeling,
-                            average.expr = result[["average"]])
+            output <- Test(model.ref, lambda, testdata,
+                           weighted.markers = result[["markers"]],
+                           dropout.modeling = dropout.modeling,
+                           average.expr = result[["average"]])
+            label.predict <- output[["predict"]]
+            likelihoods <- output[["likelihoods"]]
+            likelihoods <- t(apply(likelihoods, 1, function(l){l - min(l)}))
+            probability <- likelihoods / rowSums(likelihoods)
+            saveRDS(probability, paste0(savePath, "normalized-likelihood-", index, ".rds"))
             label.predict <- paste0(label.predict, "[", index, "]")
             label.predict <- AssignUnknown(label.predict, result[["unknown"]])
             if(umap.plot){
                 names(label.predict) <- barcodes
                 t.expr <- AddMetaData(object = t.expr,
-                                    metadata = label.predict,
-                                    col.name = "cell.subtype")
+                                      metadata = label.predict,
+                                      col.name = "cell.subtype")
                 print(DimPlot(t.expr, group.by = "cell.subtype",
                               repel = TRUE, label.size = 2))
                 rm(t.expr)
@@ -187,13 +192,21 @@ predSubType <- function(expr,
             }
             return(label.predict)
         })
+        normalized.likelihood <- lapply(seq_len(length(file.path1)), function(index){
+            file.path <- paste0(savePath, "normalized-likelihood-", index, ".rds")
+            likelihood <- readRDS(file.path)
+
+            file.remove(file.path)
+            return(likelihood)
+        })
         dev.off()
         message("[", Sys.time(), "] -----: ", celltype, " subtype annotation finished.")
         subtypes.predict <- data.frame(matrix(unlist(subtypes.predict),
                                               nrow = length(subtypes.predict),
                                               byrow = T))
-        names(subtypes.predict) <- barcodes
-        return(subtypes.predict)
+        colnames(subtypes.predict) <- barcodes
+        return(list(label = t(subtypes.predict),
+                    normalized.likelihood = normalized.likelihood))
     })
     names(finelabels.list) <- celltype.list
     return(finelabels.list)
@@ -210,6 +223,7 @@ similarityCalculation <- function(fine.labels,
     all.matrix <- lapply(names(fine.labels), function(celltype){
         predict <- fine.labels[[celltype]]
         if(!is.null(predict)){
+            predict <- t(predict)
             all.results <- c()
             all.labels <- c()
             for(j in 1:dim(predict)[1]){
@@ -273,8 +287,10 @@ runCellSubtypeClassify <- function(expr,
                                dropout.modeling = dropout.modeling,
                                unknown.cutoff = unknown.cutoff,
                                umap.plot = umap.plot)
-    similarity.matrix <- similarityCalculation(fine.labels,
-                                               savePath)
+    anno <- lapply(fine.labels, function(label){
+        return(label[["label"]])
+    })
+    similarity.matrix <- similarityCalculation(anno, savePath)
 
     return(list(fine.labels = fine.labels,
                 similarity.matrix = similarity.matrix))
