@@ -31,8 +31,8 @@ suppressMessages(library(flexclust))
 
 ```{r}
 library(devtools)
-load_all()
-document()
+suppressWarnings(load_all())
+suppressWarnings(document())
 library(scCancer2)
 ```
 
@@ -74,6 +74,7 @@ path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
 matrix <- read.table(gzfile(paste0(path, "data/ori/GSE146771_CRC.Leukocyte.10x.TPM.txt.gz")))
 saveRDS(matrix, paste0(path, "data/ori/GSE146771_CRC_data.rds"))
 ```
+
 ```{r}
 matrix <- readRDS(paste0(path, "data/ori/GSE146771_CRC_data.rds"))
 gene.list <- read.table(paste0(system.file("txt", package = "scCancer2"), "/single_cell_features.tsv"))[,1:2]
@@ -87,14 +88,16 @@ generate10Xdata(matrix = matrix.sub,
 
 ## runScStatistics
 ```{r}
-path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
-dataPath <- paste0(path, "data")
+# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
+# dataPath <- file.path(path, "data")
+path <- "D:/scCancer-data/TIL/"
+dataPath <- file.path(path, "ReadyData")
 # A path containing the scStatistics results
-statPath <- paste0(path, "result")
+statPath <- file.path(path, "result")
 # The sample name
-sampleName <- "GSE146771"
+sampleName <- "TIL2"
 # The author name or a string used to mark the report.
-authorName <- "G-Lab@THU"    
+authorName <- "G-Lab@THU"
 # A path used to save the results files
 savePath <- paste0(path, "result")
 
@@ -119,8 +122,8 @@ anno.results <- runScAnnotation(
     sampleName = sampleName,
     geneSet.method = "average",
     bool.runDiffExpr = F,
-    bool.runCellClassify = F,
-    roughlabel.path = file.path(savePath, "rough-labels.RDS"),
+    bool.runCellClassify = T,
+    # roughlabel.path = file.path(savePath, "rough-labels.RDS"),
     bool.runCellSubtypeClassify = T,
     celltype.list = NULL,
     ct.templates = NULL,
