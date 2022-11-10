@@ -56,7 +56,7 @@ allmodels <- trainAnnoModel(expr,
                             metacell.anno = FALSE)
 ```
 
-# scStatistics
+# Data processing
 ## GSE140228:.mtx, .tsv.gz file
 ```{r}
 path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE140228/"
@@ -68,7 +68,7 @@ generate10Xdata(matrix = matrix,
 # add file "barcode.tsv.gz"  manually
 ```
 
-## GSE146771:.txt file
+## DEMO1(Immune cell), GSE146771: .txt file
 ```{r}
 path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
 matrix <- read.table(gzfile(paste0(path, "data/ori/GSE146771_CRC.Leukocyte.10x.TPM.txt.gz")))
@@ -86,16 +86,31 @@ generate10Xdata(matrix = matrix.sub,
                 outPath = paste0(path, "data/"))
 ```
 
+## DEMO2(Stromal cell), CRA001160
+### with prior knowledge(.rds marker file)
+```{r}
+path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
+matrix <- readRDS(paste0(path, "data/ori/CRA001160_expression_sparse.rds"))
+gene.list <- read.table(paste0(system.file("txt", package = "scCancer2"), "/single_cell_features.tsv"))[,1:2]
+index <- which(rownames(matrix) %in% gene.list$V2)
+matrix.sub <- matrix[index,]
+geneset <- gene.list[match(rownames(matrix.sub), gene.list$V2),]
+generate10Xdata(matrix = matrix.sub,
+                gene.info = geneset, 
+                outPath = paste0(path, "data/"))
+```
+
+
 ## runScStatistics
 ```{r}
-# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
-# dataPath <- file.path(path, "data")
-path <- "D:/scCancer-data/TIL/"
-dataPath <- file.path(path, "ReadyData")
+path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
+dataPath <- file.path(path, "data")
+# path <- "D:/scCancer-data/TIL/"
+# dataPath <- file.path(path, "ReadyData")
 # A path containing the scStatistics results
 statPath <- file.path(path, "result")
 # The sample name
-sampleName <- "TIL2"
+sampleName <- "CRA001160"
 # The author name or a string used to mark the report.
 authorName <- "G-Lab@THU"
 # A path used to save the results files
