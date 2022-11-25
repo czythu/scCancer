@@ -19,7 +19,7 @@ MLEstimate(
 and columns should be cell types.The genes must be matched with test_r}
 }
 \value{
-'cellType'  or matrix
+'cellType' and 'cell*label' likelihood matrix
 }
 \description{
 MLEstimate

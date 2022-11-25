@@ -434,6 +434,7 @@ getBimodalThres <- function(scores){
 #' @export
 #'
 plotMalignancy <- function(cell.annotation,
+                           malignancy.method,
                            coor.names = c("tSNE_1", "tSNE_2"),
                            savePath = NULL){
     ## scatter plot of malignancy
@@ -458,11 +459,14 @@ plotMalignancy <- function(cell.annotation,
 
     ## save
     if(!is.null(savePath)){
-        ggsave(filename = file.path(savePath, "figures/malignType-point.png"),
+        ggsave(filename = file.path(savePath, "figures",
+                                    paste0(malignancy.method, "-malignType-point.png")),
                p.malignType.Point, width = 5, height = 3.8, dpi = 300)
-        ggsave(filename = file.path(savePath, "figures/malignScore-point.png"),
+        ggsave(filename = file.path(savePath, "figures",
+                                    paste0(malignancy.method, "-malignScore-point.png")),
                p.malignScore.Point, width = 5, height = 3.8, dpi = 300)
-        ggsave(filename = file.path(savePath, "figures/malignType-bar.png"),
+        ggsave(filename = file.path(savePath, "figures",
+                                    paste0(malignancy.method, "-malignType-bar.png")),
                p.malignType.bar, width = 6, height = 3, dpi = 300)
     }
 
@@ -566,10 +570,11 @@ runMalignancy <- function(expr,
 
     ## plot
     p.results <- plotMalignancy(cell.annotation = cell.annotation,
+                                malignancy.method = "inferCNV",
                                 coor.names = coor.names,
                                 savePath = savePath)
     p.results[["p.malignScore"]] <- p.malignScore
-    ggsave(filename = file.path(savePath, "figures/malignScore.png"),
+    ggsave(filename = file.path(savePath, "figures/inferCNV-malignScore.png"),
            p.malignScore, width = 5, height = 4, dpi = 300)
 
     ## save results

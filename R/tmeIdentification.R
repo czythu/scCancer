@@ -186,7 +186,7 @@ predSubType <- function(expr,
                                       metadata = label.predict,
                                       col.name = "cell.subtype")
                 print(DimPlot(t.expr, group.by = "cell.subtype",
-                              repel = TRUE, label.size = 2))
+                              repel = TRUE, label = FALSE, label.size = 3))
                 rm(t.expr)
                 # print(scibet_visualization(testdata, label.predict)[["plot"]])
             }
@@ -308,6 +308,7 @@ runCellSubtypeClassify <- function(expr,
 #' @import xgboost
 predMalignantCell <- function(expr,
                               cell.annotation,
+                              malignancy.method,
                               savePath,
                               coor.names = c("UMAP_1", "UMAP_2"),
                               MALIGNANT.THRES = 0.5,
@@ -335,6 +336,7 @@ predMalignantCell <- function(expr,
     # plot
     # saveRDS(cell.annotation, "E:/scCancer2/vignettes/temp-cellannotation.rds")
     p.results <- plotMalignancy(cell.annotation = cell.annotation,
+                                malignancy.method = malignancy.method,
                                 coor.names = coor.names,
                                 savePath = savePath)
     return(list(cell.annotation = cell.annotation,

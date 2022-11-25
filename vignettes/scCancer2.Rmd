@@ -70,12 +70,9 @@ generate10Xdata(matrix = matrix,
 
 ## DEMO1(Immune cell), GSE146771: .txt file
 ```{r}
-path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
-matrix <- read.table(gzfile(paste0(path, "data/ori/GSE146771_CRC.Leukocyte.10x.TPM.txt.gz")))
-saveRDS(matrix, paste0(path, "data/ori/GSE146771_CRC_data.rds"))
-```
-
-```{r}
+# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
+# matrix <- read.table(gzfile(paste0(path, "data/ori/GSE146771_CRC.Leukocyte.10x.TPM.txt.gz")))
+# saveRDS(matrix, paste0(path, "data/ori/GSE146771_CRC_data.rds"))
 matrix <- readRDS(paste0(path, "data/ori/GSE146771_CRC_data.rds"))
 gene.list <- read.table(paste0(system.file("txt", package = "scCancer2"), "/single_cell_features.tsv"))[,1:2]
 index <- which(rownames(matrix) %in% gene.list$V2)
@@ -103,14 +100,12 @@ generate10Xdata(matrix = matrix.sub,
 
 ## runScStatistics
 ```{r}
-path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
+path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/KC-example/"
 dataPath <- file.path(path, "data")
-# path <- "D:/scCancer-data/TIL/"
-# dataPath <- file.path(path, "ReadyData")
 # A path containing the scStatistics results
 statPath <- file.path(path, "result")
 # The sample name
-sampleName <- "CRA001160"
+sampleName <- "Example1"
 # The author name or a string used to mark the report.
 authorName <- "G-Lab@THU"
 # A path used to save the results files
@@ -147,6 +142,7 @@ anno.results <- runScAnnotation(
     unknown.cutoff = 0.3,
     subtype.umap = T,
     bool.runMalignancy = T,
+    malignancy.method = "both",
     bool.intraTumor = F,
     bool.runCellCycle = F,
     bool.runStemness = F,

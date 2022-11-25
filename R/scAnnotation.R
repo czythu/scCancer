@@ -1584,7 +1584,7 @@ plotCellInteraction <- function(stat.df, cell.annotation){
 #' @param coor.names A vector indicating the names of two-dimension coordinate used in visualization.
 #' @param bool.runMalignancy A logical value indicating whether to estimate malignancy.
 #' @param malignancy.method The method to be used in malignant cell identification.
-#' inferCNV and xgboost are allowed. The default is xgboost.
+#' inferCNV and xgboost are allowed. Recommend "xgboost" for large dataset, "both" for small dataset.
 #' @param cnv.ref.data An expression matrix of gene by cell, which is used as the normal reference during estimating malignancy.
 #' The default is NULL, and an immune cells or bone marrow cells expression matrix will be used for human or mouse species, respectively.
 #' @param cnv.referAdjMat An adjacent matrix for the normal reference data.
@@ -1648,7 +1648,7 @@ runScAnnotation <- function(dataPath,
                             subtype.umap = FALSE,
                             coor.names = c("UMAP_1", "UMAP_2"),
                             bool.runMalignancy = T,
-                            malignancy.method = "xgboost",
+                            malignancy.method = "both",
                             cnv.ref.data = NULL,
                             cnv.referAdjMat = NULL,
                             cutoff = 0.1,
@@ -1794,19 +1794,17 @@ runScAnnotation <- function(dataPath,
         cell.annotation <- t.results$cell.annotation
         results[["cellType.plot"]] <- t.results$p.results
         rm(t.results)
-    }
-
-    ## --------- cell subtype ---------
-    if(bool.runCellClassify){
         expr$Cell.Type %>%
             gsub("T.cells.CD4", "T.cells", .) %>%
             gsub("T.cells.CD8", "T.cells", .) -> expr$Cell.Type
         # saveRDS(expr, file = file.path(savePath, "expr-rough.RDS"))
+        saveRDS(cell.annotation, file = file.path(savePath, "rough-cell-annotation.RDS"))
         saveRDS(expr$Cell.Type, file = file.path(savePath, "rough-labels.RDS"))
     }
     else{
         expr$Cell.Type <- readRDS(roughlabel.path)
     }
+    ## --------- cell subtype ---------
     if(bool.runCellSubtypeClassify){
         if(is.null(celltype.list)){
             default.list <- c("T.cells", "Myeloid.cells", "B.cells", "Fibroblast", "Endothelial")
@@ -1840,14 +1838,14 @@ runScAnnotation <- function(dataPath,
 
     ## --------- malignancy ---------
     if(bool.runMalignancy){
-        message("[", Sys.time(), "] -----: cells malignancy annotation")
         # if(species != "human"){
         #     cat("- Warning in 'runScAnnotation': To perform 'runMalignancy', the argument 'species' needs to be 'human'.\n")
         #     results[["bool.runMalignancy"]] = FALSE
         # }else{
         #
         # }
-        if(malignancy.method == "inferCNV"){
+        if(malignancy.method == "inferCNV" | malignancy.method == "both"){
+            message("[", Sys.time(), "] -----: malignant cells identification with inferCNV")
             t.results <- runMalignancy(expr = expr,
                                        gene.manifest = gene.manifest,
                                        cell.annotation = cell.annotation,
@@ -1867,16 +1865,18 @@ runScAnnotation <- function(dataPath,
             results[["ju.exist.malign"]] <- t.results$ju.exist.malign
             results[["malign.thres"]] <- t.results$malign.thres
             # results[["bimodal.pvalue"]] <- t.results$bimodal.pvalue
-            results[["malign.plot"]] <- t.results$p.results
+            results[["malign.plot.cnv"]] <- t.results$p.results
             rm(t.results)
         }
-        else if(malignancy.method == "xgboost"){
+        if(malignancy.method == "xgboost" | malignancy.method == "both"){
+            message("[", Sys.time(), "] -----: malignant cells identification with XGBoost")
             t.results <- predMalignantCell(expr = expr,
                                            cell.annotation = cell.annotation,
+                                           malignancy.method = "xgboost",
                                            savePath = savePath,
                                            MALIGNANT.THRES = 0.5)
             cell.annotation <- t.results$cell.annotation
-            results[["malign.plot"]] <- t.results$plot
+            results[["malign.plot.xgboost"]] <- t.results$plot
             rm(t.results)
         }
     }
@@ -2017,7 +2017,7 @@ runScAnnotation <- function(dataPath,
             dir.create(file.path(savePath, 'report-figures/'), recursive = T)
         }
         suppressWarnings(
-            knit(system.file("rmd", "main-scAnno.Rmd", package = "scCancer"),
+            knit(system.file("rmd", "main-scAnno.Rmd", package = "scCancer2"),
                  file.path(savePath,'report-scAnno.md'), quiet = T)
         )
         markdownToHTML(file.path(savePath,'report-scAnno.md'),

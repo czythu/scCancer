@@ -7,8 +7,8 @@
 Scibet_visualization(dataset, label)
 }
 \arguments{
-\item{dataset}{The expression dataframe, 
-with rows being cells, and columns being genes. 
+\item{dataset}{The expression dataframe,
+with rows being cells, and columns being genes.
 The last column should be "label".}
 
 \item{label}{groundtruth or output of scibet function Test.}

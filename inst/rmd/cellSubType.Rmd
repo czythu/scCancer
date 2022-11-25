@@ -1,0 +1,26 @@
+
+
+### `r h.i`.`r h.ii` TME cell subtypes and cross-dataset label similarity
+
+The predicted cell type results can be found in [fine-labels.RDS] and [similarity-matrix.RDS]
+
+Here is the scatter plot colored by predicted cell types.
+
+```{r cellSubTypePlot, echo=F, message=F, warning=F, dpi=500, fig.width=5.2, fig.height=4, fig.align="center", out.width='80%'}
+results$cellType.plot$p.type
+```
+<p align="right">(Hi-res image: <a href="./figures/cellType-point.png">view</a>)</p>
+
+
+Here is a bar plot showing the relationship between cell cluster and cell type annotation.
+
+```{r subtypeBarPlot, echo=F, message=F, warning=F, dpi=300, fig.width=6, fig.height=4, fig.align="center", out.width='80%'}
+results$cellType.plot$p.bar
+```
+<p align="right">(Hi-res image: <a href="./figures/cellType-bar.png">view</a>)</p>
+
+
+
+```{r echo=F}
+h.ii <- h.ii + 1
+```

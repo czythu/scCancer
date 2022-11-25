@@ -75,8 +75,8 @@ getBarcodes <- function(data.path){
 #'
 #' @export
 #'
-Read10Xdata <- function (data.dir = NULL, gene.column = 2,
-                         unique.features = TRUE, only.expr = TRUE)  {
+Read10Xdata <- function(data.dir = NULL, gene.column = 2,
+                        unique.features = TRUE, only.expr = TRUE){
     full.data <- list()
     for (i in seq_along(data.dir)) {
         run <- data.dir[i]

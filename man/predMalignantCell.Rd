@@ -7,8 +7,9 @@
 predMalignantCell(
   expr,
   cell.annotation,
+  malignancy.method,
   savePath,
-  coor.names = c("tSNE_1", "tSNE_2"),
+  coor.names = c("UMAP_1", "UMAP_2"),
   MALIGNANT.THRES = 0.5,
   model.path = NULL,
   genes.path = NULL
@@ -18,6 +19,9 @@ predMalignantCell(
 \item{expr}{A Seurat object.}
 
 \item{cell.annotation}{A data.frame of cells' annotation.}
+
+\item{malignancy.method}{The method to be used in malignant cell identification.
+inferCNV and xgboost are allowed. Recommend "xgboost" for large dataset, "both" for small dataset.}
 
 \item{savePath}{A path to save the results files. If NULL, the 'statPath' will be used instead.}
 

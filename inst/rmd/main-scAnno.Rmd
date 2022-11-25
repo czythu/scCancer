@@ -239,7 +239,19 @@ h.ii <- h.ii + 1
 
 
 
-```{r malignancy, child=system.file("rmd", "malignancy.Rmd", package = "scCancer"), eval = results$bool.runMalignancy}
+```{r cellSubType, child=system.file("rmd", "cellSubType.Rmd", package = "scCancer2"), eval = results$bool.runCellSubtypeClassify}
+```
+
+
+
+
+```{r malignancy, child=system.file("rmd", "malignancy.Rmd", package = "scCancer2"), eval = results$bool.runMalignancy}
+```
+
+
+
+
+```{r malignancy-xgboost, child=system.file("rmd", "malignancy-xgboost.Rmd", package = "scCancer2"), eval = results$bool.runMalignancy}
 ```
 
 

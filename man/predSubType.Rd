@@ -5,7 +5,7 @@
 \title{predMalignantCell}
 \usage{
 predSubType(
-  test_set,
+  expr,
   submodel.path,
   markers.path,
   savePath,
@@ -16,9 +16,6 @@ predSubType(
 )
 }
 \arguments{
-\item{test_set}{An expression matrix.
-Rows should be cells and the last column should be "rough label".}
-
 \item{submodel.path}{A folder containing all models preset for cell subtype annotation(.csv file)
 The default is NULL and all models prepared in this package will be used.}
 
@@ -30,6 +27,9 @@ The default is NULL and all marker files prepared in this package will be used.}
 \item{celltype.list}{A list of cell types for subtype annotation, which depends on either rough annotation or user's input.}
 
 \item{unknown.cutoff}{A threshold for assignment of unknown label. Default is 0.3.}
+
+\item{test_set}{An expression matrix.
+Rows should be cells and the last column should be "rough label".}
 
 \item{cell.annotation}{A data.frame of cells' annotation.}
 }
