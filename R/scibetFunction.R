@@ -198,9 +198,13 @@ MLEstimate <- function(test,
                        dropout.modeling = FALSE){
     #\sigma yi*logpi (log(p1p2) = logp1 + logp2, log(p^y) = ylogp)
     if (length(weighted.markers) > 0){
-        markers <- names(weighted.markers)
-        weight <- unname(weighted.markers)
-        prob[which(rownames(prob) %in% markers),] <- 2 * prob[which(rownames(prob) %in% markers),]
+        weighted.markers <- weighted.markers[!is.na(weighted.markers)]
+        indexes <- which(rownames(prob) %in% names(weighted.markers))
+        for (index in indexes){
+            prob[index,] <- weighted.markers[rownames(prob)[index]] * prob[index,]
+        }
+        # prob[which(rownames(prob) %in% markers),] <- 2 * prob[which(rownames(prob) %in% markers),]
+        # prob <- apply(prob, 2, function(p){return(p / sum(p))})
     }
     if (dropout.modeling){
         # z~Bernoulli(1-lambda)
@@ -256,12 +260,7 @@ Test <- function(prob, lambda, test_set,
     # calculate accuracy if possible
     else{
         if(!is.null(test_set$label)){
-            correct <- 0
-            for (i in 1:length(predict)){
-                if (test_set$label[i] == predict[i]){
-                    correct <- correct + 1
-                }
-            }
+            correct <- sum(test_set$label == predict)
             message("Accuracy: ", correct / length(predict))
         }
     }
@@ -323,12 +322,20 @@ MarkerScore <- function(test_set,
                 markers = weighted.markers))
 }
 
-AssignUnknown <- function(predict, unknown.index){
+AssignUnknown <- function(test_set, predict, unknown.index){
+    # calculate accuracy after "unknown"s are excluded
+    correct <- 0
     predict.unknown <- predict
     for (i in 1:length(predict)){
         if (i %in% unknown.index){
             predict.unknown[i] <- "unknown"
+            next
+        }
+        if (test_set$label[i] == predict[i]){
+            correct <- correct + 1
         }
     }
-    return(predict.unknown)
+    accuracy <- correct / (length(predict.unknown) - length(unknown.index))
+    return(list(predict.unknown = predict.unknown,
+                accuracy = accuracy))
 }

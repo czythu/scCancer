@@ -175,11 +175,11 @@ predSubType <- function(expr,
                            average.expr = result[["average"]])
             label.predict <- output[["predict"]]
             likelihoods <- output[["likelihoods"]]
-            likelihoods <- t(apply(likelihoods, 1, function(l){l - min(l)}))
+            likelihoods <- t(apply(likelihoods, 1, function(l){return(l - min(l))}))
             probability <- likelihoods / rowSums(likelihoods)
             saveRDS(probability, paste0(savePath, "normalized-likelihood-", index, ".rds"))
             label.predict <- paste0(label.predict, "[", index, "]")
-            label.predict <- AssignUnknown(label.predict, result[["unknown"]])
+            label.predict <- AssignUnknown(label.predict, result[["unknown"]])[["predict.unknown"]]
             if(umap.plot){
                 names(label.predict) <- barcodes
                 t.expr <- AddMetaData(object = t.expr,
