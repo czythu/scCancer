@@ -579,13 +579,13 @@ runMalignancy <- function(expr,
 
     ## save results
     write.table(cnvList$expr.data[, names(obserScore.smooth)],
-                file = file.path(savePath, "malignancy/inferCNV-observation.txt"),
+                file = file.path(savePath, "malignancy-inferCNV/inferCNV-observation.txt"),
                 quote = F, sep = "\t", row.names = T)
     write.table(cnvList$expr.data[, names(referScore.smooth)],
-                file = file.path(savePath, "malignancy/inferCNV-reference.txt"),
+                file = file.path(savePath, "malignancy-inferCNV/inferCNV-reference.txt"),
                 quote = F, sep = "\t", row.names = T)
     write.table(data.frame(referScore.smooth),
-                file = file.path(savePath, "malignancy/refer-malignScore.txt"),
+                file = file.path(savePath, "malignancy-inferCNV/refer-malignScore.txt"),
                 quote = F, sep = "\t", row.names = T)
 
     results <- list(

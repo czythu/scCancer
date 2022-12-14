@@ -255,22 +255,25 @@ predSubType_XGBoost <- function(expr,
         subtypes.predict <- matrix(nrow = 1, ncol = length(barcodes))
         # Different classification principles: Several lists of subtype
         pdf(file = paste0(savePath, "umap-", celltype, ".pdf"), width = 7, height = 7)
-        for(model in models){
-            index <- which(model == models)
+        for(index in 1:length(models)){
+            model <- models[[index]]
             dataset.name <- names(models)[index]
-            message(dataset.name)
             model.celltype <- strsplit(dataset.name, split = "_")[[1]][1]
             if(model.celltype != celltype[1]){
                 next
             }
+            message(dataset.name)
             features <- model[["models"]][[1]][["feature_names"]]
             testdata <- testdata[,which(colnames(testdata) %in% features)]
+            message(ncol(testdata))
             testdata <- xgb.DMatrix(testdata)
             # Boosting(5 models)
             label.predict <- matrix(nrow = length(model[["models"]]), ncol = length(barcodes))
-            for(weak.model in model[["models"]]){
-                i <- which(weak.model == model[["models"]])
-                label.predict[i,] <- predict(model.ref, testdata)
+            for(i in 1:length(model[["models"]])){
+                weak.model <- model[["models"]][[i]]
+                # temp <- xgb.save.raw(weak.model)
+                # temp.model <- xgb.load.raw(temp)
+                label.predict[i,] <- predict(weak.model, testdata, missing = 0)
                 label.predict[i,] <- paste0(label.predict, "[", index, "]")
             }
             label.predict <- ensemble_XGBoost(label.predict)

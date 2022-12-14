@@ -1813,8 +1813,7 @@ runScAnnotation <- function(dataPath,
         if(is.null(submodel.path)){
             # submodel.path <- system.file("csv", package = "scCancer")
             # submodel.path <- system.file("csv", package = "scCancer2")
-            submodel.path <- file.path(system.file("rds", package = "scCancer2"),
-                                       "cellSubtypeTemplates-XGBoost.rds")
+            submodel.path <- file.path(system.file("rds", package = "scCancer2"), "cellSubtypeTemplates-XGBoost.rds")
         }
         if(is.null(markers.path)){
             # markers.path <- system.file("txt", package = "scCancer")
