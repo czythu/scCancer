@@ -100,12 +100,13 @@ generate10Xdata(matrix = matrix.sub,
 
 ## runScStatistics
 ```{r}
-path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/KC-example/"
+# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/KC-example/"
+path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
 dataPath <- file.path(path, "data")
 # A path containing the scStatistics results
 statPath <- file.path(path, "result")
 # The sample name
-sampleName <- "Example1"
+sampleName <- "Example2"
 # The author name or a string used to mark the report.
 authorName <- "G-Lab@THU"
 # A path used to save the results files

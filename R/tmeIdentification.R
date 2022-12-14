@@ -140,7 +140,7 @@ predSubType_Scoring <- function(expr,
                         celltype.list,
                         dropout.modeling,
                         unknown.cutoff,
-                        umap.plot = FALSE){
+                        umap.plot){
     test_set <- data.frame(t(expr@assays$RNA@data))
     test_set$rough.labels <- expr$Cell.Type
     finelabels.list <- lapply(celltype.list, function(celltype){
@@ -181,12 +181,12 @@ predSubType_Scoring <- function(expr,
             label.predict <- AssignUnknown(label.predict, result[["unknown"]])[["predict.unknown"]]
             if(umap.plot){
                 names(label.predict) <- barcodes
-                t.expr <- AddMetaData(object = t.expr,
+                tt.expr <- AddMetaData(object = t.expr,
                                       metadata = label.predict,
                                       col.name = "cell.subtype")
-                print(DimPlot(t.expr, group.by = "cell.subtype",
+                print(DimPlot(tt.expr, group.by = "cell.subtype",
                               repel = TRUE, label = FALSE, label.size = 3))
-                rm(t.expr)
+                rm(tt.expr)
                 # print(scibet_visualization(testdata, label.predict)[["plot"]])
             }
             return(label.predict)
@@ -255,7 +255,7 @@ predSubType_XGBoost <- function(expr,
                         submodel.path,
                         savePath,
                         celltype.list,
-                        umap.plot = FALSE){
+                        umap.plot){
     test_set <- data.frame(t(expr@assays$RNA@data))
     models <- readRDS(submodel.path)
     finelabels.list <- lapply(celltype.list, function(celltype){
@@ -284,6 +284,7 @@ predSubType_XGBoost <- function(expr,
             message(dataset.name)
             # Boosting(5 models)
             label.predict <- matrix(nrow = length(model[["models"]]), ncol = length(barcodes))
+            mapping <- model[["mapping"]]
             for(i in 1:length(model[["models"]])){
                 weak.model <- model[["models"]][[i]]
                 # Construct testdata
@@ -291,18 +292,18 @@ predSubType_XGBoost <- function(expr,
                 test <- testdata[,which(colnames(testdata) %in% features)]
                 test <- align_XGBoost(test, barcodes, features)
                 test <- xgb.DMatrix(test)
-                label.predict[i,] <- predict(weak.model, test)
+                label.predict[i,] <- names(mapping)[1 + predict(weak.model, test)]
                 label.predict[i,] <- paste0(label.predict[i,], "[", index, "]")
             }
             label.predict <- ensemble_XGBoost(label.predict)
             if(umap.plot){
                 names(label.predict) <- barcodes
-                t.expr <- AddMetaData(object = t.expr,
-                                      metadata = label.predict,
-                                      col.name = "cell.subtype")
-                print(DimPlot(t.expr, group.by = "cell.subtype",
+                tt.expr <- AddMetaData(object = t.expr,
+                                       metadata = label.predict,
+                                       col.name = "cell.subtype")
+                print(DimPlot(tt.expr, group.by = "cell.subtype",
                               repel = TRUE, label = FALSE, label.size = 3))
-                rm(t.expr)
+                rm(tt.expr)
                 # print(scibet_visualization(testdata, label.predict)[["plot"]])
             }
             subtypes.predict <- rbind(subtypes.predict, label.predict)
@@ -402,7 +403,7 @@ runCellSubtypeClassify <- function(expr,
                                 submodel.path,
                                 savePath,
                                 celltype.list,
-                                umap.plot = FALSE)
+                                umap.plot)
     similarity.matrix <- similarityCalculation(fine.labels, savePath)
 
     return(list(fine.labels = fine.labels,
