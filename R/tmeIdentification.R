@@ -212,6 +212,24 @@ predSubType_Scoring <- function(expr,
 }
 
 
+# adjust testdata for XGBoost(common features)
+align_XGBoost <- function(test, barcodes, features){
+    temp <- matrix(nrow = nrow(test), ncol = length(features),
+                   dimnames = list(barcodes, features))
+    current.features <- colnames(test)
+    for(j in 1:length(features)){
+        if(features[j] %in% current.features){
+            temp[,j] <- test[,features[j]]
+        }
+        else{
+            temp[,j] <- rep(0, length(barcodes))
+        }
+
+    }
+    return(temp)
+}
+
+# ensemble learning, vote for cellsubtype labels
 ensemble_XGBoost <- function(label.matrix){
     label <- apply(label.matrix, 2, function(labels){
         tab <- table(labels)
@@ -224,7 +242,6 @@ ensemble_XGBoost <- function(label.matrix){
     })
     return(label)
 }
-
 
 
 #' predSubType_XGBoost (XGBoost version)
@@ -254,33 +271,45 @@ predSubType_XGBoost <- function(expr,
         testdata <- as.matrix(testdata)
         subtypes.predict <- matrix(nrow = 1, ncol = length(barcodes))
         # Different classification principles: Several lists of subtype
-        pdf(file = paste0(savePath, "umap-", celltype, ".pdf"), width = 7, height = 7)
+        pdf(file = file.path(savePath, paste0("umap-", celltype, ".pdf")),
+            width = 7, height = 7)
         for(index in 1:length(models)){
             model <- models[[index]]
             dataset.name <- names(models)[index]
             model.celltype <- strsplit(dataset.name, split = "_")[[1]][1]
-            if(model.celltype != celltype[1]){
+            # "T", "M", "B", "E", "F"
+            if(substr(model.celltype, 1, 1) != substr(celltype, 1, 1)){
                 next
             }
             message(dataset.name)
-            features <- model[["models"]][[1]][["feature_names"]]
-            testdata <- testdata[,which(colnames(testdata) %in% features)]
-            message(ncol(testdata))
-            testdata <- xgb.DMatrix(testdata)
             # Boosting(5 models)
             label.predict <- matrix(nrow = length(model[["models"]]), ncol = length(barcodes))
             for(i in 1:length(model[["models"]])){
                 weak.model <- model[["models"]][[i]]
-                # temp <- xgb.save.raw(weak.model)
-                # temp.model <- xgb.load.raw(temp)
-                label.predict[i,] <- predict(weak.model, testdata, missing = 0)
-                label.predict[i,] <- paste0(label.predict, "[", index, "]")
+                # Construct testdata
+                features <- weak.model[["feature_names"]]
+                test <- testdata[,which(colnames(testdata) %in% features)]
+                test <- align_XGBoost(test, barcodes, features)
+                test <- xgb.DMatrix(test)
+                label.predict[i,] <- predict(weak.model, test)
+                label.predict[i,] <- paste0(label.predict[i,], "[", index, "]")
             }
             label.predict <- ensemble_XGBoost(label.predict)
+            if(umap.plot){
+                names(label.predict) <- barcodes
+                t.expr <- AddMetaData(object = t.expr,
+                                      metadata = label.predict,
+                                      col.name = "cell.subtype")
+                print(DimPlot(t.expr, group.by = "cell.subtype",
+                              repel = TRUE, label = FALSE, label.size = 3))
+                rm(t.expr)
+                # print(scibet_visualization(testdata, label.predict)[["plot"]])
+            }
             subtypes.predict <- rbind(subtypes.predict, label.predict)
         }
         dev.off()
         message("[", Sys.time(), "] -----: ", celltype, " subtype annotation finished.")
+        subtypes.predict <- subtypes.predict[-1,]
         colnames(subtypes.predict) <- barcodes
         return(t(subtypes.predict))
     })
@@ -320,14 +349,16 @@ similarityCalculation <- function(fine.labels, savePath){
             plot.title <- paste0("similarity map of ", celltype)
             # small similarity map
             if(dim(similarity.mar)[1] <= 4^2){
-                pdf(file = paste0(savePath, "similarity-", celltype, ".pdf"), width = 8, height = 8)
+                pdf(file = file.path(savePath, paste0("similarity-", celltype, ".pdf")),
+                    width = 8, height = 8)
                 SimilarityMap(plot.title, "reference = ...", similarity.mar,
                               number.digits = 2, number.cex = 1, tl.cex = 1)
                 # SimilarityHeatmap(similarity.mar, celltype, reference.list)
             }
             # huge similarity map
             else{
-                pdf(file = paste0(savePath, "similarity-", celltype, ".pdf"), width = 15, height = 15)
+                pdf(file = file.path(savePath, paste0("similarity-", celltype, ".pdf")),
+                    width = 15, height = 15)
                 SimilarityMap(plot.title, "reference = ...", similarity.mar,
                               number.digits = 1, number.cex = 0.6, tl.cex = 0.7)
                 # SimilarityHeatmap(similarity.mar, celltype, reference.list)
@@ -367,12 +398,12 @@ runCellSubtypeClassify <- function(expr,
     # anno <- lapply(fine.labels, function(label){
     #     return(label[["label"]])
     # })
-    anno <- predSubType_XGBoost(expr,
+    fine.labels <- predSubType_XGBoost(expr,
                                 submodel.path,
                                 savePath,
                                 celltype.list,
                                 umap.plot = FALSE)
-    similarity.matrix <- similarityCalculation(anno, savePath)
+    similarity.matrix <- similarityCalculation(fine.labels, savePath)
 
     return(list(fine.labels = fine.labels,
                 similarity.matrix = similarity.matrix))
@@ -399,9 +430,10 @@ predMalignantCell <- function(expr,
     model.path <- paste0(system.file("txt", package = "scCancer2"), "/sc_xgboost.model")
     genes.path <- paste0(system.file("txt", package = "scCancer2"), "/selectGenesByVar.txt")
     model.ref <- xgb.load(model.path)
-    genes.preselected <- read.table(genes.path)$V1
+    features <- read.table(genes.path)$V1
     testdata <- t(as.matrix(expr@assays$RNA@data))
-    testdata <- testdata[,which(colnames(testdata) %in% genes.preselected)]
+    testdata <- testdata[,which(colnames(testdata) %in% features)]
+    testdata <- align_XGBoost(testdata, rownames(testdata), features)
     testdata <- xgb.DMatrix(testdata)
     predict.label <- predict(model.ref, testdata)
 
