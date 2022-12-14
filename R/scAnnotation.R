@@ -1812,19 +1812,22 @@ runScAnnotation <- function(dataPath,
         }
         if(is.null(submodel.path)){
             # submodel.path <- system.file("csv", package = "scCancer")
-            submodel.path <- system.file("csv", package = "scCancer2")
+            # submodel.path <- system.file("csv", package = "scCancer2")
+            submodel.path <- file.path(system.file("rds", package = "scCancer2"),
+                                       "cellSubtypeTemplates-XGBoost.rds")
         }
         if(is.null(markers.path)){
             # markers.path <- system.file("txt", package = "scCancer")
             markers.path <- system.file("txt", package = "scCancer2")
         }
-        if(!dir.exists(file.path(savePath, "cellSubtypeAnno"))){
-            dir.create(file.path(savePath, "cellSubtypeAnno"), recursive = T)
+        folder.name <- "cellSubtypeAnno-XGBoost"
+        if(!dir.exists(file.path(savePath, folder.name))){
+            dir.create(file.path(savePath, folder.name), recursive = T)
         }
         t.results <- runCellSubtypeClassify(expr = expr,
                                             submodel.path = submodel.path,
                                             markers.path = markers.path,
-                                            savePath = paste0(savePath, "/cellSubtypeAnno/"),
+                                            savePath = file.path(savePath, folder.name),
                                             celltype.list = celltype.list,
                                             dropout.modeling = FALSE,
                                             unknown.cutoff = unknown.cutoff,
@@ -1832,8 +1835,8 @@ runScAnnotation <- function(dataPath,
         results[["fine.labels"]] <- t.results[["fine.labels"]]
         results[["similarity.matrix"]] <- t.results[["similarity.matrix"]]
         rm(t.results)
-        saveRDS(results[["fine.labels"]], file = file.path(savePath, "/cellSubtypeAnno/fine-labels.RDS"))
-        saveRDS(results[["similarity.matrix"]], file = file.path(savePath, "/cellSubtypeAnno/similarity-matrix.RDS"))
+        saveRDS(results[["fine.labels"]], file = file.path(savePath, folder.name, "fine-labels.RDS"))
+        saveRDS(results[["similarity.matrix"]], file = file.path(savePath, folder.name, "similarity-matrix.RDS"))
     }
 
     ## --------- malignancy ---------

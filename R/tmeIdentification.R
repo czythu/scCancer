@@ -125,16 +125,15 @@ trainAnnoModel <- function(expr,
     return(allmodels)
 }
 
-#' predMalignantCell
+#' predSubType_Scoring (Old version, scoring)
 #' @param test_set An expression matrix.
 #' Rows should be cells and the last column should be "rough label".
-#' @param cell.annotation A data.frame of cells' annotation.
 #' @param unknown.cutoff A threshold for assignment of unknown label. Default is 0.3.
 #' @inheritParams runScAnnotation
 #'
 #' @return A list of fine.labels containing all possible celltypes
-#' @export
-predSubType <- function(expr,
+
+predSubType_Scoring <- function(expr,
                         submodel.path,
                         markers.path,
                         savePath,
@@ -212,14 +211,88 @@ predSubType <- function(expr,
     return(finelabels.list)
 }
 
+
+ensemble_XGBoost <- function(label.matrix){
+    label <- apply(label.matrix, 2, function(labels){
+        tab <- table(labels)
+        if(max(tab) >= 3){
+            return(names(which.max(tab)))
+        }
+        else{
+            return("unknown")
+        }
+    })
+    return(label)
+}
+
+
+
+#' predSubType_XGBoost (XGBoost version)
+#' @param test_set An expression matrix.
+#' Rows should be cells and the last column should be "rough label".
+#' @inheritParams runScAnnotation
+#'
+#' @return A list of fine.labels containing all possible celltypes
+
+predSubType_XGBoost <- function(expr,
+                        submodel.path,
+                        savePath,
+                        celltype.list,
+                        umap.plot = FALSE){
+    test_set <- data.frame(t(expr@assays$RNA@data))
+    models <- readRDS(submodel.path)
+    finelabels.list <- lapply(celltype.list, function(celltype){
+        t.expr <- expr
+        message(celltype)
+        # Split test dataset with rough labels
+        testdata <- test_set[which(t.expr$Cell.Type == celltype),]
+        if(dim(testdata)[1] < 100){
+            message(celltype, " not enough for subtype annotation. Skip!")
+            return(NULL)
+        }
+        barcodes <- rownames(testdata)
+        testdata <- as.matrix(testdata)
+        subtypes.predict <- matrix(nrow = 1, ncol = length(barcodes))
+        # Different classification principles: Several lists of subtype
+        pdf(file = paste0(savePath, "umap-", celltype, ".pdf"), width = 7, height = 7)
+        for(model in models){
+            index <- which(model == models)
+            dataset.name <- names(models)[index]
+            message(dataset.name)
+            model.celltype <- strsplit(dataset.name, split = "_")[[1]][1]
+            if(model.celltype != celltype[1]){
+                next
+            }
+            features <- model[["models"]][[1]][["feature_names"]]
+            testdata <- testdata[,which(colnames(testdata) %in% features)]
+            testdata <- xgb.DMatrix(testdata)
+            # Boosting(5 models)
+            label.predict <- matrix(nrow = length(model[["models"]]), ncol = length(barcodes))
+            for(weak.model in model[["models"]]){
+                i <- which(weak.model == model[["models"]])
+                label.predict[i,] <- predict(model.ref, testdata)
+                label.predict[i,] <- paste0(label.predict, "[", index, "]")
+            }
+            label.predict <- ensemble_XGBoost(label.predict)
+            subtypes.predict <- rbind(subtypes.predict, label.predict)
+        }
+        dev.off()
+        message("[", Sys.time(), "] -----: ", celltype, " subtype annotation finished.")
+        colnames(subtypes.predict) <- barcodes
+        return(t(subtypes.predict))
+    })
+    names(finelabels.list) <- celltype.list
+    return(finelabels.list)
+}
+
+
 #' similarityCalculation
 #' @param fine.labels annotation results (barcode-subtype) of function"predSubType"
 #' @inheritParams runScAnnotation
 #'
 #' @return similarity matrixes of all possible celltypes
 #' @export
-similarityCalculation <- function(fine.labels,
-                                  savePath){
+similarityCalculation <- function(fine.labels, savePath){
     all.matrix <- lapply(names(fine.labels), function(celltype){
         predict <- fine.labels[[celltype]]
         if(!is.null(predict)){
@@ -279,17 +352,23 @@ runCellSubtypeClassify <- function(expr,
                                    unknown.cutoff,
                                    umap.plot){
     message("[", Sys.time(), "] -----: TME cell subtypes annotation")
-    fine.labels <- predSubType(expr = expr,
-                               submodel.path = submodel.path,
-                               markers.path = markers.path,
-                               savePath = savePath,
-                               celltype.list = celltype.list,
-                               dropout.modeling = dropout.modeling,
-                               unknown.cutoff = unknown.cutoff,
-                               umap.plot = umap.plot)
-    anno <- lapply(fine.labels, function(label){
-        return(label[["label"]])
-    })
+    # fine.labels <- predSubType_Scoring(expr = expr,
+    #                            submodel.path = submodel.path,
+    #                            markers.path = markers.path,
+    #                            savePath = savePath,
+    #                            celltype.list = celltype.list,
+    #                            dropout.modeling = dropout.modeling,
+    #                            unknown.cutoff = unknown.cutoff,
+    #                            umap.plot = umap.plot)
+
+    # anno <- lapply(fine.labels, function(label){
+    #     return(label[["label"]])
+    # })
+    anno <- predSubType_XGBoost(expr,
+                                submodel.path,
+                                savePath,
+                                celltype.list,
+                                umap.plot = FALSE)
     similarity.matrix <- similarityCalculation(anno, savePath)
 
     return(list(fine.labels = fine.labels,
