@@ -90,9 +90,9 @@ result.list <- lapply(sequence, function(i){
         # feature selection
         geneset <- SelectGenes(train_set[representative.index,],
                                method='Entropy', k=2000)
+        geneset <- union(geneset, intersect(markers$marker_gene, colnames(train_set)))
         # training process
-        result <- Train(train_set[representative.index,],
-                        union(geneset, markers$marker_gene))
+        result <- Train(train_set[representative.index,], geneset)
         label.name <- sort(unique(data$label))
         prob <- result[,1:length(label.name)]
         lambda <- result[,(length(label.name)+1):dim(result)[2]]
