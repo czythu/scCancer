@@ -1081,8 +1081,8 @@ select_fine_samples <- function(cds,
     pData(cds)$Size_Factor <- sf
   }
 
-  pData(cds)$num_genes_expressed <- Matrix::colSums(as(exprs(cds),
-                                                       "lgCMatrix"))
+  # pData(cds)$num_genes_expressed <- Matrix::colSums(as(exprs(cds), "lgCMatrix"))
+  pData(cds)$num_genes_expressed <- Matrix::colSums(as(exprs(cds), "lMatrix"))
   cell_totals <-  Matrix::colSums(exprs(cds))
   sf <- pData(cds)$Size_Factor
 

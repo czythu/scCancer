@@ -1640,6 +1640,7 @@ runScAnnotation <- function(dataPath,
                             bool.runCellClassify = T,
                             roughlabel.path = NULL,
                             bool.runCellSubtypeClassify = T,
+                            subtypeClassifyMethod = "Scoring",
                             celltype.list = NULL,
                             ct.templates = NULL,
                             submodel.path = NULL,
@@ -1810,16 +1811,22 @@ runScAnnotation <- function(dataPath,
             default.list <- c("T.cells", "Myeloid.cells", "B.cells", "Fibroblast", "Endothelial")
             celltype.list <- intersect(unique(expr$Cell.Type), default.list)
         }
+        folder.name <- "cellSubtypeAnno"
         if(is.null(submodel.path)){
-            # submodel.path <- system.file("csv", package = "scCancer")
-            # submodel.path <- system.file("csv", package = "scCancer2")
-            submodel.path <- file.path(system.file("rds", package = "scCancer2"), "cellSubtypeTemplates-XGBoost.rds")
+            if(subtypeClassifyMethod == "Scoring"){
+                # submodel.path <- system.file("csv", package = "scCancer")
+                submodel.path <- system.file("csv", package = "scCancer2")
+            }
+            else{
+                submodel.path <- file.path(system.file("rds", package = "scCancer2"),
+                                           "cellSubtypeTemplates-XGBoost.rds")
+                folder.name <- "cellSubtypeAnno-XGBoost"
+            }
         }
         if(is.null(markers.path)){
             # markers.path <- system.file("txt", package = "scCancer")
             markers.path <- system.file("txt", package = "scCancer2")
         }
-        folder.name <- "cellSubtypeAnno-XGBoost"
         if(!dir.exists(file.path(savePath, folder.name))){
             dir.create(file.path(savePath, folder.name), recursive = T)
         }

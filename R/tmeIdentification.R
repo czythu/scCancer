@@ -178,7 +178,7 @@ predSubType_Scoring <- function(expr,
             probability <- likelihoods / rowSums(likelihoods)
             saveRDS(probability, paste0(savePath, "normalized-likelihood-", index, ".rds"))
             label.predict <- paste0(label.predict, "[", index, "]")
-            label.predict <- AssignUnknown(label.predict, result[["unknown"]])[["predict.unknown"]]
+            label.predict <- AssignUnknown(NULL, label.predict, result[["unknown"]])[["predict.unknown"]]
             if(umap.plot){
                 names(label.predict) <- barcodes
                 tt.expr <- AddMetaData(object = t.expr,
@@ -387,23 +387,23 @@ runCellSubtypeClassify <- function(expr,
                                    unknown.cutoff,
                                    umap.plot){
     message("[", Sys.time(), "] -----: TME cell subtypes annotation")
-    # fine.labels <- predSubType_Scoring(expr = expr,
-    #                            submodel.path = submodel.path,
-    #                            markers.path = markers.path,
-    #                            savePath = savePath,
-    #                            celltype.list = celltype.list,
-    #                            dropout.modeling = dropout.modeling,
-    #                            unknown.cutoff = unknown.cutoff,
-    #                            umap.plot = umap.plot)
+    fine.labels <- predSubType_Scoring(expr = expr,
+                               submodel.path = submodel.path,
+                               markers.path = markers.path,
+                               savePath = savePath,
+                               celltype.list = celltype.list,
+                               dropout.modeling = dropout.modeling,
+                               unknown.cutoff = unknown.cutoff,
+                               umap.plot = umap.plot)
 
-    # anno <- lapply(fine.labels, function(label){
-    #     return(label[["label"]])
-    # })
-    fine.labels <- predSubType_XGBoost(expr,
-                                submodel.path,
-                                savePath,
-                                celltype.list,
-                                umap.plot)
+    fine.labels <- lapply(fine.labels, function(label){
+        return(label[["label"]])
+    })
+    # fine.labels <- predSubType_XGBoost(expr,
+    #                             submodel.path,
+    #                             savePath,
+    #                             celltype.list,
+    #                             umap.plot)
     similarity.matrix <- similarityCalculation(fine.labels, savePath)
 
     return(list(fine.labels = fine.labels,

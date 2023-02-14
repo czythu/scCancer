@@ -138,7 +138,7 @@ generate10Xdata(matrix = matrix,
 
 ## DEMO1(Immune cell), GSE146771: .txt file
 ```{r}
-# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
+path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
 # matrix <- read.table(gzfile(paste0(path, "data/ori/GSE146771_CRC.Leukocyte.10x.TPM.txt.gz")))
 # saveRDS(matrix, paste0(path, "data/ori/GSE146771_CRC_data.rds"))
 matrix <- readRDS(paste0(path, "data/ori/GSE146771_CRC_data.rds"))
@@ -168,13 +168,13 @@ generate10Xdata(matrix = matrix.sub,
 
 ## runScStatistics
 ```{r}
-# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/KC-example/"
-path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
+path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/KC-example/"
+# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
 dataPath <- file.path(path, "data")
 # A path containing the scStatistics results
 statPath <- file.path(path, "result")
 # The sample name
-sampleName <- "Example3"
+sampleName <- "KC-Example"
 # The author name or a string used to mark the report.
 authorName <- "G-Lab@THU"
 # A path used to save the results files
@@ -204,6 +204,7 @@ anno.results <- runScAnnotation(
     bool.runCellClassify = T,
     # roughlabel.path = file.path(savePath, "rough-labels.RDS"),
     bool.runCellSubtypeClassify = T,
+    subtypeClassifyMethod = "Scoring", # XGBoost
     celltype.list = NULL,
     ct.templates = NULL,
     submodel.path = NULL,

@@ -331,6 +331,9 @@ AssignUnknown <- function(test_set, predict, unknown.index){
             predict.unknown[i] <- "unknown"
             next
         }
+        if(is.null(test_set)){
+            next
+        }
         if (test_set$label[i] == predict[i]){
             correct <- correct + 1
         }
