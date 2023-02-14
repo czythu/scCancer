@@ -158,7 +158,8 @@ predSubType_Scoring <- function(expr,
         file.path1 <- paste0(folder.path1, list.files(folder.path1))
         file.path2 <- paste0(folder.path2, list.files(folder.path2))
         # Different classification principles: Several lists of subtype
-        pdf(file = paste0(savePath, "umap-", celltype, ".pdf"), width = 7, height = 7)
+        pdf(file = file.path(savePath, paste0("umap-", celltype, ".pdf")),
+            width = 7, height = 7)
         subtypes.predict <- lapply(file.path1, function(model.path){
             message(model.path)
             index <- which(file.path1 == model.path)

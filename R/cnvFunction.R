@@ -511,8 +511,8 @@ runMalignancy <- function(expr,
                           species = "human",
                           genome = "hg19",
                           hg.mm.mix = F){
-    if(!dir.exists(file.path(savePath, 'malignancy/'))){
-        dir.create(file.path(savePath, 'malignancy/'), recursive = T)
+    if(!dir.exists(file.path(savePath, 'malignancy-inferCNV/'))){
+        dir.create(file.path(savePath, 'malignancy-inferCNV/'), recursive = T)
     }
 
     expr.data <- expr@assays$RNA@counts
