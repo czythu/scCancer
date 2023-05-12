@@ -720,6 +720,7 @@ checkCombArguments <- function(argList){
 # Update in scCancer 2.0:
 # 1. visualization functions for training and similarity calculation
 # 2. similarity calculation functions
+# 3. visualization for mutant cells
 
 # Part1. visualization
 # --------------------------------------------------------------------
@@ -736,7 +737,7 @@ scibet_visualization <- function(dataset,
                                  reduction="umap",
                                  metacell=FALSE){
   counts <- data.frame(t(dataset[, 1:dim(dataset)[2]-1]))
-  object <- CreateSeuratObject(counts = counts)
+  object <- CreateSeuratObject(counts = counts, min.cells = 3)
   if(is.null(label)){
     label <- rep("unknown cell", time=ncol(counts))
   }
@@ -850,24 +851,83 @@ SimilarityMap <- function(plot.title, reference, similarity.mar, similarity.var 
 }
 
 SimilarityHeatmap <- function(similarity.mar,
-                              celltype,
-                              reference.list){
-    p1 <- pheatmap(similarity.mar,
-                   angle_col = 45,
-                   clustering_method = "ward.D",
-                   color=colorRampPalette(c("#FFFFD4", "#FED98E", "#FE9929", "#D95F0E"))(50),
-                   main = paste0(celltype, " similarity map"),
-                   display_numbers = TRUE,
-                   number_format = "%.2f")
-    distance <- dist(similarity.mar, p = 2)
-    mds_x <- cmdscale(distance)
-    mds_x <- data.frame(mds_x)
-    labels <- rownames(mds_x)
-    ref <- lapply((str_extract_all(labels, "\\d")), as.numeric)
-    ref <- unlist(lapply(ref, function(i){return((reference.list[[i]]))}))
-    p2 <- ggplot(mds_x, aes(x=X1, y=X2, color = ref))
-        + geom_label_repel(aes(label = rownames(mds_x)), size = 12)
-    return(p.heatmap = p1, p.MDS = p2)
+                              celltype){
+    if (celltype == "B cell"){
+        p <- pheatmap(similarity.mar,
+                       angle_col = 45,
+                       cutree_rows = 3,
+                       cutree_cols = 3,
+                       clustering_method = "ward.D",
+                       color=colorRampPalette(c("#FFFFD4", "#FED98E", "#FE9929", "#D95F0E"))(50),
+                       main = paste0(celltype, " similarity map"),
+                       fontsize = 10,
+                       display_numbers = TRUE,
+                       number_format = "%.2f")
+    }
+
+    else if (celltype == "T cell"){
+        p <- pheatmap(similarity.mar,
+                       angle_col = 45,
+                       cutree_rows = 16,
+                       cutree_cols = 16,
+                       clustering_method = "ward.D",
+                       color=colorRampPalette(c("#FFFFD4", "#FED98E", "#FE9929", "#D95F0E"))(50),
+                       main = paste0(celltype, " similarity map"),
+                       fontsize = 8.5,
+                       display_numbers = FALSE,
+                       number_format = "%.1f")
+    }
+
+    else if (celltype == "Myeloid cell"){
+        p <- pheatmap(similarity.mar,
+                       angle_col = 45,
+                       cutree_rows = 11,
+                       cutree_cols = 11,
+                       clustering_method = "ward.D",
+                       color=colorRampPalette(c("#FFFFD4", "#FED98E", "#FE9929", "#D95F0E"))(50),
+                       main = paste0(celltype, " similarity map"),
+                       fontsize = 9,
+                       display_numbers = FALSE,
+                       number_format = "%.1f")
+    }
+
+    else if (celltype == "Endothelial"){
+        p1 <- pheatmap(similarity.mar,
+                       angle_col = 45,
+                       cutree_rows = 4,
+                       cutree_cols = 4,
+                       clustering_method = "ward.D",
+                       color=colorRampPalette(c("#FFFFD4", "#FED98E", "#FE9929", "#D95F0E"))(50),
+                       main = paste0(celltype, " similarity map"),
+                       fontsize = 8,
+                       display_numbers = TRUE,
+                       number_format = "%.2f")
+    }
+
+    # Fibroblast
+    else{
+        p <- pheatmap(similarity.mar,
+                       angle_col = 45,
+                       cutree_rows = 4,
+                       cutree_cols = 4,
+                       clustering_method = "ward.D",
+                       color=colorRampPalette(c("#FFFFD4", "#FED98E", "#FE9929", "#D95F0E"))(50),
+                       main = paste0(celltype, " similarity map"),
+                       fontsize = 8,
+                       display_numbers = TRUE,
+                       number_format = "%.2f")
+    }
+
+    # distance <- dist(similarity.mar, p = 2)
+    # mds_x <- cmdscale(distance)
+    # mds_x <- data.frame(mds_x)
+    # labels <- rownames(mds_x)
+    # ref <- lapply((str_extract_all(labels, "\\d")), as.numeric)
+    # ref <- unlist(lapply(ref, function(i){return((reference.list[[i]]))}))
+    # p2 <- ggplot(mds_x, aes(x=X1, y=X2, color = ref))
+    # + geom_label_repel(aes(label = rownames(mds_x)), size = 12)
+    # return(p.heatmap = p1, p.MDS = p2)
+    return(p)
 }
 # --------------------------------------------------------------------
 
@@ -925,3 +985,18 @@ Intergration <- function(all.matrix){
   return(list(mean = similarity.mean, var = similarity.var))
 }
 # --------------------------------------------------------------------
+
+# Part3. mutant cell (downstream of cb_sniffer)
+# --------------------------------------------------------------------
+# snp.pos <- c('NRAS_c34', 'NRAS_c35', 'NRAS_c38', 'KRAS_c34', 'KRAS_c35', 'KRAS_c38')
+# names(snp.pos) <- c(114716127, 114716126, 114716123, 25245351, 25245350, 25245347)
+# snp.df <- read.table(paste0(snp.path, '/', sample.name, '/', sample.name, '_allele_counts_CB.tsv'), header = T, sep = '\t')
+# snp.df$cells <- substr(snp.df$barcode, 1, 16)
+# snp.df <- snp.df[(snp.df$alt_count !=0) & (snp.df$cells %in% colnames(object)),]
+# snp.df$start <- as.character(snp.df$start)
+# snp.df$snp <-  snp.pos[snp.df$start]
+# snp.df$num <- table(snp.df$snp)[snp.df$snp]
+# snp.df$snp <- paste0(snp.df$snp, '_num', snp.df$num)
+# snp.cells <- rep('undetermined', ncol(object))
+# names(snp.cells) <- colnames(object)
+# snp.cells[snp.df$cells] <- snp.df$snp

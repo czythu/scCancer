@@ -220,10 +220,11 @@ align_XGBoost <- function(test, barcodes, features){
     current.features <- colnames(test)
     for(j in 1:length(features)){
         if(features[j] %in% current.features){
-            temp[,j] <- test[,features[j]]
+            temp[,j] <- test[, features[j]]
         }
         else{
             temp[,j] <- rep(0, length(barcodes))
+            # temp[,j] <- sample(seq(0,10), length(barcodes), replace=TRUE)
         }
 
     }
@@ -430,9 +431,11 @@ predMalignantCell <- function(expr,
                               model.path = NULL,
                               genes.path = NULL){
     model.path <- paste0(system.file("txt", package = "scCancer2"), "/sc_xgboost.model")
-    genes.path <- paste0(system.file("txt", package = "scCancer2"), "/selectGenesByVar.txt")
+    # genes.path <- paste0(system.file("txt", package = "scCancer2"), "/selectGenesByVar.txt")
+    genes.path <- paste0(system.file("txt", package = "scCancer2"), "/genes-scRNA-tcga-sorted.txt")
     model.ref <- xgb.load(model.path)
-    features <- read.table(genes.path)$V1
+    # features <- read.table(genes.path)$V1
+    features <- as.list(read.table(genes.path))[[1]]
     testdata <- t(as.matrix(expr@assays$RNA@data))
     testdata <- testdata[,which(colnames(testdata) %in% features)]
     testdata <- align_XGBoost(testdata, rownames(testdata), features)
