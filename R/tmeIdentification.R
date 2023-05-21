@@ -354,17 +354,17 @@ similarityCalculation <- function(fine.labels, savePath){
             if(dim(similarity.mar)[1] <= 4^2){
                 pdf(file = file.path(savePath, paste0("similarity-", celltype, ".pdf")),
                     width = 8, height = 8)
-                SimilarityMap(plot.title, "reference = ...", similarity.mar,
-                              number.digits = 2, number.cex = 1, tl.cex = 1)
-                # SimilarityHeatmap(similarity.mar, celltype, reference.list)
+                # SimilarityMap(plot.title, "reference = ...", similarity.mar,
+                #               number.digits = 2, number.cex = 1, tl.cex = 1)
+                SimilarityHeatmap(similarity.mar, celltype)
             }
             # huge similarity map
             else{
                 pdf(file = file.path(savePath, paste0("similarity-", celltype, ".pdf")),
                     width = 15, height = 15)
-                SimilarityMap(plot.title, "reference = ...", similarity.mar,
-                              number.digits = 1, number.cex = 0.6, tl.cex = 0.7)
-                # SimilarityHeatmap(similarity.mar, celltype, reference.list)
+                # SimilarityMap(plot.title, "reference = ...", similarity.mar,
+                #               number.digits = 1, number.cex = 0.6, tl.cex = 0.7)
+                SimilarityHeatmap(similarity.mar, celltype)
             }
             dev.off()
             return(similarity.mar)
