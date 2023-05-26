@@ -717,10 +717,10 @@ checkCombArguments <- function(argList){
     }
 }
 
-# Update in scCancer 2.0:
+
+# Update in scCancer2:
 # 1. visualization functions for training and similarity calculation
 # 2. similarity calculation functions
-# 3. visualization for mutant cells
 
 # Part1. visualization
 # --------------------------------------------------------------------
@@ -824,32 +824,8 @@ ConfusionMatrix <- function(name.reference, name.prediction,
     mytheme
 }
 
-#' Correlation heatmap and hierarchical clustering
-#' @export
-#'
-#' @import corrplot
-#' @import flexclust
-SimilarityMap <- function(plot.title, reference, similarity.mar, similarity.var = NULL,
-                          number.digits = 2, number.cex = 1, tl.cex = 1){
-  print(corrplot(similarity.mar, tl.col="black", tl.srt=45, tl.cex=tl.cex, order="hclust",
-                 number.digits=number.digits, number.cex=number.cex))
-  title(main=paste0(plot.title, "-corr heatmap, hclust order"), sub=reference, cex=1)
-  print(corrplot(similarity.mar, method="shade", shade.col=NA,
-                 tl.col="black", tl.srt=45, tl.cex=0.7, addCoef.col="black", cl.pos="n", order="AOE",
-                 col=colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))(200),
-                 number.digits=number.digits, number.cex=number.cex))
-  title(main=paste0(plot.title, "-corr heatmap, AOE order"), sub=reference, cex=1)
-  if(!is.null(similarity.var)){
-    print(corrplot(similarity.var, method="shade", shade.col=NA,
-                   tl.col="black", tl.srt=90, tl.cex=0.7, addCoef.col="black", cl.pos="n", order="AOE",
-                   col=colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))(200),
-                   number.digits=number.digits, number.cex=number.cex))
-    title(main=paste0("Heatmap:var(corr)", "-AOE order"), sub=reference, cex=1)
-  }
-  print(plot(hclust(dist(similarity.mar, method = "euclidean"), method = "ward.D2"),
-             main = paste0(plot.title, "-hierarchical clustering\n", reference)))
-}
 
+#' @export
 SimilarityHeatmap <- function(similarity.mar,
                               celltype){
     if (celltype == "B cell"){
@@ -918,15 +894,6 @@ SimilarityHeatmap <- function(similarity.mar,
                        number_format = "%.2f")
     }
 
-    # distance <- dist(similarity.mar, p = 2)
-    # mds_x <- cmdscale(distance)
-    # mds_x <- data.frame(mds_x)
-    # labels <- rownames(mds_x)
-    # ref <- lapply((str_extract_all(labels, "\\d")), as.numeric)
-    # ref <- unlist(lapply(ref, function(i){return((reference.list[[i]]))}))
-    # p2 <- ggplot(mds_x, aes(x=X1, y=X2, color = ref))
-    # + geom_label_repel(aes(label = rownames(mds_x)), size = 12)
-    # return(p.heatmap = p1, p.MDS = p2)
     return(p)
 }
 # --------------------------------------------------------------------
@@ -985,18 +952,3 @@ Intergration <- function(all.matrix){
   return(list(mean = similarity.mean, var = similarity.var))
 }
 # --------------------------------------------------------------------
-
-# Part3. mutant cell (downstream of cb_sniffer)
-# --------------------------------------------------------------------
-# snp.pos <- c('NRAS_c34', 'NRAS_c35', 'NRAS_c38', 'KRAS_c34', 'KRAS_c35', 'KRAS_c38')
-# names(snp.pos) <- c(114716127, 114716126, 114716123, 25245351, 25245350, 25245347)
-# snp.df <- read.table(paste0(snp.path, '/', sample.name, '/', sample.name, '_allele_counts_CB.tsv'), header = T, sep = '\t')
-# snp.df$cells <- substr(snp.df$barcode, 1, 16)
-# snp.df <- snp.df[(snp.df$alt_count !=0) & (snp.df$cells %in% colnames(object)),]
-# snp.df$start <- as.character(snp.df$start)
-# snp.df$snp <-  snp.pos[snp.df$start]
-# snp.df$num <- table(snp.df$snp)[snp.df$snp]
-# snp.df$snp <- paste0(snp.df$snp, '_num', snp.df$num)
-# snp.cells <- rep('undetermined', ncol(object))
-# names(snp.cells) <- colnames(object)
-# snp.cells[snp.df$cells] <- snp.df$snp

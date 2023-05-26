@@ -125,6 +125,7 @@ trainAnnoModel <- function(expr,
     return(allmodels)
 }
 
+
 #' predSubType_Scoring (Old version, scoring)
 #' @param test_set An expression matrix.
 #' Rows should be cells and the last column should be "rough label".
@@ -132,7 +133,7 @@ trainAnnoModel <- function(expr,
 #' @inheritParams runScAnnotation
 #'
 #' @return A list of fine.labels containing all possible celltypes
-
+#' @export
 predSubType_Scoring <- function(expr,
                         submodel.path,
                         markers.path,
@@ -354,18 +355,13 @@ similarityCalculation <- function(fine.labels, savePath){
             if(dim(similarity.mar)[1] <= 4^2){
                 pdf(file = file.path(savePath, paste0("similarity-", celltype, ".pdf")),
                     width = 8, height = 8)
-                # SimilarityMap(plot.title, "reference = ...", similarity.mar,
-                #               number.digits = 2, number.cex = 1, tl.cex = 1)
-                SimilarityHeatmap(similarity.mar, celltype)
             }
             # huge similarity map
             else{
                 pdf(file = file.path(savePath, paste0("similarity-", celltype, ".pdf")),
                     width = 15, height = 15)
-                # SimilarityMap(plot.title, "reference = ...", similarity.mar,
-                #               number.digits = 1, number.cex = 0.6, tl.cex = 0.7)
-                SimilarityHeatmap(similarity.mar, celltype)
             }
+            SimilarityHeatmap(similarity.mar, celltype)
             dev.off()
             return(similarity.mar)
         }
@@ -430,9 +426,8 @@ predMalignantCell <- function(expr,
                               MALIGNANT.THRES = 0.5,
                               model.path = NULL,
                               genes.path = NULL){
-    model.path <- paste0(system.file("txt", package = "scCancer2"), "/sc_xgboost.model")
-    # genes.path <- paste0(system.file("txt", package = "scCancer2"), "/selectGenesByVar.txt")
-    genes.path <- paste0(system.file("txt", package = "scCancer2"), "/genes-scRNA-tcga-sorted.txt")
+    model.path <- paste0(system.file("txt", package = "scCancer"), "/sc_xgboost.model")
+    genes.path <- paste0(system.file("txt", package = "scCancer"), "/genes-scRNA-tcga-sorted.txt")
     model.ref <- xgb.load(model.path)
     # features <- read.table(genes.path)$V1
     features <- as.list(read.table(genes.path))[[1]]
@@ -448,9 +443,6 @@ predMalignantCell <- function(expr,
     predict.label[which(predict.label > MALIGNANT.THRES)] <- "malignant"
     predict.label[which(predict.label <= MALIGNANT.THRES)] <- "nonMalignant"
     cell.annotation$Malign.type <- predict.label
-    # expr$Malign.type <- predict.label
-    # p1 <- DimPlot(expr, reduction = "tsne", group.by = "Malign.score")
-    # p2 <- DimPlot(expr, reduction = "tsne", group.by = "Malign.type")
 
     # plot
     # saveRDS(cell.annotation, "E:/scCancer2/vignettes/temp-cellannotation.rds")

@@ -116,8 +116,7 @@ SelectCells <- function(object,
 Train <- function(expr, geneset=NULL){
     if(is.null(geneset)){
         print("All scRNA-seq features...")
-        # path <- paste0(system.file("txt", package = "scCancer"), "/single_cell_features.tsv")
-        path <- paste0(system.file("txt", package = "scCancer2"), "/single_cell_features.tsv")
+        path <- paste0(system.file("txt", package = "scCancer"), "/single_cell_features.tsv")
         gene.list <- read.table(path)$V2
         index_remain <- which(colnames(expr) %in% intersect(colnames(expr), gene.list))
         geneset <- colnames(expr)[index_remain]
