@@ -159,7 +159,7 @@ predSubType_Scoring <- function(expr,
         file.path2 <- paste0(folder.path2, list.files(folder.path2))
         # Different classification principles: Several lists of subtype
         pdf(file = file.path(savePath, paste0("umap-", celltype, ".pdf")),
-            width = 7, height = 8)
+            width = 6, height = 5)
         subtypes.predict <- lapply(file.path1, function(model.path){
             message(model.path)
             index <- which(file.path1 == model.path)
@@ -189,11 +189,17 @@ predSubType_Scoring <- function(expr,
                 colors.assigned <- getDefaultColors(length(unique(label.predict)))
                 colors.assigned <- c(colors.assigned, "#c1cdcd")
                 names(colors.assigned) <- c(unique(label.predict), "NA")
+                if(celltype == "T.cells" | celltype == "Myeloid.cells"){
+                    legend.size <- 10
+                }
+                else{
+                    legend.size <- 12
+                }
                 print(DimPlot(tt.expr, group.by = "cell.subtype",
                               repel = TRUE, label = FALSE,
-                              cols = colors.assigned, label.size = 3)+
-                          theme(legend.position = "bottom",
-                                legend.text = element_text(size = 8)))
+                              cols = colors.assigned)+
+                          theme(legend.position = "right",
+                                legend.text = element_text(size = legend.size)))
                 rm(tt.expr)
                 # print(scibet_visualization(testdata, label.predict)[["plot"]])
             }
