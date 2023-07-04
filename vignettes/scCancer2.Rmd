@@ -1,7 +1,7 @@
 ---
 title: "scCancer2-TMEIdentification"
 author: "Zeyu Chen"
-date: '2022-09-07'
+date: '2023-07-04'
 output: html_document
 ---
 
@@ -12,7 +12,6 @@ options(stringsAsFactors = F)
 ```
 
 # Import Packages
-
 ```{r}
 suppressMessages(library(Seurat))
 suppressMessages(library(org.Hs.eg.db))
@@ -25,104 +24,15 @@ suppressMessages(library(viridis))
 suppressMessages(library(magrittr))
 suppressMessages(library(dplyr))
 suppressMessages(library(edgeR))
-suppressMessages(library(corrplot))
-suppressMessages(library(flexclust))
 ```
 
 ```{r}
 library(devtools)
 suppressWarnings(load_all())
 suppressWarnings(document())
-library(scCancer2)
+# library(scCancer2)
+library(scCancer)
 ```
-
-# Training(5 fold cross-validation)
-
-```{r}
-path <- "D:/scCancer-data/SubtypeAnno-training"
-data.list <- list.files(file.path(path, "data"))
-label.list <- readRDS(file.path(path, "label/all-labels.rds"))
-marker.list <- file.path(path, "markers", list.files(file.path(path, "markers")))
-FOLD = 5
-training.cutoff = 0.7
-unknown.cutoff = 0.3
-sequence <- seq(from = 1, to = length(data.list))
-```
-
-```{r}
-result.list <- lapply(sequence, function(i){
-    gc()
-    print(data.list[i])
-    data <- readRDS(file.path(path, "data", data.list[i]))
-    label <- label.list[[i]]
-    folder.name <- strsplit(data.list[i], split = "\\.")[[1]][1]
-    data$label <- label
-    marker_file_path <- marker.list[i]
-    accuracy <- vector(mode = "numeric", length = FOLD)
-    models <- vector(mode = "list", length = FOLD)
-    group.length <- ceiling(nrow(data) / FOLD)
-    remain <- seq(1, nrow(data))
-    ID <- c()
-    index <- matrix(nrow = FOLD, ncol = group.length)
-    set.seed(i)
-    for (j in seq(1, FOLD)){
-        gc()
-        # message(j)
-        if(j < FOLD){
-            ID <- sort(sample(length(remain), group.length))
-            index[j,1:length(remain[ID])] <- sort(remain[ID])
-            remain <- sort(remain[-ID])
-            ID.test <- index[j,]
-        }
-        else{
-            index[j,1:length(remain)] <- sort(remain)
-            ID.test <- index[j,1:length(remain)]
-        }
-        test_set <- data[ID.test,]      #construct query set
-        train_set <- data[-ID.test,]    #construct reference set
-        object <- scibet_visualization(train_set, train_set$label)[["object"]]
-        object <- as.CellDataSet(object)
-        object <- estimateSizeFactors(object)
-        # sample selection
-        result <- SelectCells(object, cutoff = training.cutoff, marker_file_path)
-        representative.index <- result[["index"]]
-        markers <- result[["markers"]]
-        # feature selection
-        geneset <- SelectGenes(train_set[representative.index,],
-                               method='Entropy', k=2000)
-        geneset <- union(geneset, intersect(markers$marker_gene, colnames(train_set)))
-        # training process
-        result <- Train(train_set[representative.index,], geneset)
-        label.name <- sort(unique(data$label))
-        prob <- result[,1:length(label.name)]
-        lambda <- result[,(length(label.name)+1):dim(result)[2]]
-        model.save <- data.frame(t(prob))
-        # label prediction
-        result <- suppressWarnings(MarkerScore(test_set,
-                                               marker_file_path,
-                                               cutoff = unknown.cutoff,
-                                               metacell = FALSE))
-        predict <- Test(prob, lambda, test_set,
-                        weighted.markers = result[["markers"]],
-                        dropout.modeling = FALSE,
-                        average.expr = result[["average"]])[["predict"]]
-        accuracy[j] <- sum(test_set$label == predict) / length(predict)
-        print(accuracy[j])
-        saveRDS(model.save, file.path(path, "model", folder.name,
-                                  paste0("M", j, "-", round(100 * accuracy[j], 2), ".rds")))
-        models[[j]] <- model.save
-    }
-    # return(list(mean = mean(accuracy), variance = var(accuracy)))
-    return(list(accuracy = accuracy, models = models))
-})
-```
-
-
-```{r}
-names(result.list) <- sapply(data.list, function(x){strsplit(x, split = "\\.")[[1]][1]})
-saveRDS(result.list, file.path("D:/scCancer-data/SubtypeAnno-training", "cellSubtypeTemplates-garnett-scibet.rds"))
-```
-
 
 # Data processing
 ## GSE140228:.mtx, .tsv.gz file
@@ -142,7 +52,8 @@ path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
 # matrix <- read.table(gzfile(paste0(path, "data/ori/GSE146771_CRC.Leukocyte.10x.TPM.txt.gz")))
 # saveRDS(matrix, paste0(path, "data/ori/GSE146771_CRC_data.rds"))
 matrix <- readRDS(paste0(path, "data/ori/GSE146771_CRC_data.rds"))
-gene.list <- read.table(paste0(system.file("txt", package = "scCancer2"), "/single_cell_features.tsv"))[,1:2]
+# gene.list <- read.table(paste0(system.file("txt", package = "scCancer2"), "/single_cell_features.tsv"))[,1:2]
+gene.list <- read.table(paste0(system.file("txt", package = "scCancer"), "/single_cell_features.tsv"))[,1:2]
 index <- which(rownames(matrix) %in% gene.list$V2)
 matrix.sub <- matrix[index,]
 geneset <- gene.list[match(rownames(matrix.sub), gene.list$V2),]
@@ -156,7 +67,8 @@ generate10Xdata(matrix = matrix.sub,
 ```{r}
 path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
 matrix <- readRDS(paste0(path, "data/ori/CRA001160_expression_sparse.rds"))
-gene.list <- read.table(paste0(system.file("txt", package = "scCancer2"), "/single_cell_features.tsv"))[,1:2]
+# gene.list <- read.table(paste0(system.file("txt", package = "scCancer2"), "/single_cell_features.tsv"))[,1:2]
+gene.list <- read.table(paste0(system.file("txt", package = "scCancer"), "/single_cell_features.tsv"))[,1:2]
 index <- which(rownames(matrix) %in% gene.list$V2)
 matrix.sub <- matrix[index,]
 geneset <- gene.list[match(rownames(matrix.sub), gene.list$V2),]
@@ -168,13 +80,13 @@ generate10Xdata(matrix = matrix.sub,
 
 ## runScStatistics
 ```{r}
-path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/KC-example/"
+path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
 # path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
 dataPath <- file.path(path, "data")
 # A path containing the scStatistics results
 statPath <- file.path(path, "result")
 # The sample name
-sampleName <- "KC-Example"
+sampleName <- "CRC-Example"
 # The author name or a string used to mark the report.
 authorName <- "G-Lab@THU"
 # A path used to save the results files
@@ -212,7 +124,7 @@ anno.results <- runScAnnotation(
     unknown.cutoff = 0.3,
     subtype.umap = T,
     bool.runMalignancy = T,
-    malignancy.method = "both",
+    malignancy.method = "xgboost",
     bool.intraTumor = F,
     bool.runCellCycle = F,
     bool.runStemness = F,

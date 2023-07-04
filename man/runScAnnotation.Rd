@@ -34,6 +34,7 @@ runScAnnotation(
   bool.runCellClassify = T,
   roughlabel.path = NULL,
   bool.runCellSubtypeClassify = T,
+  subtypeClassifyMethod = "Scoring",
   celltype.list = NULL,
   ct.templates = NULL,
   submodel.path = NULL,

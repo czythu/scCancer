@@ -12,7 +12,7 @@ predSubType_Scoring(
   celltype.list,
   dropout.modeling,
   unknown.cutoff,
-  umap.plot = FALSE
+  umap.plot
 )
 }
 \arguments{

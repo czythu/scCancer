@@ -4,13 +4,7 @@
 \alias{predSubType_XGBoost}
 \title{predSubType_XGBoost (XGBoost version)}
 \usage{
-predSubType_XGBoost(
-  expr,
-  submodel.path,
-  savePath,
-  celltype.list,
-  umap.plot = FALSE
-)
+predSubType_XGBoost(expr, submodel.path, savePath, celltype.list, umap.plot)
 }
 \arguments{
 \item{submodel.path}{A folder containing all models preset for cell subtype annotation(.csv file)
