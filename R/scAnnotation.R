@@ -1813,19 +1813,21 @@ runScAnnotation <- function(dataPath,
         }
         folder.name <- "cellSubtypeAnno"
         if(is.null(submodel.path)){
-            if(subtypeClassifyMethod == "Scoring"){
-                # submodel.path <- system.file("csv", package = "scCancer")
-                submodel.path <- system.file("csv", package = "scCancer2")
-            }
-            else{
-                submodel.path <- file.path(system.file("rds", package = "scCancer2"),
-                                           "cellSubtypeTemplates-XGBoost.rds")
-                folder.name <- "cellSubtypeAnno-XGBoost"
-            }
+            # if(subtypeClassifyMethod == "Scoring"){
+            #     submodel.path <- system.file("csv", package = "scCancer")
+            #     # submodel.path <- system.file("csv", package = "scCancer2")
+            # }
+            # else{
+            #     submodel.path <- file.path(system.file("rds", package = "scCancer"),
+            #                                "cellSubtypeTemplates-XGBoost.rds")
+            #     # submodel.path <- file.path(system.file("rds", package = "scCancer2"), "cellSubtypeTemplates-XGBoost.rds")
+            #     folder.name <- "cellSubtypeAnno-XGBoost"
+            # }
+            submodel.path <- system.file("csv", package = "scCancer")
         }
         if(is.null(markers.path)){
-            # markers.path <- system.file("txt", package = "scCancer")
-            markers.path <- system.file("txt", package = "scCancer2")
+            markers.path <- system.file("txt", package = "scCancer")
+            # markers.path <- system.file("txt", package = "scCancer2")
         }
         if(!dir.exists(file.path(savePath, folder.name))){
             dir.create(file.path(savePath, folder.name), recursive = T)
@@ -2026,8 +2028,9 @@ runScAnnotation <- function(dataPath,
             dir.create(file.path(savePath, 'report-figures/'), recursive = T)
         }
         suppressWarnings(
-            knit(system.file("rmd", "main-scAnno.Rmd", package = "scCancer2"),
+            knit(system.file("rmd", "main-scAnno.Rmd", package = "scCancer"),
                  file.path(savePath,'report-scAnno.md'), quiet = T)
+            # knit(system.file("rmd", "main-scAnno.Rmd", package = "scCancer2"), file.path(savePath,'report-scAnno.md'), quiet = T)
         )
         markdownToHTML(file.path(savePath,'report-scAnno.md'),
                        file.path(savePath, 'report-scAnno.html'))

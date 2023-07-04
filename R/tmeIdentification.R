@@ -443,9 +443,10 @@ predMalignantCell <- function(expr,
                               MALIGNANT.THRES = 0.5,
                               model.path = NULL,
                               genes.path = NULL){
-    model.path <- paste0(system.file("txt", package = "scCancer2"), "/sc_xgboost.model")
-    # genes.path <- paste0(system.file("txt", package = "scCancer2"), "/selectGenesByVar.txt")
-    genes.path <- paste0(system.file("txt", package = "scCancer2"), "/genes-scRNA-tcga-sorted.txt")
+    # model.path <- paste0(system.file("txt", package = "scCancer2"), "/sc_xgboost.model")
+    # genes.path <- paste0(system.file("txt", package = "scCancer2"), "/genes-scRNA-tcga-sorted.txt")
+    model.path <- paste0(system.file("txt", package = "scCancer"), "/sc_xgboost.model")
+    genes.path <- paste0(system.file("txt", package = "scCancer"), "/genes-scRNA-tcga-sorted.txt")
     model.ref <- xgb.load(model.path)
     # features <- read.table(genes.path)$V1
     features <- as.list(read.table(genes.path))[[1]]
@@ -466,7 +467,6 @@ predMalignantCell <- function(expr,
     # p2 <- DimPlot(expr, reduction = "tsne", group.by = "Malign.type")
 
     # plot
-    # saveRDS(cell.annotation, "E:/scCancer2/vignettes/temp-cellannotation.rds")
     p.results <- plotMalignancy(cell.annotation = cell.annotation,
                                 malignancy.method = malignancy.method,
                                 coor.names = coor.names,
