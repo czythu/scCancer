@@ -77,43 +77,55 @@ R version: >= 3.5.0
 ## Package Installation and Quick Start for scRNA-seq analysis
 
 Quick start of scCancer2:
-Download .zip file of scCancer2 package
-Dependency installation
-See scCancer2.rmd for temporary installation and demos. Recommended demo: CRC-example (Source: GSE146771)
+
+1. Download .zip file of scCancer2 package
+
+2. Dependency installation
 
 Some dependent packages for scCancer2 (old version of scCancer, edgeR, garnett, xgboost, and org.Hs.eg.db) may not be installed automatically, so you can install them from the following steps. After installing them successfully, then you can run the scCancer2.rmd
 
 Dependency installation:
 
-'''R
+```R
 library("devtools")
 if(!checkPkg("harmony")) install_github("immunogenomics/harmony")
 if(!checkPkg("RcppArmadillo")) install.packages("RcppArmadillo")
 if(!checkPkg("RcppProgress")) install.packages("RcppProgress")
 if(!checkPkg("NNLM")) install_github("linxihui/NNLM")
 if(!checkPkg("liger")) install_github("MacoskoLab/liger")
+# install scCancer1.0
 install_github("wguo-research/scCancer")
+
 if(!checkPkg("monocle")) BiocManager::install(c("monocle"))
 if(!checkPkg("edgeR")) BiocManager::install(c("edgeR"))
 if(!checkPkg(c('DelayedArray','DelayedMatrixStats','org.Hs.eg.db','org.Mm.eg.db'))) BiocManager::install(c('DelayedArray','DelayedMatrixStats','org.Hs.eg.db','org.Mm.eg.db'))
 if(!checkPkg("garnett")) install_github("cole-trapnell-lab/garnett")
 if(!checkPkg("xgboost ")) install.packages("xgboost")
-'''
+```
 
-if errors occur when installing "NNLM" or "edgeR", you may install them from the .tar.gz file
+if errors occur when installing "NNLM" or "edgeR", you may install them from the .tar.gz file:
+
 https://cran.r-project.org/src/contrib/Archive/NNLM/
+
 https://bioconductor.org/packages/release/bioc/html/edgeR.html
 
-If you have already installed the above dependencies, you have 2 ways to run scCancer2.0:
-1. Run scCancer2.rmd in the scCancer folder.
-2. if you want to completely update scCancer to the next version:
+3. If you have already installed the above dependencies, you have 2 ways to run scCancer2.0:
 
-'''R
+Run scCancer2.rmd in the scCancer folder. See scCancer2.rmd for temporary installation and demos.
+
+Or, if you want to completely update scCancer to the next version:
+
+```R
+# install scCancer2.0
 install_github("czythu/scCancer")
-'''
+```
+
+Recommended demo: CRC-example (Source: GSE146771)
 
 ## Report Generation
-The results of cell subtype annotation are stored in folder: cellSubtypeAnno/
-The results of malignant cell identification by machine learning method are directly insert into original report (report-scAnno.html).
+
+1. The results of cell subtype annotation are stored in folder: cellSubtypeAnno/
+
+2. The results of malignant cell identification by machine learning method are directly insert into original report (report-scAnno.html).
 
 ## Citation
