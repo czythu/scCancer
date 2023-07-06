@@ -54,3 +54,66 @@ Wenbo Guo, Dongfang Wang, Shicheng Wang, Yiran Shan, Changyi Liu, Jin Gu, scCanc
 
 ## License
 GPL-3
+
+
+# scCancer2
+
+## Introduction
+
+We updated our R toolkit, scCancer, based on massive single-cell transcriptome and spatial transcriptome data.
+
+1. Cell subtype annotation and cross-dataset label similarity: Our analysis mainly focused on cell subtype annotation by training multiple lightweight machine-learning models on scRNA-seq data. We proposed a method for quantitatively evaluating the similarity of cell subtype labels originating from different published datasets. We fully preserved the original labeling in cell atlases and analyzed the relationship between cell subtypes across datasets.
+
+2. Malignant cell identification: We constructed a reference dataset combining scRNA-seq and bulk RNA-seq data across multiple cancer types to identify the malignant cell in TME. We trained a model to identify malignant cells with high generalization ability and computational efficiency. 
+
+3. Spatial transcriptome analysis: Finally, we integrated a spatial transcriptome analysis pipeline. It enables us to analyze TME from a spatial perspective systematically and automatically.
+
+With scCancer2, researchers can understand the composition of the TME more accurately from multiple dimensions.
+
+## System Requirements
+
+R version: >= 3.5.0
+
+## Package Installation and Quick Start for scRNA-seq analysis
+
+Quick start of scCancer2:
+Download .zip file of scCancer2 package
+Dependency installation
+See scCancer2.rmd for temporary installation and demos. Recommended demo: CRC-example (Source: GSE146771)
+
+Some dependent packages for scCancer2 (old version of scCancer, edgeR, garnett, xgboost, and org.Hs.eg.db) may not be installed automatically, so you can install them from the following steps. After installing them successfully, then you can run the scCancer2.rmd
+
+Dependency installation:
+
+'''R
+library("devtools")
+if(!checkPkg("harmony")) install_github("immunogenomics/harmony")
+if(!checkPkg("RcppArmadillo")) install.packages("RcppArmadillo")
+if(!checkPkg("RcppProgress")) install.packages("RcppProgress")
+if(!checkPkg("NNLM")) install_github("linxihui/NNLM")
+if(!checkPkg("liger")) install_github("MacoskoLab/liger")
+install_github("wguo-research/scCancer")
+if(!checkPkg("monocle")) BiocManager::install(c("monocle"))
+if(!checkPkg("edgeR")) BiocManager::install(c("edgeR"))
+if(!checkPkg(c('DelayedArray','DelayedMatrixStats','org.Hs.eg.db','org.Mm.eg.db'))) BiocManager::install(c('DelayedArray','DelayedMatrixStats','org.Hs.eg.db','org.Mm.eg.db'))
+if(!checkPkg("garnett")) install_github("cole-trapnell-lab/garnett")
+if(!checkPkg("xgboost ")) install.packages("xgboost")
+'''
+
+if errors occur when installing "NNLM" or "edgeR", you may install them from the .tar.gz file
+https://cran.r-project.org/src/contrib/Archive/NNLM/
+https://bioconductor.org/packages/release/bioc/html/edgeR.html
+
+If you have already installed the above dependencies, you have 2 ways to run scCancer2.0:
+1. Run scCancer2.rmd in the scCancer folder.
+2. if you want to completely update scCancer to the next version:
+
+'''R
+install_github("czythu/scCancer")
+'''
+
+## Report Generation
+The results of cell subtype annotation are stored in folder: cellSubtypeAnno/
+The results of malignant cell identification by machine learning method are directly insert into original report (report-scAnno.html).
+
+## Citation
