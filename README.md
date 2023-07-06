@@ -70,6 +70,9 @@ We updated our R toolkit, scCancer, based on massive single-cell transcriptome a
 
 With scCancer2, researchers can understand the composition of the TME more accurately from multiple dimensions.
 
+## Overview of scCancer2
+![image](https://github.com/czythu/scCancer_MicroEnv/blob/master/CellSubtypeAnnotation/vignettes/Figure1.png)
+
 ## System Requirements
 
 R version: >= 3.5.0
@@ -82,25 +85,22 @@ Quick start of scCancer2:
 
 2. Dependency installation
 
-Some dependent packages for scCancer2 (old version of scCancer, edgeR, garnett, xgboost, and org.Hs.eg.db) may not be installed automatically, so you can install them from the following steps. After installing them successfully, then you can run the scCancer2.rmd
-
-Dependency installation:
+Some dependent packages for scCancer2 (old version of scCancer, edgeR, garnett, xgboost, and org.Hs.eg.db) may not be installed automatically, so you can install them from the following steps. After installing them successfully, then you can run the vignettes/scCancer2.rmd
 
 ```R
-library("devtools")
-if(!checkPkg("harmony")) install_github("immunogenomics/harmony")
+if(!checkPkg("harmony")) devtools::install_github("immunogenomics/harmony")
 if(!checkPkg("RcppArmadillo")) install.packages("RcppArmadillo")
 if(!checkPkg("RcppProgress")) install.packages("RcppProgress")
-if(!checkPkg("NNLM")) install_github("linxihui/NNLM")
-if(!checkPkg("liger")) install_github("MacoskoLab/liger")
+if(!checkPkg("NNLM")) devtools::install_github("linxihui/NNLM")
+if(!checkPkg("liger")) devtools::install_github("MacoskoLab/liger")
 # install scCancer1.0
-install_github("wguo-research/scCancer")
+devtools::install_github("wguo-research/scCancer")
 
 if(!checkPkg("monocle")) BiocManager::install(c("monocle"))
 if(!checkPkg("edgeR")) BiocManager::install(c("edgeR"))
 if(!checkPkg(c('DelayedArray','DelayedMatrixStats','org.Hs.eg.db','org.Mm.eg.db'))) BiocManager::install(c('DelayedArray','DelayedMatrixStats','org.Hs.eg.db','org.Mm.eg.db'))
-if(!checkPkg("garnett")) install_github("cole-trapnell-lab/garnett")
-if(!checkPkg("xgboost ")) install.packages("xgboost")
+if(!checkPkg("garnett")) devtools::install_github("cole-trapnell-lab/garnett")
+if(!checkPkg("xgboost")) install.packages("xgboost")
 ```
 
 if errors occur when installing "NNLM" or "edgeR", you may install them from the .tar.gz file:
@@ -111,21 +111,25 @@ https://bioconductor.org/packages/release/bioc/html/edgeR.html
 
 3. If you have already installed the above dependencies, you have 2 ways to run scCancer2.0:
 
-Run scCancer2.rmd in the scCancer folder. See scCancer2.rmd for temporary installation and demos.
+Run vignettes/scCancer2.rmd in the scCancer folder. See vignettes/scCancer2.rmd for temporary installation and demos.
 
 Or, if you want to completely update scCancer to the next version:
 
 ```R
 # install scCancer2.0
-install_github("czythu/scCancer")
+devtools::install_github("czythu/scCancer")
 ```
 
 Recommended demo: CRC-example (Source: GSE146771)
 
-## Report Generation
+## Report Generation for scRNA-seq analysis
 
 1. The results of cell subtype annotation are stored in folder: cellSubtypeAnno/
 
 2. The results of malignant cell identification by machine learning method are directly insert into original report (report-scAnno.html).
+
+## Package Installation and Quick Start for spatial transcriptome analysis
+
+See https://github.com/Miaoyx323/stCancer for details.
 
 ## Citation
