@@ -289,7 +289,7 @@ MarkerScore <- function(test_set,
                         metacell = FALSE){
     # check markers on test set, set unknown labels
     set.seed(unclass(Sys.time()))
-    object <- scibet_visualization(test_set, metacell = metacell)[["object"]]
+    object <- visualization_pipeline(test_set, metacell = metacell)[["object"]]
     average.expr <- NULL
     clustering <- NULL
     if(metacell){
