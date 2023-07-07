@@ -725,13 +725,13 @@ checkCombArguments <- function(argList){
 # Part1. visualization
 # --------------------------------------------------------------------
 #' Construct a convenient Seurat pipeline
-#' @name scibet_visualization
-#' @usage Scibet_visualization(dataset, label)
+#' @name visualization_pipeline
+#' @usage visualization_pipeline(dataset, label)
 #' @param dataset The expression dataframe,
 #' with rows being cells, and columns being genes.
 #' The last column should be "label".
 #' @param label groundtruth or output of scibet function Test.
-scibet_visualization <- function(dataset,
+visualization_pipeline <- function(dataset,
                                  label=NULL,
                                  normalize=TRUE,
                                  reduction="umap",
