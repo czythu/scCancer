@@ -127,18 +127,21 @@ https://bioconductor.org/packages/release/bioc/html/edgeR.html
 ```R
 # install scCancer2.0
 devtools::install_github("czythu/scCancer")
+library(scCancer)
 ```
 
-(b) Temporary installation
+(b) Download .zip file of R package. Install scCancer1.0 and run temporary installation in scCancer2.rmd in the scCancer folder.
 
 ```R
 # install scCancer1.0
-# devtools::install_github("wguo-research/scCancer")
+devtools::install_github("wguo-research/scCancer")
+# Load all files in the folder
+suppressWarnings(load_all())
+suppressWarnings(document())
+library(scCancer)
 ```
 
-Download .zip file of scCancer2 package. Run vignettes/scCancer2.rmd in the scCancer folder. 
-
-See vignettes/scCancer2.rmd for temporary installation and demos.
+See vignettes/scCancer2.rmd for installation and demos.
 
 Recommended demo: CRC-example (Source: GSE146771)
 
@@ -160,5 +163,7 @@ checkPkg <- function(pkg){
 }
 if(!checkPkg("copykat")) devtools::install_github("navinlabcode/copykat")
 ```
+
+See vignettes/stcancer.rmd for demos.
 
 ## Citation

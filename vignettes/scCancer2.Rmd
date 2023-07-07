@@ -30,7 +30,6 @@ suppressMessages(library(edgeR))
 library(devtools)
 suppressWarnings(load_all())
 suppressWarnings(document())
-# library(scCancer2)
 library(scCancer)
 ```
 
@@ -52,7 +51,6 @@ path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
 # matrix <- read.table(gzfile(paste0(path, "data/ori/GSE146771_CRC.Leukocyte.10x.TPM.txt.gz")))
 # saveRDS(matrix, paste0(path, "data/ori/GSE146771_CRC_data.rds"))
 matrix <- readRDS(paste0(path, "data/ori/GSE146771_CRC_data.rds"))
-# gene.list <- read.table(paste0(system.file("txt", package = "scCancer2"), "/single_cell_features.tsv"))[,1:2]
 gene.list <- read.table(paste0(system.file("txt", package = "scCancer"), "/single_cell_features.tsv"))[,1:2]
 index <- which(rownames(matrix) %in% gene.list$V2)
 matrix.sub <- matrix[index,]
@@ -67,7 +65,6 @@ generate10Xdata(matrix = matrix.sub,
 ```{r}
 path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
 matrix <- readRDS(paste0(path, "data/ori/CRA001160_expression_sparse.rds"))
-# gene.list <- read.table(paste0(system.file("txt", package = "scCancer2"), "/single_cell_features.tsv"))[,1:2]
 gene.list <- read.table(paste0(system.file("txt", package = "scCancer"), "/single_cell_features.tsv"))[,1:2]
 index <- which(rownames(matrix) %in% gene.list$V2)
 matrix.sub <- matrix[index,]
