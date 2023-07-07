@@ -101,7 +101,7 @@ stat.results <- runScStatistics(
 # scAnnotation
 
 ```{r}
-# Run scAnnotation(annotation only)
+# Run scAnnotation
 anno.results <- runScAnnotation(
     dataPath = dataPath,
     statPath = statPath,
@@ -111,9 +111,8 @@ anno.results <- runScAnnotation(
     geneSet.method = "average",
     bool.runDiffExpr = F,
     bool.runCellClassify = T,
-    # roughlabel.path = file.path(savePath, "rough-labels.RDS"),
     bool.runCellSubtypeClassify = T,
-    subtypeClassifyMethod = "Scoring", # XGBoost
+    subtypeClassifyMethod = "Scoring",
     celltype.list = NULL,
     ct.templates = NULL,
     submodel.path = NULL,
@@ -121,7 +120,7 @@ anno.results <- runScAnnotation(
     unknown.cutoff = 0.3,
     subtype.umap = T,
     bool.runMalignancy = T,
-    malignancy.method = "xgboost",
+    malignancy.method = "xgboost", # Or: "inferCNV", "both"
     bool.intraTumor = T,
     bool.runCellCycle = T,
     bool.runStemness = T,
