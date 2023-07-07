@@ -81,21 +81,32 @@ R version: >= 3.5.0
 
 Quick start of scCancer2:
 
-1. Download .zip file of scCancer2 package
-
-2. Dependency installation
+1. Dependency installation
 
 Some dependent packages for scCancer2 (old version of scCancer, edgeR, garnett, xgboost, and org.Hs.eg.db) may not be installed automatically, so you can install them from the following steps. After installing them successfully, then you can run the vignettes/scCancer2.rmd
 
 ```R
-if(!checkPkg("harmony")) devtools::install_github("immunogenomics/harmony")
+checkPkg <- function(pkg){
+    return(requireNamespace(pkg, quietly = TRUE))
+}
+
+# Some frequently used packages 
+if(!checkPkg("Seurat")) BiocManager::install("Seurat")
+if(!checkPkg("knitr")) BiocManager::install("knitr")
+if(!checkPkg("GSVA")) BiocManager::install("GSVA")
+if(!checkPkg("pheatmap")) BiocManager::install("pheatmap")
+if(!checkPkg("ComplexHeatmap")) BiocManager::install("ComplexHeatmap")
+if(!checkPkg("markdown")) install.packages("markdown")
+if(!checkPkg("R.utils")) install.packages("R.utils")
 if(!checkPkg("RcppArmadillo")) install.packages("RcppArmadillo")
 if(!checkPkg("RcppProgress")) install.packages("RcppProgress")
+
+# Algorithms integrated in scCancer1.0
+if(!checkPkg("harmony")) devtools::install_github("immunogenomics/harmony")
 if(!checkPkg("NNLM")) devtools::install_github("linxihui/NNLM")
 if(!checkPkg("liger")) devtools::install_github("MacoskoLab/liger")
-# install scCancer1.0
-devtools::install_github("wguo-research/scCancer")
 
+# Algorithms integrated in scCancer2.0
 if(!checkPkg("monocle")) BiocManager::install(c("monocle"))
 if(!checkPkg("edgeR")) BiocManager::install(c("edgeR"))
 if(!checkPkg(c('DelayedArray','DelayedMatrixStats','org.Hs.eg.db','org.Mm.eg.db'))) BiocManager::install(c('DelayedArray','DelayedMatrixStats','org.Hs.eg.db','org.Mm.eg.db'))
@@ -109,16 +120,25 @@ https://cran.r-project.org/src/contrib/Archive/NNLM/
 
 https://bioconductor.org/packages/release/bioc/html/edgeR.html
 
-3. If you have already installed the above dependencies, you have 2 ways to run scCancer2.0:
+2. If you have already installed the above dependencies, you have 2 ways to run scCancer2.0:
 
-Run vignettes/scCancer2.rmd in the scCancer folder. See vignettes/scCancer2.rmd for temporary installation and demos.
-
-Or, if you want to completely update scCancer to the next version:
+(a) Recommended: if you want to completely update scCancer to the next version:
 
 ```R
 # install scCancer2.0
 devtools::install_github("czythu/scCancer")
 ```
+
+(b) Temporary installation
+
+```R
+# install scCancer1.0
+# devtools::install_github("wguo-research/scCancer")
+```
+
+Download .zip file of scCancer2 package. Run vignettes/scCancer2.rmd in the scCancer folder. 
+
+See vignettes/scCancer2.rmd for temporary installation and demos.
 
 Recommended demo: CRC-example (Source: GSE146771)
 
@@ -131,5 +151,14 @@ Recommended demo: CRC-example (Source: GSE146771)
 ## Package Installation and Quick Start for spatial transcriptome analysis
 
 See https://github.com/Miaoyx323/stCancer for details.
+
+Most of the dependencies are the same, only copyKAT need to be installed.
+
+```R
+checkPkg <- function(pkg){
+    return(requireNamespace(pkg, quietly = TRUE))
+}
+if(!checkPkg("copykat")) devtools::install_github("navinlabcode/copykat")
+```
 
 ## Citation

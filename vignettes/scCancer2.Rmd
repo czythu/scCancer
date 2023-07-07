@@ -125,12 +125,12 @@ anno.results <- runScAnnotation(
     subtype.umap = T,
     bool.runMalignancy = T,
     malignancy.method = "xgboost",
-    bool.intraTumor = F,
-    bool.runCellCycle = F,
-    bool.runStemness = F,
-    bool.runGeneSets = F,
-    bool.runExprProgram = F,
-    bool.runInteraction = F,
+    bool.intraTumor = T,
+    bool.runCellCycle = T,
+    bool.runStemness = T,
+    bool.runGeneSets = T,
+    bool.runExprProgram = T,
+    bool.runInteraction = T,
     genReport = T
 )
 ```
