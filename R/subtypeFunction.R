@@ -302,9 +302,9 @@ MarkerScore <- function(test_set,
         clustering <- as.character(object@meta.data[["RNA_snn_res.100"]])
     }
     object <- as.CellDataSet(object)
-    object <- estimateSizeFactors(object)
+    object <- monocle::estimateSizeFactors(object)
     # adjust cutoff parameter
-    suppressWarnings(marker_check <- check_markers(object,
+    suppressWarnings(marker_check <- garnett::check_markers(object,
                                   marker_file_path,
                                   db = database,
                                   cds_gene_id_type = "SYMBOL",
