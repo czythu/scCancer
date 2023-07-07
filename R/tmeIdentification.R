@@ -1,4 +1,6 @@
 #' @export
+#' @import monocle
+#' @import garnett
 trainSubAnnoModel <- function(data,
                               label,
                               markers.Path,
