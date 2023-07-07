@@ -1,9 +1,9 @@
 Package: scCancer
 Type: Package
 Title: A package for automated processing of single cell RNA-seq data in cancer
-Version: 2.2.1
+Version: 2.3.0
 Author: G-Lab
-Maintainer: Wenbo Guo <gwb17@mails.tsinghua.edu.cn>
+Maintainer: Wenbo Guo <gwb17@tsinghua.org.cn>, Zeyu Chen <chenzy22@mails.tsinghua.edu.cn>
 Description: The package 'scCancer' is focuses on processing and analyzing 
     scRNA-seq data for cancer research. Except routine data processing steps, 
     it also integrates several cancer-specific analyses. For example, 
@@ -43,6 +43,9 @@ Imports:
     survival,
     survminer,
     harmony,
-    liger
+    liger,
+	garnett,
+	org.Hs.eg.db,
+	xgboost
 Depends: R (>= 3.5.0)
 biocViews:
