@@ -24,7 +24,7 @@ trainSubAnnoModel <- function(data,
         ID <- sort(sample(nrow(data), train.ratio * nrow(data)))
         train_set <- data[ID,]      #construct reference set
         test_set <- data[-ID,]      #construct query set
-        object <- scibet_visualization(train_set, train_set$label)[["object"]]
+        object <- visualization_pipeline(train_set, train_set$label)[["object"]]
         object <- as.CellDataSet(object)
         object <- estimateSizeFactors(object)
         # sample selection
@@ -65,8 +65,8 @@ trainSubAnnoModel <- function(data,
         predict.unknown <- AssignUnknown(predict, result[["unknown"]])
         # umap visualization
         if(umap.visualization){
-            print(scibet_visualization(test_set, predict))
-            print(scibet_visualization(test_set, predict.unknown))
+            print(visualization_pipeline(test_set, predict))
+            print(visualization_pipeline(test_set, predict.unknown))
         }
         # confusion matrix for analysis
         if(confusion.matrix){
@@ -201,7 +201,7 @@ predSubType_Scoring <- function(expr,
                           theme(legend.position = "right",
                                 legend.text = element_text(size = legend.size)))
                 rm(tt.expr)
-                # print(scibet_visualization(testdata, label.predict)[["plot"]])
+                # print(visualization_pipeline(testdata, label.predict)[["plot"]])
             }
             return(label.predict)
         })
@@ -319,7 +319,7 @@ predSubType_XGBoost <- function(expr,
                 print(DimPlot(tt.expr, group.by = "cell.subtype",
                               repel = TRUE, label = FALSE, label.size = 3))
                 rm(tt.expr)
-                # print(scibet_visualization(testdata, label.predict)[["plot"]])
+                # print(visualization_pipeline(testdata, label.predict)[["plot"]])
             }
             subtypes.predict <- rbind(subtypes.predict, label.predict)
         }
