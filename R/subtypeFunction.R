@@ -282,6 +282,12 @@ CrossTest <- function(prob, test_set){
     return(predict)
 }
 
+
+#' MarkerScore
+#' @name MarkerScore
+#' @export
+#' @import monocle
+#' @import garnett
 MarkerScore <- function(test_set,
                         marker_file_path,
                         cutoff = 0.3,
