@@ -75,7 +75,7 @@ generate10Xdata(matrix = matrix.sub,
 ```
 
 
-## runScStatistics
+# scStatistics
 ```{r}
 path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
 # path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"

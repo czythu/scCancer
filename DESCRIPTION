@@ -44,6 +44,7 @@ Imports:
     survminer,
     harmony,
     liger,
+	monocle,
 	garnett,
 	org.Hs.eg.db,
 	xgboost
