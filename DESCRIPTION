@@ -11,7 +11,7 @@ Description: The package 'scCancer' is focuses on processing and analyzing
     prediction, cell malignancy estimation, gene set signature scores calculation,
     and expression programs identification. After all steps, the package can
     generate a user-friendly graphic report. 
-License: GPL-3
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
@@ -19,7 +19,8 @@ Suggests:
     rmarkdown,
     DropletUtils
 VignetteBuilder: knitr
-Imports: 
+Imports:
+	Biobase,
     cowplot,
     dplyr,
     ggExtra,

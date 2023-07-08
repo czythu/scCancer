@@ -78,7 +78,8 @@ SelectGenes <- function(expr, method="Entropy", k = 2000){
 #' @param object Seurat object of training set.
 #' @return representative.index A user-defined set of cells for training.
 #' @export
-#'
+#' @import org.Hs.eg.db
+#' @importFrom garnett check_markers
 SelectCells <- function(object,
                         marker_file_path,
                         cutoff = 0.75,
@@ -286,7 +287,9 @@ CrossTest <- function(prob, test_set){
 #' MarkerScore
 #' @name MarkerScore
 #' @export
-#' @import monocle garnett
+#' @import org.Hs.eg.db
+#' @importFrom DESeq2 estimateSizeFactors
+#' @importFrom garnett check_markers
 MarkerScore <- function(test_set,
                         marker_file_path,
                         cutoff = 0.3,
@@ -302,9 +305,9 @@ MarkerScore <- function(test_set,
         clustering <- as.character(object@meta.data[["RNA_snn_res.100"]])
     }
     object <- as.CellDataSet(object)
-    object <- monocle::estimateSizeFactors(object)
+    object <- estimateSizeFactors(object)
     # adjust cutoff parameter
-    suppressWarnings(marker_check <- garnett::check_markers(object,
+    suppressWarnings(marker_check <- check_markers(object,
                                   marker_file_path,
                                   db = database,
                                   cds_gene_id_type = "SYMBOL",

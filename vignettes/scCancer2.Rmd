@@ -30,6 +30,7 @@ suppressMessages(library(edgeR))
 library(devtools)
 suppressWarnings(load_all())
 suppressWarnings(document())
+# usethis::use_mit_license()
 library(scCancer)
 ```
 
@@ -74,16 +75,15 @@ generate10Xdata(matrix = matrix.sub,
                 outPath = paste0(path, "data/"))
 ```
 
-
 # scStatistics
 ```{r}
 path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
-# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
+# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/KC-example/"
 dataPath <- file.path(path, "data")
 # A path containing the scStatistics results
 statPath <- file.path(path, "result")
 # The sample name
-sampleName <- "CRC-Example"
+sampleName <- "KC-example"
 # The author name or a string used to mark the report.
 authorName <- "G-Lab@THU"
 # A path used to save the results files

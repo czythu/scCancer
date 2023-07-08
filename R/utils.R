@@ -74,7 +74,7 @@ getBarcodes <- function(data.path){
 #' a list containing a sparse matrix of the data from each type will be returned.
 #'
 #' @export
-#'
+#' @import Matrix
 Read10Xdata <- function(data.dir = NULL, gene.column = 2,
                         unique.features = TRUE, only.expr = TRUE){
     full.data <- list()
@@ -868,7 +868,7 @@ SimilarityHeatmap <- function(similarity.mar,
     }
 
     else if (celltype == "Endothelial"){
-        p1 <- pheatmap(similarity.mar,
+        p <- pheatmap(similarity.mar,
                        angle_col = 45,
                        cutree_rows = 4,
                        cutree_cols = 4,
