@@ -2,15 +2,15 @@
 
 ## Introduction
 
-We updated our R toolkit, scCancer, based on massive single-cell transcriptome and spatial transcriptome data.
+We updated our R toolkit, `scCancer`, based on massive single-cell transcriptome and spatial transcriptome data.
 
-1. Cell subtype annotation and cross-dataset label similarity: Our analysis mainly focused on cell subtype annotation by training multiple lightweight machine-learning models on scRNA-seq data. We proposed a method for quantitatively evaluating the similarity of cell subtype labels originating from different published datasets. We fully preserved the original labeling in cell atlases and analyzed the relationship between cell subtypes across datasets.
+1. `Cell subtype annotation` and `cross-dataset label similarity`: Our analysis mainly focused on cell subtype annotation by training multiple lightweight machine-learning models on scRNA-seq data. We proposed a method for quantitatively evaluating the similarity of cell subtype labels originating from different published datasets. We fully preserved the original labeling in cell atlases and analyzed the relationship between cell subtypes across datasets.
 
-2. Malignant cell identification: We constructed a reference dataset combining scRNA-seq and bulk RNA-seq data across multiple cancer types to identify the malignant cell in TME. We trained a model to identify malignant cells with high generalization ability and computational efficiency. 
+2. `Malignant cell identification`: We constructed a reference dataset combining scRNA-seq and bulk RNA-seq data across multiple cancer types to identify the malignant cell in TME. We trained a model to identify malignant cells with high generalization ability and computational efficiency. 
 
-3. Spatial transcriptome analysis: Finally, we integrated a spatial transcriptome analysis pipeline. It enables us to analyze TME from a spatial perspective systematically and automatically.
+3. `Spatial transcriptome analysis`: Finally, we integrated a spatial transcriptome analysis pipeline. It enables us to analyze TME from a spatial perspective systematically and automatically.
 
-With scCancer2, researchers can understand the composition of the TME more accurately from multiple dimensions.
+With `scCancer2`, researchers can understand the composition of the TME more accurately from multiple dimensions.
 
 ## Overview of scCancer2
 ![image](https://github.com/czythu/scCancer_MicroEnv/blob/master/CellSubtypeAnnotation/vignettes/Figure1.png)
@@ -90,7 +90,7 @@ library(scCancer)
 
 See vignettes/scCancer2.rmd for temporary installation and demos.
 
-(c) We provide a recommended demo [CRC-example (Source: GSE146771)](https://cloud.tsinghua.edu.cn/f/eeabce03650244cea46e/?dl=1) from 10X Genomics.
+(c) We provide a recommended demo [`CRC-example (Source: GSE146771)`](https://cloud.tsinghua.edu.cn/f/eeabce03650244cea46e/?dl=1) from 10X Genomics.
 
 ## Report Generation for scRNA-seq analysis
 
