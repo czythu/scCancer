@@ -88,9 +88,9 @@ suppressWarnings(document())
 library(scCancer)
 ```
 
-See vignettes/scCancer2.rmd for installation and demos.
+See vignettes/scCancer2.rmd for temporary installation and demos.
 
-Recommended demo: CRC-example (Source: GSE146771)
+(c) We provide a recommended demo [CRC-example (Source: GSE146771)](https://cloud.tsinghua.edu.cn/f/eeabce03650244cea46e/?dl=1) from 10X Genomics.
 
 ## Report Generation for scRNA-seq analysis
 
