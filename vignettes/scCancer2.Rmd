@@ -83,7 +83,8 @@ dataPath <- file.path(path, "data")
 # A path containing the scStatistics results
 statPath <- file.path(path, "result")
 # The sample name
-sampleName <- "KC-example"
+sampleName <- "CRC-example"
+# sampleName <- "KC-example"
 # The author name or a string used to mark the report.
 authorName <- "G-Lab@THU"
 # A path used to save the results files

@@ -34,8 +34,11 @@ checkPkg <- function(pkg){
     return(requireNamespace(pkg, quietly = TRUE))
 }
 
-# Some frequently used packages 
+# Some frequently used packages
+if(!checkPkg("BiocManager")) install.packages("BiocManager")
+if(!checkPkg("devtools")) install.packages("devtools")
 if(!checkPkg("Seurat")) BiocManager::install("Seurat")
+if(!checkPkg("Biobase")) BiocManager::install("Biobase")
 if(!checkPkg("knitr")) BiocManager::install("knitr")
 if(!checkPkg("GSVA")) BiocManager::install("GSVA")
 if(!checkPkg("pheatmap")) BiocManager::install("pheatmap")
