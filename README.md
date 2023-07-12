@@ -29,7 +29,7 @@ Quick start of scCancer2:
 
 1. Dependency installation
 
-Some dependent packages for scCancer2 (old version of scCancer, edgeR, garnett, xgboost, and org.Hs.eg.db) may not be installed automatically, so you can install them from the following steps. After installing them successfully, then you can run the vignettes/scCancer2.rmd
+Some dependent packages for scCancer2 (old version of scCancer, edgeR, garnett, xgboost, and org.Hs.eg.db) may not be installed automatically, so you can install them from the following steps. After installing them successfully, you can run the demos.
 
 ```R
 checkPkg <- function(pkg){
@@ -79,7 +79,9 @@ devtools::install_github("czythu/scCancer")
 library(scCancer)
 ```
 
-(b) Download .zip file of R package. Install scCancer1.0 and run temporary installation in [`scCancer2.rmd`](https://github.com/czythu/scCancer/blob/master/vignettes/) in the scCancer folder.
+See [scCancer2.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) for demos.
+
+(b) Download .zip file of R package. Install [scCancer](https://github.com/wguo-research/scCancer) and run temporary installation in [scCancer2.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) in the scCancer folder.
 
 ```R
 # install scCancer1.0
@@ -90,9 +92,7 @@ suppressWarnings(document())
 library(scCancer)
 ```
 
-See [scCancer2.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) for temporary installation and demos.
-
-(c) We provide a recommended demo [`CRC-example (Source: GSE146771)`](https://cloud.tsinghua.edu.cn/f/eeabce03650244cea46e/?dl=1) from 10X Genomics.
+(c) We provide a recommended data [`CRC-example (Source: GSE146771)`](https://cloud.tsinghua.edu.cn/f/eeabce03650244cea46e/?dl=1) from 10X Genomics.
 
 ## Report Generation for scRNA-seq analysis
 
