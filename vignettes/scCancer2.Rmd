@@ -112,7 +112,7 @@ anno.results <- runScAnnotation(
     geneSet.method = "average",
     bool.runDiffExpr = F,
     bool.runCellClassify = T,
-    bool.runCellSubtypeClassify = T,
+    bool.runCellSubtypeClassify = F,
     subtypeClassifyMethod = "Scoring",
     celltype.list = NULL,
     ct.templates = NULL,

@@ -452,7 +452,9 @@ predMalignantCell <- function(expr,
     model.ref <- xgb.load(model.path)
     # features <- read.table(genes.path)$V1
     features <- as.list(read.table(genes.path))[[1]]
-    testdata <- t(as.matrix(expr@assays$RNA@data))
+    new.expr <- ScaleData(expr, vars.to.regress = c("nCount_RNA", "mito.percent"),verbose = FALSE)
+    testdata <- t(as.matrix(new.expr@assays$RNA@data))
+    # testdata <- t(as.matrix(expr@assays$RNA@data))
     testdata <- testdata[,which(colnames(testdata) %in% features)]
     testdata <- align_XGBoost(testdata, rownames(testdata), features)
     testdata <- xgb.DMatrix(testdata)
@@ -465,8 +467,6 @@ predMalignantCell <- function(expr,
     predict.label[which(predict.label <= MALIGNANT.THRES)] <- "nonMalignant"
     cell.annotation$Malign.type <- predict.label
     # expr$Malign.type <- predict.label
-    # p1 <- DimPlot(expr, reduction = "tsne", group.by = "Malign.score")
-    # p2 <- DimPlot(expr, reduction = "tsne", group.by = "Malign.type")
 
     # plot
     p.results <- plotMalignancy(cell.annotation = cell.annotation,
