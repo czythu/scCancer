@@ -79,7 +79,7 @@ devtools::install_github("czythu/scCancer")
 library(scCancer)
 ```
 
-(b) Download .zip file of R package. Install scCancer1.0 and run temporary installation in scCancer2.rmd in the scCancer folder.
+(b) Download .zip file of R package. Install scCancer1.0 and run temporary installation in [`scCancer2.rmd`](https://github.com/czythu/scCancer/blob/master/vignettes/) in the scCancer folder.
 
 ```R
 # install scCancer1.0
@@ -90,7 +90,7 @@ suppressWarnings(document())
 library(scCancer)
 ```
 
-See vignettes/scCancer2.rmd for temporary installation and demos.
+See [scCancer2.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) for temporary installation and demos.
 
 (c) We provide a recommended demo [`CRC-example (Source: GSE146771)`](https://cloud.tsinghua.edu.cn/f/eeabce03650244cea46e/?dl=1) from 10X Genomics.
 
@@ -113,6 +113,6 @@ checkPkg <- function(pkg){
 if(!checkPkg("copykat")) devtools::install_github("navinlabcode/copykat")
 ```
 
-See vignettes/stcancer.rmd for demos.
+See [stCancer.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) for demos.
 
 ## Citation
