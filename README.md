@@ -13,7 +13,7 @@ We updated our R toolkit, `scCancer`, based on massive single-cell transcriptome
 With `scCancer2`, researchers can understand the composition of the TME more accurately from multiple dimensions.
 
 ## Overview of scCancer2
-![image](https://github.com/czythu/scCancer_MicroEnv/blob/master/CellSubtypeAnnotation/vignettes/Figure1.png)
+![image](https://github.com/czythu/scCancer/blob/master/inst/Overview.png)
 
 ## System Requirements
 
