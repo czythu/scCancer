@@ -245,13 +245,13 @@ h.ii <- h.ii + 1
 
 
 
-```{r malignancy, child=system.file("rmd", "malignancy.Rmd", package = "scCancer"), eval = results$bool.runMalignancy}
+```{r malignancy, child=system.file("rmd", "malignancy.Rmd", package = "scCancer"), eval = results$cnv.anno}
 ```
 
 
 
 
-```{r malignancy-xgboost, child=system.file("rmd", "malignancy-xgboost.Rmd", package = "scCancer"), eval = results$bool.runMalignancy}
+```{r malignancy-xgboost, child=system.file("rmd", "malignancy-xgboost.Rmd", package = "scCancer"), eval = results$xgboost.anno}
 ```
 
 

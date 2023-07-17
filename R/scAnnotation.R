@@ -1855,6 +1855,8 @@ runScAnnotation <- function(dataPath,
         # }else{
         #
         # }
+        results[["cnv.anno"]] <- FALSE
+        results[["xgboost.anno"]] <- FALSE
         if(malignancy.method == "inferCNV" | malignancy.method == "both"){
             message("[", Sys.time(), "] -----: malignant cells identification with inferCNV")
             t.results <- runMalignancy(expr = expr,
@@ -1877,6 +1879,7 @@ runScAnnotation <- function(dataPath,
             results[["malign.thres"]] <- t.results$malign.thres
             # results[["bimodal.pvalue"]] <- t.results$bimodal.pvalue
             results[["malign.plot.cnv"]] <- t.results$p.results
+            results[["cnv.anno"]] <- TRUE
             rm(t.results)
         }
         if(malignancy.method == "xgboost" | malignancy.method == "both"){
@@ -1889,6 +1892,7 @@ runScAnnotation <- function(dataPath,
             cell.annotation <- t.results$cell.annotation
             results[["malign.plot.xgboost"]] <- t.results$plot
             rm(t.results)
+            results[["xgboost.anno"]] <- TRUE
         }
     }
 
