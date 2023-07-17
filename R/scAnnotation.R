@@ -1848,6 +1848,8 @@ runScAnnotation <- function(dataPath,
     }
 
     ## --------- malignancy ---------
+    results[["cnv.anno"]] <- FALSE
+    results[["xgboost.anno"]] <- FALSE
     if(bool.runMalignancy){
         # if(species != "human"){
         #     cat("- Warning in 'runScAnnotation': To perform 'runMalignancy', the argument 'species' needs to be 'human'.\n")
@@ -1855,8 +1857,6 @@ runScAnnotation <- function(dataPath,
         # }else{
         #
         # }
-        results[["cnv.anno"]] <- FALSE
-        results[["xgboost.anno"]] <- FALSE
         if(malignancy.method == "inferCNV" | malignancy.method == "both"){
             message("[", Sys.time(), "] -----: malignant cells identification with inferCNV")
             t.results <- runMalignancy(expr = expr,
@@ -1883,7 +1883,7 @@ runScAnnotation <- function(dataPath,
             rm(t.results)
         }
         if(malignancy.method == "xgboost" | malignancy.method == "both"){
-            message("[", Sys.time(), "] -----: malignant cells identification with XGBoost")
+            message("[", Sys.time(), "] -----: malignant cells identification with XGBoost model")
             t.results <- predMalignantCell(expr = expr,
                                            cell.annotation = cell.annotation,
                                            malignancy.method = "xgboost",

@@ -26,11 +26,15 @@ suppressMessages(library(dplyr))
 suppressMessages(library(edgeR))
 ```
 
+# Temporary installation
 ```{r}
 library(devtools)
 suppressWarnings(load_all())
 suppressWarnings(document())
 # usethis::use_mit_license()
+library(scCancer)
+```
+```{r}
 library(scCancer)
 ```
 
