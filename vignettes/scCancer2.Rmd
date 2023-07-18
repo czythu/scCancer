@@ -11,7 +11,7 @@ gc()
 options(stringsAsFactors = F)
 ```
 
-# Import Packages
+# Temporary installation: Import dependencies and R functions
 ```{r}
 suppressMessages(library(Seurat))
 suppressMessages(library(org.Hs.eg.db))
@@ -24,17 +24,16 @@ suppressMessages(library(viridis))
 suppressMessages(library(magrittr))
 suppressMessages(library(dplyr))
 suppressMessages(library(edgeR))
-```
-
-# Temporary installation
-```{r}
 library(devtools)
 suppressWarnings(load_all())
 suppressWarnings(document())
 # usethis::use_mit_license()
 library(scCancer)
 ```
+
+# Install scCancer directly
 ```{r}
+# devtools::install_github("czythu/scCancer")
 library(scCancer)
 ```
 
