@@ -875,7 +875,7 @@ SimilarityHeatmap <- function(similarity.mar,
                        clustering_method = "ward.D",
                        color=colorRampPalette(c("#FFFFD4", "#FED98E", "#FE9929", "#D95F0E"))(50),
                        main = paste0(celltype, " similarity map"),
-                       fontsize = 8,
+                       fontsize = 11,
                        display_numbers = TRUE,
                        number_format = "%.2f")
     }

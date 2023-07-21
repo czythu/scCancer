@@ -179,7 +179,7 @@ predSubType_Scoring <- function(expr,
             likelihoods <- output[["likelihoods"]]
             likelihoods <- t(apply(likelihoods, 1, function(l){return(l - min(l))}))
             probability <- likelihoods / rowSums(likelihoods)
-            saveRDS(probability, paste0(savePath, "normalized-likelihood-", index, ".rds"))
+            saveRDS(probability, paste0(savePath, "/normalized-likelihood-", index, ".rds"))
             label.predict <- paste0(label.predict, " (", index, ")")
             label.predict <- AssignUnknown(NULL, label.predict, result[["unknown"]])[["predict.unknown"]]
             if(umap.plot){
@@ -208,9 +208,8 @@ predSubType_Scoring <- function(expr,
             return(label.predict)
         })
         normalized.likelihood <- lapply(seq_len(length(file.path1)), function(index){
-            file.path <- paste0(savePath, "normalized-likelihood-", index, ".rds")
+            file.path <- paste0(savePath, "/normalized-likelihood-", index, ".rds")
             likelihood <- readRDS(file.path)
-
             file.remove(file.path)
             return(likelihood)
         })
@@ -230,18 +229,17 @@ predSubType_Scoring <- function(expr,
 
 # adjust testdata for XGBoost(common features)
 align_XGBoost <- function(test, barcodes, features){
-    temp <- matrix(nrow = nrow(test), ncol = length(features),
+    temp <- matrix(data = 0, nrow = nrow(test), ncol = length(features),
                    dimnames = list(barcodes, features))
     current.features <- colnames(test)
     for(j in 1:length(features)){
         if(features[j] %in% current.features){
             temp[,j] <- test[, features[j]]
         }
-        else{
-            temp[,j] <- rep(0, length(barcodes))
-            # temp[,j] <- sample(seq(0,10), length(barcodes), replace=TRUE)
-        }
-
+        # else{
+        #     temp[,j] <- rep(0, length(barcodes))
+        #     # temp[,j] <- sample(seq(0,10), length(barcodes), replace=TRUE)
+        # }
     }
     return(temp)
 }
@@ -349,7 +347,9 @@ similarityCalculation <- function(fine.labels, savePath){
             predict <- t(predict)
             all.results <- c()
             all.labels <- c()
-            for(j in 1:dim(predict)[1]){
+            dims <- dim(predict)
+            for (j in 1:dims[1]) {
+                # print(j)
                 all.results <- c(all.results, predict[j, ])
                 all.labels <- c(all.labels, unique(as.list(predict[j, ])))
             }
@@ -421,6 +421,7 @@ runCellSubtypeClassify <- function(expr,
     #                             savePath,
     #                             celltype.list,
     #                             umap.plot)
+    message("[", Sys.time(), "] -----: Generation of similarity maps")
     similarity.matrix <- similarityCalculation(fine.labels, savePath)
 
     return(list(fine.labels = fine.labels,
@@ -445,17 +446,14 @@ predMalignantCell <- function(expr,
                               MALIGNANT.THRES = 0.5,
                               model.path = NULL,
                               genes.path = NULL){
-    # model.path <- paste0(system.file("txt", package = "scCancer2"), "/sc_xgboost.model")
-    # genes.path <- paste0(system.file("txt", package = "scCancer2"), "/genes-scRNA-tcga-sorted.txt")
     model.path <- paste0(system.file("txt", package = "scCancer"), "/sc_xgboost.model")
     genes.path <- paste0(system.file("txt", package = "scCancer"), "/genes-scRNA-tcga-sorted.txt")
     model.ref <- xgb.load(model.path)
     # features <- read.table(genes.path)$V1
     features <- as.list(read.table(genes.path))[[1]]
-    new.expr <- ScaleData(expr, vars.to.regress = c("nCount_RNA", "mito.percent"),verbose = FALSE)
-    testdata <- t(as.matrix(new.expr@assays$RNA@data))
+    testdata <- t(as.matrix(expr@assays$RNA@scale.data))
     # testdata <- t(as.matrix(expr@assays$RNA@data))
-    testdata <- testdata[,which(colnames(testdata) %in% features)]
+    # testdata <- testdata[,which(colnames(testdata) %in% features)]
     testdata <- align_XGBoost(testdata, rownames(testdata), features)
     testdata <- xgb.DMatrix(testdata)
     predict.label <- predict(model.ref, testdata)

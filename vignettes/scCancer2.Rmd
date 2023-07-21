@@ -81,17 +81,19 @@ generate10Xdata(matrix = matrix.sub,
 # scStatistics
 ```{r}
 path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
-# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/KC-example/"
+# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE140228/"
+# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
 dataPath <- file.path(path, "data")
 # A path containing the scStatistics results
 statPath <- file.path(path, "result")
 # The sample name
 sampleName <- "CRC-example"
 # sampleName <- "KC-example"
+# sampleName <- "PDAC-example"
 # The author name or a string used to mark the report.
 authorName <- "G-Lab@THU"
 # A path used to save the results files
-savePath <- paste0(path, "result")
+savePath <- file.path(path, "result")
 
 # Run scStatistics
 stat.results <- runScStatistics(
@@ -113,7 +115,8 @@ anno.results <- runScAnnotation(
     authorName = authorName,
     sampleName = sampleName,
     geneSet.method = "average",
-    bool.runDiffExpr = T,
+    vars.to.regress = c("nCount_RNA", "mito.percent"),
+    bool.runDiffExpr = F,
     bool.runCellClassify = T,
     bool.runCellSubtypeClassify = T,
     subtypeClassifyMethod = "Scoring",
@@ -124,14 +127,68 @@ anno.results <- runScAnnotation(
     unknown.cutoff = 0.3,
     subtype.umap = T,
     bool.runMalignancy = T,
-    malignancy.method = "xgboost", # Or: "inferCNV", "both"
+    malignancy.method = "both", # Or: "inferCNV", "both"
     bool.intraTumor = T,
-    bool.runCellCycle = T,
-    bool.runStemness = T,
-    bool.runGeneSets = T,
-    bool.runExprProgram = T,
-    bool.runInteraction = T,
+    bool.runCellCycle = F,
+    bool.runStemness = F,
+    bool.runGeneSets = F,
+    bool.runExprProgram = F,
+    bool.runInteraction = F,
     genReport = T
 )
+```
+
+```{r}
+samples <- c('CC009', 'cc006', 'YS2306057_AV_230615', 'YS2306057_BD_230615', 'YS2306057_NL_230615',
+             'YS2306060_AV_230615', 'YS2306060_NL_230615', 'icc010',
+             '20200208-PAC-CRR034523-N4-Normal', '20200208-PAC-CRR034524-N5-Normal',
+             '20180625-HCC-P4-Tumor-New', '20181024-KC-P7-Tumor-vCR3',
+             '20200208-PAC-CRR034517-T22-Tumor', 
+             'cc001', 'cc003', 'cc002')
+for (sample in samples){
+    print(sample)
+    path <- paste0("D:/scCancer-data/SubtypeAnno/Demo-pipeline/", sample)
+    dataPath <- file.path(path, "data")
+    statPath <- file.path(path, "result")
+    sampleName <- sample
+    authorName <- "G-Lab@THU"
+    savePath <- file.path(path, "result")
+    
+    stat.results <- runScStatistics(
+        dataPath = dataPath,
+        savePath = savePath,
+        sampleName = sampleName,
+        authorName = authorName)
+
+    anno.results <- runScAnnotation(
+        dataPath = dataPath,
+        statPath = statPath,
+        savePath = savePath,
+        authorName = authorName,
+        sampleName = sampleName,
+        geneSet.method = "average",
+        # bool.filter.gene = F,
+        vars.to.regress = c("nCount_RNA", "mito.percent"),
+        bool.runDiffExpr = F,
+        bool.runCellClassify = T,
+        bool.runCellSubtypeClassify = T,
+        subtypeClassifyMethod = "Scoring",
+        celltype.list = NULL,
+        ct.templates = NULL,
+        submodel.path = NULL,
+        markers.path = NULL,
+        unknown.cutoff = 0.3,
+        subtype.umap = T,
+        bool.runMalignancy = T,
+        malignancy.method = "xgboost", # "xgboost", inferCNV", "both"
+        bool.intraTumor = T,
+        bool.runCellCycle = F,
+        bool.runStemness = F,
+        bool.runGeneSets = F,
+        bool.runExprProgram = F,
+        bool.runInteraction = F,
+        genReport = T
+)
+}
 ```
 
