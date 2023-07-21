@@ -353,7 +353,7 @@ similarityCalculation <- function(fine.labels, savePath){
                 all.results <- c(all.results, predict[j, ])
                 all.labels <- c(all.labels, unique(as.list(predict[j, ])))
             }
-            all.labels <- all.labels[-which(all.labels == "unknown")]
+            all.labels <- all.labels[which(all.labels != "unknown")]
             cell.sets <- lapply(all.labels, function(label){
                 index <- which(all.results == label)
                 cells <- names(all.results)[index]
@@ -452,6 +452,7 @@ predMalignantCell <- function(expr,
     # features <- read.table(genes.path)$V1
     features <- as.list(read.table(genes.path))[[1]]
     testdata <- t(as.matrix(expr@assays$RNA@scale.data))
+    print(dim(testdata))
     # testdata <- t(as.matrix(expr@assays$RNA@data))
     # testdata <- testdata[,which(colnames(testdata) %in% features)]
     testdata <- align_XGBoost(testdata, rownames(testdata), features)

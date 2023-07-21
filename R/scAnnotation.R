@@ -162,7 +162,7 @@ prepareSeurat <- function(dataPath, statPath, savePath,
 
     message("[", Sys.time(), "] -----: Seurat object creation")
     expr = CreateSeuratObject(counts = expr.data,
-                              min.cells = 0,
+                              min.cells = 3,
                               min.features = 0,
                               project = sampleName)
 
@@ -185,9 +185,13 @@ prepareSeurat <- function(dataPath, statPath, savePath,
 
     message("[", Sys.time(), "] -----: highly variable genes")
     expr <- FindVariableFeatures(expr, selection.method = "vst", nfeatures = 2000, verbose = F)
+    # expr <- FindVariableFeatures(expr, selection.method = "vst",
+    #                              nfeatures = min(30000, length(rownames(expr))), verbose = F)
 
     message("[", Sys.time(), "] -----: data scaling")
+    print(length(rownames(expr)))
     expr <- ScaleData(object = expr,
+                      features =  rownames(expr),
                       vars.to.regress = vars.to.regress,
                       verbose = F)
 
