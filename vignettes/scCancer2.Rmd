@@ -139,17 +139,16 @@ anno.results <- runScAnnotation(
 ```
 
 ```{r}
-samples <- c('20200215-HCC-Pt14d-Tumor', '20200208-PAC-CRR034517-T22-Tumor',
-             '20180625-HCC-P4-Tumor-New', '20181024-KC-P7-Tumor-vCR3', 
+samples <- c('20200208-PAC-CRR034523-N4-Normal', '20200208-PAC-CRR034524-N5-Normal',
+             '20200215-HCC-Pt14d-Tumor', '20200208-PAC-CRR034517-T22-Tumor',
+             '20180625-HCC-P4-Tumor-New', '20181024-KC-P7-Tumor-vCR3',
              'YS2306057_AV_230615', 'YS2306057_BD_230615', 'YS2306057_NL_230615',
              'YS2306060_AV_230615', 'YS2306060_NL_230615',
-             '20200208-PAC-CRR034523-N4-Normal', '20200208-PAC-CRR034524-N5-Normal', 
              'cc001', 'cc002', 'cc003', 'cc006', 'CC009', 'icc010')
-samples <- c('20200208-PAC-CRR034523-N4-Normal', '20200208-PAC-CRR034524-N5-Normal', 
-             'YS2306057_AV_230615', '20181024-KC-P7-Tumor-vCR3', 'cc001',
-             'YS2306057_BD_230615', '20200208-PAC-CRR034524-N5-Normal', 
-             'cc002', '20200208-PAC-CRR034517-T22-Tumor',
-             '20180625-HCC-P4-Tumor-New')
+# samples <- c('20200208-PAC-CRR034523-N4-Normal', '20200208-PAC-CRR034524-N5-Normal',
+#              'YS2306057_AV_230615', '20181024-KC-P7-Tumor-vCR3', 'cc001',
+#              'YS2306057_BD_230615', 'cc002', '20200208-PAC-CRR034517-T22-Tumor',
+#              '20180625-HCC-P4-Tumor-New')
 for (sample in samples){
     print(sample)
     path <- paste0("D:/scCancer-data/SubtypeAnno/Demo-pipeline/", sample)
@@ -172,7 +171,6 @@ for (sample in samples){
         authorName = authorName,
         sampleName = sampleName,
         geneSet.method = "average",
-        bool.filter.gene = F,
         vars.to.regress = c("nCount_RNA", "mito.percent"),
         bool.runDiffExpr = F,
         bool.runCellClassify = T,

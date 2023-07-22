@@ -111,6 +111,7 @@ checkPkg <- function(pkg){
     return(requireNamespace(pkg, quietly = TRUE))
 }
 if(!checkPkg("copykat")) devtools::install_github("navinlabcode/copykat")
+devtools::install_github("Miaoyx323/stCancer")
 ```
 
 See [stCancer.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) for demos.
