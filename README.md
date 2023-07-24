@@ -99,6 +99,14 @@ library(scCancer)
 
 (c) We provide a recommended data [`CRC-example (Source: GSE146771)`](https://cloud.tsinghua.edu.cn/f/eeabce03650244cea46e/?dl=1) from 10X Genomics.
 
+## A Python module for malignant cell identification
+
+If you are only interested in identifying malignant cells in your own samples or want to reproduce Figure4 in our manuscript, we highly recommend using the pipeline [Figure4.ipynb](https://github.com/czythu/scCancer_MicroEnv/tree/master/MalignantCellIdentification)
+
+The constructed reference and several query data sets have been uploaded to: .
+
+The basic processing steps are relied on package `scanpy`, `sklearn` and `xgboost`.
+
 ## Report Generation for scRNA-seq analysis
 
 1. The results of cell subtype annotation are stored in folder: cellSubtypeAnno/
