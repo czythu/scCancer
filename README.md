@@ -65,11 +65,14 @@ if(!checkPkg("garnett")) devtools::install_github("cole-trapnell-lab/garnett")
 if(!checkPkg("xgboost")) install.packages("xgboost")
 ```
 
-if errors occur when installing "NNLM" or "edgeR", you may install them from the .tar.gz file:
+if errors occur when installing "NNLM", "edgeR" or "harmony", you may install them from the .tar.gz file:
 
 https://cran.r-project.org/src/contrib/Archive/NNLM/
 
 https://bioconductor.org/packages/release/bioc/html/edgeR.html
+
+We noticed that directly installing harmony from CRAN might meet this bug: [harmony/issues/](https://github.com/immunogenomics/harmony/issues/159),
+you may download the source package from https://github.com/immunogenomics/harmony/releases/tag/0.1. to run scCombination.
 
 2. If you have already installed the above dependencies, you have 2 ways to run scCancer2.0:
 
