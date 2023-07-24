@@ -44,7 +44,7 @@ Imports:
     survival,
     survminer,
     harmony,
-    liger,
+    rliger,
 	monocle,
 	garnett,
 	org.Hs.eg.db,

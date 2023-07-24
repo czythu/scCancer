@@ -51,9 +51,11 @@ if(!checkPkg("RcppArmadillo")) install.packages("RcppArmadillo")
 if(!checkPkg("RcppProgress")) install.packages("RcppProgress")
 
 # Algorithms integrated in scCancer1.0
-if(!checkPkg("harmony")) devtools::install_github("immunogenomics/harmony")
 if(!checkPkg("NNLM")) devtools::install_github("linxihui/NNLM")
-if(!checkPkg("liger")) devtools::install_github("MacoskoLab/liger")
+# if(!checkPkg("harmony")) devtools::install_github("immunogenomics/harmony")
+# if(!checkPkg("liger")) devtools::install_github("MacoskoLab/liger")
+if(!checkPkg("harmony")) install.packages("harmony")
+if(!checkPkg("liger")) install.packages("rliger")
 
 # Algorithms integrated in scCancer2.0
 if(!checkPkg("monocle")) BiocManager::install(c("monocle"))

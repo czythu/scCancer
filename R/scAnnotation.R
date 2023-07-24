@@ -189,7 +189,7 @@ prepareSeurat <- function(dataPath, statPath, savePath,
                                  nfeatures = min(10000, length(rownames(expr))), verbose = F)
 
     message("[", Sys.time(), "] -----: data scaling")
-    print(length(rownames(expr)))
+    # print(length(rownames(expr)))
     expr <- ScaleData(object = expr,
                       # features =  rownames(expr),
                       vars.to.regress = vars.to.regress,

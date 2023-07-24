@@ -452,7 +452,7 @@ predMalignantCell <- function(expr,
     # features <- read.table(genes.path)$V1
     features <- as.list(read.table(genes.path))[[1]]
     testdata <- t(as.matrix(expr@assays$RNA@scale.data))
-    print(dim(testdata))
+    # print(dim(testdata))
     # testdata <- t(as.matrix(expr@assays$RNA@data))
     # testdata <- testdata[,which(colnames(testdata) %in% features)]
     testdata <- align_XGBoost(testdata, rownames(testdata), features)

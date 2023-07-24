@@ -828,7 +828,7 @@ ConfusionMatrix <- function(name.reference, name.prediction,
 #' @export
 SimilarityHeatmap <- function(similarity.mar,
                               celltype){
-    if (celltype == "B cell"){
+    if (celltype == "B.cells"){
         p <- pheatmap(similarity.mar,
                        angle_col = 45,
                        cutree_rows = 3,
@@ -841,7 +841,7 @@ SimilarityHeatmap <- function(similarity.mar,
                        number_format = "%.2f")
     }
 
-    else if (celltype == "T cell"){
+    else if (celltype == "T.cells"){
         p <- pheatmap(similarity.mar,
                        angle_col = 45,
                        cutree_rows = 16,
@@ -854,7 +854,7 @@ SimilarityHeatmap <- function(similarity.mar,
                        number_format = "%.1f")
     }
 
-    else if (celltype == "Myeloid cell"){
+    else if (celltype == "Myeloid.cells"){
         p <- pheatmap(similarity.mar,
                        angle_col = 45,
                        cutree_rows = 11,
