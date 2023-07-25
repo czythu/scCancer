@@ -37,7 +37,7 @@ library(scCancer)
 library(scCancer)
 ```
 
-# Data processing
+# Data processing for filtered_bc_matrix/
 ## GSE140228:.mtx, .tsv.gz file
 ```{r}
 path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE140228/"
@@ -65,7 +65,6 @@ generate10Xdata(matrix = matrix.sub,
 ```
 
 ## DEMO2(Stromal cell), CRA001160
-### with prior knowledge(.rds marker file)
 ```{r}
 path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
 matrix <- readRDS(paste0(path, "data/ori/CRA001160_expression_sparse.rds"))
@@ -140,6 +139,7 @@ anno.results <- runScAnnotation(
 )
 ```
 
+# Loop for multi-samples
 ```{r}
 samples <- c('CRA001160', 'GSE146771',
              '20200208-PAC-CRR034523-N4-Normal', '20200208-PAC-CRR034524-N5-Normal',
@@ -177,7 +177,7 @@ for (sample in samples){
         sampleName = sampleName,
         geneSet.method = "average",
         vars.to.regress = c("nCount_RNA", "mito.percent"),
-        bool.runDiffExpr = F,
+        bool.runDiffExpr = F, # False to save time
         bool.runCellClassify = T,
         bool.runCellSubtypeClassify = T,
         subtypeClassifyMethod = "Scoring",
@@ -188,12 +188,12 @@ for (sample in samples){
         unknown.cutoff = 0.3,
         subtype.umap = T,
         bool.runMalignancy = T,
-        malignancy.method = "xgboost", # "xgboost", inferCNV", "both"
+        malignancy.method = "xgboost", # or "inferCNV", "both", recommend "both" for single sample
         bool.intraTumor = T,
         bool.runCellCycle = T,
         bool.runStemness = T,
         bool.runGeneSets = T,
-        bool.runExprProgram = T,
+        bool.runExprProgram = T, # False to save time
         bool.runInteraction = T,
         genReport = T
     )
