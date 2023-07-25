@@ -97,13 +97,23 @@ suppressWarnings(document())
 library(scCancer)
 ```
 
-(c) We provide a recommended data [`CRC-example (Source: GSE146771)`](https://cloud.tsinghua.edu.cn/f/eeabce03650244cea46e/?dl=1) from 10X Genomics.
+(c) We provide 5 recommended data sets, including 2 large-scale published datasets (multi-sample) and 3 unpublished data (single-sample).
+
+[`CRC-example-immune (Source: GSE146771)`](https://cloud.tsinghua.edu.cn/f/dc6178e9a37746cf9f11/?dl=1)
+
+[`PAC-example-tumor (Source: CRA001160)`](https://cloud.tsinghua.edu.cn/f/a7b70953a42048ccb231/?dl=1)
+
+[`KC-example-tumor`](https://cloud.tsinghua.edu.cn/f/6b29aab86fc94340832e/?dl=1)
+
+[`PAC-example-normal`](https://cloud.tsinghua.edu.cn/f/3f4715952407477b8b3a/?dl=1)
+
+[`Organoid-example-epithelial`](https://cloud.tsinghua.edu.cn/f/5519909386244a058255/?dl=1)
 
 ## A Python module for malignant cell identification
 
 If you are only interested in identifying malignant cells in your own samples or want to reproduce Figure4 in our manuscript, we highly recommend using the pipeline [Figure4.ipynb](https://github.com/czythu/scCancer_MicroEnv/tree/master/MalignantCellIdentification)
 
-The constructed reference and several query data sets have been uploaded to: .
+The constructed reference data set, several query data sets and the trained model have been uploaded to: ......
 
 The basic processing steps are relied on package `scanpy`, `sklearn` and `xgboost`.
 

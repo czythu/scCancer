@@ -148,10 +148,12 @@ samples <- c('CRA001160', 'GSE146771',
              'YS2306057_AV_230615', 'YS2306057_BD_230615', 'YS2306057_NL_230615',
              'YS2306060_AV_230615', 'YS2306060_NL_230615',
              'cc001', 'cc002', 'cc003', 'cc006', 'CC009', 'icc010')
-# samples <- c('20200208-PAC-CRR034523-N4-Normal', '20200208-PAC-CRR034524-N5-Normal',
-#              'YS2306057_AV_230615', '20181024-KC-P7-Tumor-vCR3', 'cc001',
-#              'YS2306057_BD_230615', 'cc002', '20200208-PAC-CRR034517-T22-Tumor',
-#              '20180625-HCC-P4-Tumor-New')
+# samples <- c('20181024-KC-P7-Tumor-vCR3', '20200208-PAC-CRR034517-T22-Tumor',
+#              'YS2306057_BD_230615', 'cc001', 'cc002', 
+#              '20200208-PAC-CRR034524-N5-Normal',
+#              '20200208-PAC-CRR034523-N4-Normal', '20180625-HCC-P4-Tumor-New',
+#              'YS2306057_AV_230615')
+# samples <- c('CRA001160', 'GSE146771')
 for (sample in samples){
     print(sample)
     path <- paste0("D:/scCancer-data/SubtypeAnno/Demo-pipeline/", sample)

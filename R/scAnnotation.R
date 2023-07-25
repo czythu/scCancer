@@ -185,8 +185,10 @@ prepareSeurat <- function(dataPath, statPath, savePath,
 
     message("[", Sys.time(), "] -----: highly variable genes")
     # expr <- FindVariableFeatures(expr, selection.method = "vst", nfeatures = 2000, verbose = F)
+    # expr <- FindVariableFeatures(expr, selection.method = "vst",
+    #                              nfeatures = min(10000, length(rownames(expr))), verbose = F)
     expr <- FindVariableFeatures(expr, selection.method = "vst",
-                                 nfeatures = min(10000, length(rownames(expr))), verbose = F)
+                                 nfeatures = min(5000, length(rownames(expr))), verbose = F)
 
     message("[", Sys.time(), "] -----: data scaling")
     # print(length(rownames(expr)))
