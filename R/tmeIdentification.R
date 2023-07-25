@@ -366,21 +366,13 @@ similarityCalculation <- function(fine.labels, savePath){
             # Heatmap and Hierarchical clustering
             plot.title <- paste0("similarity map of ", celltype)
             # small similarity map
+            pdf.size = 15
             if(dim(similarity.mar)[1] <= 4^2){
-                pdf(file = file.path(savePath, paste0("similarity-", celltype, ".pdf")),
-                    width = 8, height = 8)
-                # SimilarityMap(plot.title, "reference = ...", similarity.mar,
-                #               number.digits = 2, number.cex = 1, tl.cex = 1)
-                SimilarityHeatmap(similarity.mar, celltype)
+                pdf.size = 8
             }
-            # huge similarity map
-            else{
-                pdf(file = file.path(savePath, paste0("similarity-", celltype, ".pdf")),
-                    width = 15, height = 15)
-                # SimilarityMap(plot.title, "reference = ...", similarity.mar,
-                #               number.digits = 1, number.cex = 0.6, tl.cex = 0.7)
-                SimilarityHeatmap(similarity.mar, celltype)
-            }
+            pdf(file = file.path(savePath, paste0("similarity-", celltype, ".pdf")),
+                width = pdf.size, height = pdf.size)
+            print(SimilarityHeatmap(similarity.mar, celltype))
             dev.off()
             return(similarity.mar)
         }

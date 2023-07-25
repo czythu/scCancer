@@ -82,7 +82,7 @@ generate10Xdata(matrix = matrix.sub,
 # path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
 # path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE140228/"
 # path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
-path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/20190913-HCC-P8-Normal/"
+path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/STAD-ascites-2/"
 dataPath <- file.path(path, "data")
 # A path containing the scStatistics results
 statPath <- file.path(path, "result")
@@ -90,7 +90,7 @@ statPath <- file.path(path, "result")
 # sampleName <- "CRC-example"
 # sampleName <- "KC-example"
 # sampleName <- "PDAC-example"
-sampleName <- "HCC-example"
+sampleName <- "STAD-example"
 # The author name or a string used to mark the report.
 authorName <- "G-Lab@THU"
 # A path used to save the results files
@@ -141,19 +141,20 @@ anno.results <- runScAnnotation(
 
 # Loop for multi-samples
 ```{r}
-samples <- c('CRA001160', 'GSE146771',
-             '20200208-PAC-CRR034523-N4-Normal', '20200208-PAC-CRR034524-N5-Normal',
-             '20200215-HCC-Pt14d-Tumor', '20200208-PAC-CRR034517-T22-Tumor',
-             '20180625-HCC-P4-Tumor-New', '20181024-KC-P7-Tumor-vCR3',
-             'YS2306057_AV_230615', 'YS2306057_BD_230615', 'YS2306057_NL_230615',
-             'YS2306060_AV_230615', 'YS2306060_NL_230615',
-             'cc001', 'cc002', 'cc003', 'cc006', 'CC009', 'icc010')
+# samples <- c('CRA001160', 'GSE146771',
+#              '20200208-PAC-CRR034523-N4-Normal', '20200208-PAC-CRR034524-N5-Normal',
+#              '20200215-HCC-Pt14d-Tumor', '20200208-PAC-CRR034517-T22-Tumor',
+#              '20180625-HCC-P4-Tumor-New', '20181024-KC-P7-Tumor-vCR3',
+#              'YS2306057_AV_230615', 'YS2306057_BD_230615', 'YS2306057_NL_230615',
+#              'YS2306060_AV_230615', 'YS2306060_NL_230615',
+#              'cc001', 'cc002', 'cc003', 'cc006', 'CC009', 'icc010')
 # samples <- c('20181024-KC-P7-Tumor-vCR3', '20200208-PAC-CRR034517-T22-Tumor',
 #              'YS2306057_BD_230615', 'cc001', 'cc002', 
 #              '20200208-PAC-CRR034524-N5-Normal',
 #              '20200208-PAC-CRR034523-N4-Normal', '20180625-HCC-P4-Tumor-New',
 #              'YS2306057_AV_230615')
 # samples <- c('CRA001160', 'GSE146771')
+samples <- c("STAD-ascites-1", "STAD-ascites-2", "STAD-example")
 for (sample in samples){
     print(sample)
     path <- paste0("D:/scCancer-data/SubtypeAnno/Demo-pipeline/", sample)
@@ -193,7 +194,7 @@ for (sample in samples){
         bool.runCellCycle = T,
         bool.runStemness = T,
         bool.runGeneSets = T,
-        bool.runExprProgram = T, # False to save time
+        bool.runExprProgram = F, # False to save time
         bool.runInteraction = T,
         genReport = T
     )
