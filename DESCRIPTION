@@ -36,6 +36,8 @@ Imports:
     pheatmap,
 	ComplexHeatmap,
     R.utils,
+	RcppArmadillo,
+	RcppProgress,
     reshape2,
     scds,
     Seurat (>= 3.0),
@@ -48,8 +50,11 @@ Imports:
     rliger,
 	monocle,
 	edgeR,
-	garnett,
+	DelayedArray,
+	DelayedMatrixStats,
 	org.Hs.eg.db,
+	org.Mm.eg.db,
+	garnett,
 	xgboost
 Depends: R (>= 3.5.0)
 biocViews:

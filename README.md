@@ -29,7 +29,7 @@ Quick start of scCancer2:
 
 1. Dependency installation
 
-Some dependent packages for scCancer2 (NNLM, edgeR, garnett, xgboost, and org.Hs.eg.db) may not be installed automatically, so you can install them from the following steps. After installing them successfully, you can run the demos.
+Some dependent packages for scCancer2 (NNLM, garnett) may not be installed automatically, so you can install them from the following steps. After installing them successfully, you can run the demos.
 
 ```R
 checkPkg <- function(pkg){
