@@ -34,6 +34,7 @@ Imports:
     methods,
     NNLM,
     pheatmap,
+	ComplexHeatmap,
     R.utils,
     reshape2,
     scds,
@@ -46,6 +47,7 @@ Imports:
     harmony,
     rliger,
 	monocle,
+	edgeR,
 	garnett,
 	org.Hs.eg.db,
 	xgboost
