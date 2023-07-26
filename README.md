@@ -86,15 +86,28 @@ library(scCancer)
 
 See [scCancer2.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) for demos.
 
-(b) Download .zip file of R package. Install [scCancer](https://github.com/wguo-research/scCancer) and run temporary installation in [scCancer2.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) in the scCancer folder.
+(b) Download .zip file of R package. Open the .rproj and run temporary installation in [scCancer2.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) in the scCancer folder.
 
 ```R
-# install scCancer1.0
-devtools::install_github("wguo-research/scCancer")
+# Check the dependencies
+suppressMessages(library(Seurat))
+suppressMessages(library(org.Hs.eg.db))
+suppressMessages(library(garnett))
+suppressMessages(library(xgboost))
+suppressMessages(library(ggplot2))
+suppressMessages(library(ggsci))
+suppressMessages(library(cowplot))
+suppressMessages(library(viridis))
+suppressMessages(library(magrittr))
+suppressMessages(library(dplyr))
+suppressMessages(library(edgeR))
+library(devtools)
 # Load all files in the folder
 suppressWarnings(load_all())
 suppressWarnings(document())
 library(scCancer)
+# Run demos
+# ...... See .rmd file
 ```
 
 (c) We have uploaded 5 recommended data sets, including 2 large-scale published datasets (multi-sample) and 3 unpublished data (single-sample).
