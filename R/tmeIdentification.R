@@ -370,10 +370,14 @@ similarityCalculation <- function(fine.labels, savePath){
             if(dim(similarity.mar)[1] <= 4^2){
                 pdf.size = 8
             }
-            pdf(file = file.path(savePath, paste0("similarity-", celltype, ".pdf")),
-                width = pdf.size, height = pdf.size)
-            print(SimilarityHeatmap(similarity.mar, celltype))
-            dev.off()
+            # pdf(file = file.path(savePath, paste0("similarity-", celltype, ".pdf")),
+            #     width = pdf.size, height = pdf.size)
+            pdf.path <- file.path(savePath, paste0("similarity-", celltype, ".pdf"))
+            p <- SimilarityHeatmap(similarity.mar, celltype, pdf.path)
+            # if(dev.cur() > 1){
+            #     dev.off()
+            # }
+            # dev.off()
             return(similarity.mar)
         }
     })

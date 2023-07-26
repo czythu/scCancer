@@ -827,7 +827,8 @@ ConfusionMatrix <- function(name.reference, name.prediction,
 
 #' @export
 SimilarityHeatmap <- function(similarity.mar,
-                              celltype){
+                              celltype,
+                              pdf.path){
     if (celltype == "B.cells"){
         p <- pheatmap(similarity.mar,
                        angle_col = 45,
@@ -838,7 +839,8 @@ SimilarityHeatmap <- function(similarity.mar,
                        main = paste0(celltype, " similarity map"),
                        fontsize = 10,
                        display_numbers = TRUE,
-                       number_format = "%.2f")
+                       number_format = "%.2f",
+                       filename = pdf.path)
     }
 
     else if (celltype == "T.cells"){
@@ -849,9 +851,10 @@ SimilarityHeatmap <- function(similarity.mar,
                        clustering_method = "ward.D",
                        color=colorRampPalette(c("#FFFFD4", "#FED98E", "#FE9929", "#D95F0E"))(50),
                        main = paste0(celltype, " similarity map"),
-                       fontsize = 8.5,
+                       fontsize = 5,
                        display_numbers = FALSE,
-                       number_format = "%.1f")
+                       number_format = "%.1f",
+                       filename = pdf.path)
     }
 
     else if (celltype == "Myeloid.cells"){
@@ -862,9 +865,10 @@ SimilarityHeatmap <- function(similarity.mar,
                        clustering_method = "ward.D",
                        color=colorRampPalette(c("#FFFFD4", "#FED98E", "#FE9929", "#D95F0E"))(50),
                        main = paste0(celltype, " similarity map"),
-                       fontsize = 9,
+                       fontsize = 6,
                        display_numbers = FALSE,
-                       number_format = "%.1f")
+                       number_format = "%.1f",
+                       filename = pdf.path)
     }
 
     else if (celltype == "Endothelial"){
@@ -877,7 +881,8 @@ SimilarityHeatmap <- function(similarity.mar,
                        main = paste0(celltype, " similarity map"),
                        fontsize = 11,
                        display_numbers = TRUE,
-                       number_format = "%.2f")
+                       number_format = "%.2f",
+                       filename = pdf.path)
     }
 
     # Fibroblast
@@ -891,9 +896,10 @@ SimilarityHeatmap <- function(similarity.mar,
                        main = paste0(celltype, " similarity map"),
                        fontsize = 8,
                        display_numbers = TRUE,
-                       number_format = "%.2f")
+                       number_format = "%.2f",
+                       filename = pdf.path)
     }
-
+    # print(p)
     return(p)
 }
 # --------------------------------------------------------------------
