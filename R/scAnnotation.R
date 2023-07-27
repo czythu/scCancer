@@ -100,7 +100,7 @@ prepareSeurat <- function(dataPath, statPath, savePath,
         }
     }
 
-    message("[", Sys.time(), "] -----: data preparation")
+    cat("[", paste0(Sys.time()), "] -----: data preparation\n")
     expr.data <- Read10Xdata(data.dir = data.path, only.expr = T)
     rownames(expr.data) <- gsub("_", "-", rownames(expr.data))
 
@@ -116,7 +116,7 @@ prepareSeurat <- function(dataPath, statPath, savePath,
                                header = T, stringsAsFactors = F)
 
     if(bool.rmContamination){
-        message("[", Sys.time(), "] -----: contamination removing")
+        cat("[", paste0(Sys.time()), "] -----: contamination removing\n")
         soupx.out <- rmContamination(statPath = statPath)
         if(!is.null(soupx.out)){
             expr.data <- soupx.out$expr.data
@@ -160,7 +160,7 @@ prepareSeurat <- function(dataPath, statPath, savePath,
     expr.data <- expr.data[genes.select, cells.select]
 
 
-    message("[", Sys.time(), "] -----: Seurat object creation")
+    cat("[", paste0(Sys.time()), "] -----: Seurat object creation\n")
     expr = CreateSeuratObject(counts = expr.data,
                               min.cells = 0,
                               min.features = 0,
@@ -183,14 +183,14 @@ prepareSeurat <- function(dataPath, statPath, savePath,
                           scale.factor = 10000,
                           verbose = F)
 
-    message("[", Sys.time(), "] -----: highly variable genes")
+    cat("[", paste0(Sys.time()), "] -----: highly variable genes\n")
     # expr <- FindVariableFeatures(expr, selection.method = "vst", nfeatures = 2000, verbose = F)
     # expr <- FindVariableFeatures(expr, selection.method = "vst",
     #                              nfeatures = min(10000, length(rownames(expr))), verbose = F)
     expr <- FindVariableFeatures(expr, selection.method = "vst",
                                  nfeatures = min(5000, length(rownames(expr))), verbose = F)
 
-    message("[", Sys.time(), "] -----: data scaling")
+    cat("[", paste0(Sys.time()), "] -----: data scaling\n")
     # print(length(rownames(expr)))
     expr <- ScaleData(object = expr,
                       # features =  rownames(expr),
@@ -248,32 +248,32 @@ runSeurat <- function(expr,
             reduction.type = "inmf"
             pc.use <- min(pc.use, ncol(expr@reductions$inmf@cell.embeddings))
         }else{
-            message("[", Sys.time(), "] -----: PCA")
+            cat("[", paste0(Sys.time()), "] -----: PCA\n")
             expr <- RunPCA(expr, verbose = F)
             reduction.type <- "pca"
         }
     }else{
-        message("[", Sys.time(), "] -----: PCA")
+        cat("[", paste0(Sys.time()), "] -----: PCA\n")
         expr <- RunPCA(expr, npcs = npcs, verbose = F)
         reduction.type <- "pca"
     }
 
-    message("[", Sys.time(), "] -----: clustering")
+    cat("[", paste0(Sys.time()), "] -----: clustering\n")
     expr <- FindNeighbors(expr, reduction = reduction.type, dims = 1:pc.use, verbose = F)
     expr <- FindClusters(expr, resolution = resolution, verbose = F)
     expr[[clusterStashName]] <- as.numeric(Idents(object = expr))
 
     if(is.null(comb.method)){
-        message("[", Sys.time(), "] -----: tSNE")
+        cat("[", paste0(Sys.time()), "] -----: tSNE\n")
         expr <- RunTSNE(object = expr, dims = 1:pc.use, reduction = reduction.type)
     }else{
         if(comb.method != "LIGER"){
-            message("[", Sys.time(), "] -----: tSNE")
+            cat("[", paste0(Sys.time()), "] -----: tSNE\n")
             expr <- RunTSNE(object = expr, dims = 1:pc.use, reduction = reduction.type)
         }
     }
 
-    message("[", Sys.time(), "] -----: UMAP")
+    cat("[", paste0(Sys.time()), "] -----: UMAP\n")
     suppressWarnings(
         tryCatch(expr <- RunUMAP(expr, dims = 1:pc.use, reduction = reduction.type, verbose = F),
                  error = function(err) {
@@ -282,7 +282,7 @@ runSeurat <- function(expr,
     )
 
     if(bool.runDiffExpr){
-        message("[", Sys.time(), "] -----: differential expression analysis")
+        cat("[", paste0(Sys.time()), "] -----: differential expression analysis\n")
         if(!dir.exists(file.path(savePath, "diff.expr.genes"))){
             dir.create(file.path(savePath, "diff.expr.genes"), recursive = T)
         }
@@ -668,7 +668,7 @@ plotSeurat <- function(expr,
                        species = "human",
                        savePath){
 
-    message("[", Sys.time(), "] -----: Seurat plotting and saving")
+    cat("[", paste0(Sys.time()), "] -----: Seurat plotting and saving\n")
 
     if(!dir.exists(file.path(savePath, "figures/singleMarkerPlot/"))){
         dir.create(file.path(savePath, "figures/singleMarkerPlot/"), recursive = T)
@@ -915,7 +915,6 @@ runCellClassify <- function(expr, cell.annotation, coor.names = c("UMAP_1", "UMA
     if(!("Cell.Type" %in% names(cell.annotation))){
         # message("[", Sys.time(), "] -----: TME cell types annotation")
         cat("[", paste0(Sys.time()), "] -----: TME cell types annotation\n")
-        cat(Sys.time(), " -----: TME cell types annotation")
         t.results <- predCellType(X.test = expr@assays$RNA@data,
                                   ct.templates = ct.templates, species = species)
 
@@ -927,7 +926,7 @@ runCellClassify <- function(expr, cell.annotation, coor.names = c("UMAP_1", "UMA
         cell.annotation$Cell.Type <- t.results$type.pred
         cell.annotation <- cbind(cell.annotation, t.results$cor.df)
     }else{
-        message("[", Sys.time(), "] -----: TME cell types combination")
+        cat("[", paste0(Sys.time()), "] -----: TME cell types combination\n")
     }
 
     # cell.colors <- c(
@@ -1037,7 +1036,7 @@ getTumorCluster <- function(cell.annotation, epi.thres = 0.6, malign.thres = 0.8
 #' @export
 #'
 runCellCycle <- function(expr, species = "human"){
-    message("[", Sys.time(), "] -----: cell cycle score estimation")
+    cat("[", paste0(Sys.time()), "] -----: cell cycle score estimation\n")
     cellCycle.genes <- read.table(system.file("txt", "cellCycle-genes.txt", package = "scCancer"),
                                   header = F, stringsAsFactors = F)$V1
     if(species == "mouse"){
@@ -1064,7 +1063,7 @@ runCellCycle <- function(expr, species = "human"){
 #' @export
 #'
 runStemness <- function(X, stem.sig = NULL, species = "human"){
-    message("[", Sys.time(), "] -----: stemness score calculation")
+    cat("[", paste0(Sys.time()), "] -----: stemness score calculation\n")
     if(is.null(stem.sig)){
         stem.sig.file <- system.file("txt", "pcbc-stemsig.tsv", package = "scCancer")
         stem.sig <- read.delim(stem.sig.file, header = FALSE, row.names = 1)
@@ -1128,7 +1127,7 @@ getDefaultGeneSets <- function(species = "human"){
 #' @importFrom GSVA gsva
 #'
 runGeneSets <- function(expr, geneSets, method = "average"){
-    message("[", Sys.time(), "] -----: gene set signatures analysis")
+    cat("[", paste0(Sys.time()), "] -----: gene set signatures analysis\n")
     if(class(geneSets) != "list"){
         cat("- Warning in 'runGeneSets': The 'geneSets' should be a list of several gene sets.\n")
         return(NULL)
@@ -1220,7 +1219,7 @@ plotGeneSet <- function(cell.annotation, prefix = "GS__", bool.limit = T, savePa
 #' @importFrom methods as
 #'
 runExprProgram <- function(expr, rank = 50, sel.clusters = NULL, clusterStashName = "default", savePath = NULL){
-    message("[", Sys.time(), "] -----: expression programs analysis")
+    cat("[", paste0(Sys.time()), "] -----: expression programs analysis\n")
 
     data <- as(object = expr[["RNA"]]@data, Class = "TsparseMatrix")
     if(!is.null(sel.clusters)){
@@ -1373,7 +1372,7 @@ plotExprProgram <- function(H, cell.annotation, bool.limit = T, sel.clusters = N
 #' @export
 #'
 runCellInteraction <- function(expr, cellSetName = "default", species = "human", savePath = NULL){
-    message("[", Sys.time(), "] -----: cell interaction analysis")
+    cat("[", paste0(Sys.time()), "] -----: cell interaction analysis\n")
 
     pairsLigRec <- read.table(system.file("txt", "PairsLigRec.txt", package = "scCancer"),
                               sep = "\t", header = T,stringsAsFactors = F)
@@ -1673,7 +1672,7 @@ runScAnnotation <- function(dataPath,
                             bool.runInteraction = T,
                             genReport = T){
 
-    message("[", Sys.time(), "] START: RUN scAnnotation")
+    cat("[", paste0(Sys.time()), "] START: RUN scAnnotation\n")
     results <- as.list(environment())
     checkAnnoArguments(results)
 
@@ -1762,7 +1761,7 @@ runScAnnotation <- function(dataPath,
 
     ## --------- doublet ---------
     if(bool.runDoublet){
-        message("[", Sys.time(), "] -----: Doublet score estimation")
+        cat("[", paste0(Sys.time()), "] -----: Doublet score estimation\n")
         doubletScore <- runDoublet(expr, method = doublet.method, pc.use = pc.use)
         expr[["doublet.score"]] <- doubletScore
         cell.annotation$doublet.score <- doubletScore
@@ -1866,7 +1865,7 @@ runScAnnotation <- function(dataPath,
         #
         # }
         if(malignancy.method == "inferCNV" | malignancy.method == "both"){
-            message("[", Sys.time(), "] -----: malignant cells identification with inferCNV")
+            cat("[", paste0(Sys.time()), "] -----: malignant cells identification with inferCNV\n")
             t.results <- runMalignancy(expr = expr,
                                        gene.manifest = gene.manifest,
                                        cell.annotation = cell.annotation,
@@ -1891,7 +1890,7 @@ runScAnnotation <- function(dataPath,
             rm(t.results)
         }
         if(malignancy.method == "xgboost" | malignancy.method == "both"){
-            message("[", Sys.time(), "] -----: malignant cells identification with XGBoost model")
+            cat("[", paste0(Sys.time()), "] -----: malignant cells identification with XGBoost model\n")
             t.results <- predMalignantCell(expr = expr,
                                            cell.annotation = cell.annotation,
                                            malignancy.method = "xgboost",
@@ -2035,7 +2034,7 @@ runScAnnotation <- function(dataPath,
                 quote = F, sep = "\t", row.names = F)
 
     if(genReport){
-        message("[", Sys.time(), "] -----: report generating")
+        cat("[", paste0(Sys.time()), "] -----: report generating\n")
         if(!dir.exists(file.path(savePath, 'report-figures/'))){
             dir.create(file.path(savePath, 'report-figures/'), recursive = T)
         }
@@ -2048,7 +2047,7 @@ runScAnnotation <- function(dataPath,
                        file.path(savePath, 'report-scAnno.html'))
     }
 
-    message("[", Sys.time(), "] END: Finish scAnnotation\n\n")
+    cat("[", paste0(Sys.time()), "] END: Finish scAnnotation\n\n")
 
     return(results)
 }
@@ -2065,7 +2064,7 @@ runScAnnotation <- function(dataPath,
 #' @export
 #'
 genAnnoReport <- function(results, savePath){
-    message("[", Sys.time(), "] -----: report generating")
+    cat("[", paste0(Sys.time()), "] -----: report generating\n")
 
     if(!dir.exists(savePath)){
         dir.create(savePath, recursive = T)

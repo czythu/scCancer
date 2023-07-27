@@ -151,7 +151,7 @@ predSubType_Scoring <- function(expr,
         # Split test dataset with rough labels
         testdata <- test_set[which(test_set$rough.labels == celltype),]
         if(dim(testdata)[1] < 100){
-            message(celltype, " not enough for subtype annotation. Skip!")
+            cat(celltype, " not enough for subtype annotation. Skip!")
             return(NULL)
         }
         barcodes <- rownames(testdata)
@@ -214,7 +214,7 @@ predSubType_Scoring <- function(expr,
             return(likelihood)
         })
         dev.off()
-        message("[", Sys.time(), "] -----: ", celltype, " subtype annotation finished.")
+        cat("[", paste0(Sys.time()), "] -----: ", celltype, " subtype annotation finished\n")
         subtypes.predict <- data.frame(matrix(unlist(subtypes.predict),
                                               nrow = length(subtypes.predict),
                                               byrow = T))
@@ -324,7 +324,7 @@ predSubType_XGBoost <- function(expr,
             subtypes.predict <- rbind(subtypes.predict, label.predict)
         }
         dev.off()
-        message("[", Sys.time(), "] -----: ", celltype, " subtype annotation finished.")
+        cat("[", paste0(Sys.time()), "] -----: ", celltype, " subtype annotation finished\n")
         subtypes.predict <- subtypes.predict[-1,]
         colnames(subtypes.predict) <- barcodes
         return(t(subtypes.predict))
@@ -399,7 +399,8 @@ runCellSubtypeClassify <- function(expr,
                                    dropout.modeling,
                                    unknown.cutoff,
                                    umap.plot){
-    message("[", Sys.time(), "] -----: TME cell subtypes annotation")
+    # message("[", Sys.time(), "] -----: TME cell subtypes annotation")
+    cat("[", paste0(Sys.time()), "] -----: TME cell subtypes annotation\n")
     fine.labels <- predSubType_Scoring(expr = expr,
                                submodel.path = submodel.path,
                                markers.path = markers.path,
@@ -417,7 +418,7 @@ runCellSubtypeClassify <- function(expr,
     #                             savePath,
     #                             celltype.list,
     #                             umap.plot)
-    message("[", Sys.time(), "] -----: Generation of similarity maps")
+    cat("[", paste0(Sys.time()), "] -----: Generation of similarity maps\n")
     similarity.matrix <- similarityCalculation(fine.labels, savePath)
 
     return(list(fine.labels = fine.labels,
