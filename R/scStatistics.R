@@ -577,6 +577,7 @@ runScStatistics <- function(dataPath, savePath,
                             genReport = T){
 
     message("[", Sys.time(), "] START: RUN scStatistics")
+    cat("[", paste0(Sys.time()), "] START: RUN scStatistics\n")
     # results <- as.list(environment())
     checkStatArguments(as.list(environment()))
 

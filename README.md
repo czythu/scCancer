@@ -17,7 +17,9 @@ For old version of `scCancer`, see https://github.com/wguo-research/scCancer.
 ## Overview of scCancer2
 ![image](https://github.com/czythu/scCancer/blob/master/inst/Overview.png)
 
-## System Requirements
+## Package Installation and Quick Start for scRNA-seq analysis
+
+### System Requirements
 
 R version: >= 3.5.0
 
@@ -25,13 +27,13 @@ We have test scCancer2 on R 4.0.5 and R 4.2.0
 
 R tools need to be previously installed: https://cran.r-project.org/bin/windows/Rtools/
 
-## Package Installation and Quick Start for scRNA-seq analysis
+To avoid the issue of version conflicts in R packages, we highly recommend that you install a brand new R environment and switch it in anaconda or RStudio.
 
-Quick start of scCancer2:
+### Quick start of scCancer2
 
 1. Dependency installation
 
-Some dependent packages for scCancer2 (NNLM, garnett) may not be installed automatically, so you can install them from the following steps. After installing them successfully, you can run the demos.
+You can install the dependencies from the following steps. After installing them successfully, you can run the demos.
 
 ```R
 checkPkg <- function(pkg){
@@ -70,8 +72,8 @@ https://cran.r-project.org/src/contrib/Archive/NNLM/
 
 https://bioconductor.org/packages/release/bioc/html/edgeR.html
 
-We noticed that directly installing harmony from CRAN might meet this bug: [github/harmony/issues/](https://github.com/immunogenomics/harmony/issues/159),
-you may download and install the source package from https://github.com/immunogenomics/harmony/releases/tag/0.1. to run scCombination with harmony method smoothly.
+We also noticed that directly installing harmony from CRAN might meet this bug: [github/harmony/issues/](https://github.com/immunogenomics/harmony/issues/159),
+you may download and install the source package from https://github.com/immunogenomics/harmony/releases/tag/0.1. to run `scCombination` with harmony method smoothly.
 
 2. If you have already installed the above dependencies, you have 2 ways to run scCancer2.0:
 
@@ -81,6 +83,8 @@ you may download and install the source package from https://github.com/immunoge
 # install scCancer2.0
 devtools::install_github("czythu/scCancer")
 library(scCancer)
+# Run demos
+# ...... See .rmd file
 ```
 
 See [scCancer2.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) for demos.
@@ -125,7 +129,11 @@ library(scCancer)
 
 If you are only interested in identifying malignant cells in your own samples or want to reproduce Figure4 in our manuscript, we highly recommend using the pipeline [Figure4.ipynb](https://github.com/czythu/scCancer_MicroEnv/tree/master/MalignantCellIdentification)
 
-The constructed reference data set, several query data sets and the trained model have been uploaded to: ......
+The constructed reference data set will be uploaded later.
+
+The 5 recommended data sets above can be served as query data sets.
+
+The trained model: [`sc_xgboost_alldata.model`](https://github.com/czythu/scCancer_MicroEnv/tree/master/MalignantCellIdentification/model). It has been integrated into the R package.
 
 The basic processing steps are relied on package `scanpy`, `sklearn` and `xgboost`.
 

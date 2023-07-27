@@ -913,7 +913,9 @@ predCellType <- function(X.test, ct.templates = NULL, species = "human"){
 runCellClassify <- function(expr, cell.annotation, coor.names = c("UMAP_1", "UMAP_2"),
                             savePath, ct.templates = NULL, species = "human"){
     if(!("Cell.Type" %in% names(cell.annotation))){
-        message("[", Sys.time(), "] -----: TME cell types annotation")
+        # message("[", Sys.time(), "] -----: TME cell types annotation")
+        cat("[", paste0(Sys.time()), "] -----: TME cell types annotation\n")
+        cat(Sys.time(), " -----: TME cell types annotation")
         t.results <- predCellType(X.test = expr@assays$RNA@data,
                                   ct.templates = ct.templates, species = species)
 
