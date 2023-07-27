@@ -21,7 +21,9 @@ For old version of `scCancer`, see https://github.com/wguo-research/scCancer.
 
 R version: >= 3.5.0
 
-My R version: R 4.0.5
+We have test scCancer2 on R 4.0.5 and R 4.2.0
+
+R tools need to be previously installed: https://cran.r-project.org/bin/windows/Rtools/
 
 ## Package Installation and Quick Start for scRNA-seq analysis
 
@@ -41,28 +43,25 @@ if(!checkPkg("BiocManager")) install.packages("BiocManager")
 if(!checkPkg("devtools")) install.packages("devtools")
 if(!checkPkg("Seurat")) BiocManager::install("Seurat")
 if(!checkPkg("Biobase")) BiocManager::install("Biobase")
-if(!checkPkg("knitr")) BiocManager::install("knitr")
 if(!checkPkg("GSVA")) BiocManager::install("GSVA")
 if(!checkPkg("pheatmap")) BiocManager::install("pheatmap")
 if(!checkPkg("ComplexHeatmap")) BiocManager::install("ComplexHeatmap")
 if(!checkPkg("markdown")) install.packages("markdown")
 if(!checkPkg("R.utils")) install.packages("R.utils")
-if(!checkPkg("RcppArmadillo")) install.packages("RcppArmadillo")
-if(!checkPkg("RcppProgress")) install.packages("RcppProgress")
 
 # Algorithms integrated in scCancer1.0
 if(!checkPkg("NNLM")) devtools::install_github("linxihui/NNLM")
-# if(!checkPkg("harmony")) devtools::install_github("immunogenomics/harmony")
-# if(!checkPkg("liger")) devtools::install_github("MacoskoLab/liger")
 if(!checkPkg("harmony")) install.packages("harmony")
 if(!checkPkg("liger")) install.packages("rliger")
 
 # Algorithms integrated in scCancer2.0
+if(!checkPkg("xgboost")) install.packages("xgboost")
+if(!checkPkg("DESeq2")) BiocManager::install("DESeq2")
+# https://cole-trapnell-lab.github.io/garnett/docs/
 if(!checkPkg("monocle")) BiocManager::install(c("monocle"))
 if(!checkPkg("edgeR")) BiocManager::install(c("edgeR"))
-if(!checkPkg(c('DelayedArray','DelayedMatrixStats','org.Hs.eg.db','org.Mm.eg.db'))) BiocManager::install(c('DelayedArray','DelayedMatrixStats','org.Hs.eg.db','org.Mm.eg.db'))
+BiocManager::install(c('DelayedArray', 'DelayedMatrixStats', 'org.Hs.eg.db', 'org.Mm.eg.db'))
 if(!checkPkg("garnett")) devtools::install_github("cole-trapnell-lab/garnett")
-if(!checkPkg("xgboost")) install.packages("xgboost")
 ```
 
 Notice: if errors occur when installing "NNLM", "edgeR" or "harmony", you may install them from the .tar.gz file:
@@ -86,7 +85,7 @@ library(scCancer)
 
 See [scCancer2.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) for demos.
 
-(b) Download .zip file of R package. Open the .rproj and run temporary installation in [scCancer2.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) in the scCancer folder.
+(b) Download .zip file of R package. Open scCancer.rproj and run temporary installation in [scCancer2.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/).
 
 ```R
 # Check the dependencies
