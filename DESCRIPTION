@@ -1,6 +1,6 @@
 Package: scCancer
 Type: Package
-Title: A package for automated processing of single cell RNA-seq data in cancer
+Title: Supervised and in-depth annotations of the tumor microenvironment
 Version: 2.3.0
 Author: G-Lab
 Maintainer: Wenbo Guo <gwb17@tsinghua.org.cn>, Zeyu Chen <chenzy22@mails.tsinghua.edu.cn>

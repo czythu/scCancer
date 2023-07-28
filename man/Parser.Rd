@@ -123,35 +123,35 @@ pages for those functions for details.
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-p_file_1}{\code{Parser$p_file_1()}}
-\item \href{#method-p_file_2}{\code{Parser$p_file_2()}}
-\item \href{#method-p_header_start}{\code{Parser$p_header_start()}}
-\item \href{#method-p_header_1}{\code{Parser$p_header_1()}}
-\item \href{#method-p_celltype_1}{\code{Parser$p_celltype_1()}}
-\item \href{#method-p_celltype_2}{\code{Parser$p_celltype_2()}}
-\item \href{#method-p_rule_head_1}{\code{Parser$p_rule_head_1()}}
-\item \href{#method-p_rule_head_comp_1}{\code{Parser$p_rule_head_comp_1()}}
-\item \href{#method-p_rule_head_2}{\code{Parser$p_rule_head_2()}}
-\item \href{#method-p_rule_1}{\code{Parser$p_rule_1()}}
-\item \href{#method-p_rule_2}{\code{Parser$p_rule_2()}}
-\item \href{#method-p_rule_3}{\code{Parser$p_rule_3()}}
-\item \href{#method-p_expression_1}{\code{Parser$p_expression_1()}}
-\item \href{#method-p_expression_2}{\code{Parser$p_expression_2()}}
-\item \href{#method-p_expression_3}{\code{Parser$p_expression_3()}}
-\item \href{#method-p_expression_4}{\code{Parser$p_expression_4()}}
-\item \href{#method-p_comp_expression_1}{\code{Parser$p_comp_expression_1()}}
-\item \href{#method-p_comp_expression_2}{\code{Parser$p_comp_expression_2()}}
-\item \href{#method-p_comp_expression_3}{\code{Parser$p_comp_expression_3()}}
-\item \href{#method-p_comp_expression_4}{\code{Parser$p_comp_expression_4()}}
-\item \href{#method-p_comp_expression_5}{\code{Parser$p_comp_expression_5()}}
-\item \href{#method-p_comp_expression_6}{\code{Parser$p_comp_expression_6()}}
-\item \href{#method-p_error}{\code{Parser$p_error()}}
-\item \href{#method-clone}{\code{Parser$clone()}}
+\item \href{#method-Parser-p_file_1}{\code{Parser$p_file_1()}}
+\item \href{#method-Parser-p_file_2}{\code{Parser$p_file_2()}}
+\item \href{#method-Parser-p_header_start}{\code{Parser$p_header_start()}}
+\item \href{#method-Parser-p_header_1}{\code{Parser$p_header_1()}}
+\item \href{#method-Parser-p_celltype_1}{\code{Parser$p_celltype_1()}}
+\item \href{#method-Parser-p_celltype_2}{\code{Parser$p_celltype_2()}}
+\item \href{#method-Parser-p_rule_head_1}{\code{Parser$p_rule_head_1()}}
+\item \href{#method-Parser-p_rule_head_comp_1}{\code{Parser$p_rule_head_comp_1()}}
+\item \href{#method-Parser-p_rule_head_2}{\code{Parser$p_rule_head_2()}}
+\item \href{#method-Parser-p_rule_1}{\code{Parser$p_rule_1()}}
+\item \href{#method-Parser-p_rule_2}{\code{Parser$p_rule_2()}}
+\item \href{#method-Parser-p_rule_3}{\code{Parser$p_rule_3()}}
+\item \href{#method-Parser-p_expression_1}{\code{Parser$p_expression_1()}}
+\item \href{#method-Parser-p_expression_2}{\code{Parser$p_expression_2()}}
+\item \href{#method-Parser-p_expression_3}{\code{Parser$p_expression_3()}}
+\item \href{#method-Parser-p_expression_4}{\code{Parser$p_expression_4()}}
+\item \href{#method-Parser-p_comp_expression_1}{\code{Parser$p_comp_expression_1()}}
+\item \href{#method-Parser-p_comp_expression_2}{\code{Parser$p_comp_expression_2()}}
+\item \href{#method-Parser-p_comp_expression_3}{\code{Parser$p_comp_expression_3()}}
+\item \href{#method-Parser-p_comp_expression_4}{\code{Parser$p_comp_expression_4()}}
+\item \href{#method-Parser-p_comp_expression_5}{\code{Parser$p_comp_expression_5()}}
+\item \href{#method-Parser-p_comp_expression_6}{\code{Parser$p_comp_expression_6()}}
+\item \href{#method-Parser-p_error}{\code{Parser$p_error()}}
+\item \href{#method-Parser-clone}{\code{Parser$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_file_1"></a>}}
-\if{latex}{\out{\hypertarget{method-p_file_1}{}}}
+\if{html}{\out{<a id="method-Parser-p_file_1"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_file_1}{}}}
 \subsection{Method \code{p_file_1()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_file_1(doc = "file : NEWLINE file", p)}\if{html}{\out{</div>}}
@@ -159,8 +159,8 @@ pages for those functions for details.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_file_2"></a>}}
-\if{latex}{\out{\hypertarget{method-p_file_2}{}}}
+\if{html}{\out{<a id="method-Parser-p_file_2"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_file_2}{}}}
 \subsection{Method \code{p_file_2()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_file_2(
@@ -171,21 +171,21 @@ pages for those functions for details.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_header_start"></a>}}
-\if{latex}{\out{\hypertarget{method-p_header_start}{}}}
+\if{html}{\out{<a id="method-Parser-p_header_start"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_header_start}{}}}
 \subsection{Method \code{p_header_start()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_header_start(
- 
-    doc = "header_start : '>' NAME\\n                                                | '>' NUM\\n                                                | header_start NUM\\n                                                | header_start NAME",
+  doc =
+    "header_start : '>' NAME\\n                                                | '>' NUM\\n                                                | header_start NUM\\n                                                | header_start NAME",
   p
 )}\if{html}{\out{</div>}}
 }
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_header_1"></a>}}
-\if{latex}{\out{\hypertarget{method-p_header_1}{}}}
+\if{html}{\out{<a id="method-Parser-p_header_1"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_header_1}{}}}
 \subsection{Method \code{p_header_1()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_header_1(doc = "header : header_start NEWLINE", p)}\if{html}{\out{</div>}}
@@ -193,8 +193,8 @@ pages for those functions for details.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_celltype_1"></a>}}
-\if{latex}{\out{\hypertarget{method-p_celltype_1}{}}}
+\if{html}{\out{<a id="method-Parser-p_celltype_1"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_celltype_1}{}}}
 \subsection{Method \code{p_celltype_1()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_celltype_1(doc = "celltype : header", p)}\if{html}{\out{</div>}}
@@ -202,8 +202,8 @@ pages for those functions for details.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_celltype_2"></a>}}
-\if{latex}{\out{\hypertarget{method-p_celltype_2}{}}}
+\if{html}{\out{<a id="method-Parser-p_celltype_2"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_celltype_2}{}}}
 \subsection{Method \code{p_celltype_2()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_celltype_2(doc = "celltype : celltype rule", p)}\if{html}{\out{</div>}}
@@ -211,8 +211,8 @@ pages for those functions for details.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_rule_head_1"></a>}}
-\if{latex}{\out{\hypertarget{method-p_rule_head_1}{}}}
+\if{html}{\out{<a id="method-Parser-p_rule_head_1"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_rule_head_1}{}}}
 \subsection{Method \code{p_rule_head_1()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_rule_head_1(doc = "rule_head : SIMP_KEY ':'", p)}\if{html}{\out{</div>}}
@@ -220,8 +220,8 @@ pages for those functions for details.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_rule_head_comp_1"></a>}}
-\if{latex}{\out{\hypertarget{method-p_rule_head_comp_1}{}}}
+\if{html}{\out{<a id="method-Parser-p_rule_head_comp_1"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_rule_head_comp_1}{}}}
 \subsection{Method \code{p_rule_head_comp_1()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_rule_head_comp_1(doc = "rule_head_comp : KEYWORD ':'", p)}\if{html}{\out{</div>}}
@@ -229,8 +229,8 @@ pages for those functions for details.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_rule_head_2"></a>}}
-\if{latex}{\out{\hypertarget{method-p_rule_head_2}{}}}
+\if{html}{\out{<a id="method-Parser-p_rule_head_2"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_rule_head_2}{}}}
 \subsection{Method \code{p_rule_head_2()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_rule_head_2(doc = "rule_head : NAME ':'", p)}\if{html}{\out{</div>}}
@@ -238,8 +238,8 @@ pages for those functions for details.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_rule_1"></a>}}
-\if{latex}{\out{\hypertarget{method-p_rule_1}{}}}
+\if{html}{\out{<a id="method-Parser-p_rule_1"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_rule_1}{}}}
 \subsection{Method \code{p_rule_1()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_rule_1(doc = "rule : rule_head expression NEWLINE", p)}\if{html}{\out{</div>}}
@@ -247,8 +247,8 @@ pages for those functions for details.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_rule_2"></a>}}
-\if{latex}{\out{\hypertarget{method-p_rule_2}{}}}
+\if{html}{\out{<a id="method-Parser-p_rule_2"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_rule_2}{}}}
 \subsection{Method \code{p_rule_2()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_rule_2(doc = "rule : rule_head_comp comp_expression NEWLINE", p)}\if{html}{\out{</div>}}
@@ -256,8 +256,8 @@ pages for those functions for details.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_rule_3"></a>}}
-\if{latex}{\out{\hypertarget{method-p_rule_3}{}}}
+\if{html}{\out{<a id="method-Parser-p_rule_3"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_rule_3}{}}}
 \subsection{Method \code{p_rule_3()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_rule_3(doc = "rule : rule NEWLINE", p)}\if{html}{\out{</div>}}
@@ -265,8 +265,8 @@ pages for those functions for details.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_expression_1"></a>}}
-\if{latex}{\out{\hypertarget{method-p_expression_1}{}}}
+\if{html}{\out{<a id="method-Parser-p_expression_1"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_expression_1}{}}}
 \subsection{Method \code{p_expression_1()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_expression_1(
@@ -277,73 +277,73 @@ pages for those functions for details.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_expression_2"></a>}}
-\if{latex}{\out{\hypertarget{method-p_expression_2}{}}}
+\if{html}{\out{<a id="method-Parser-p_expression_2"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_expression_2}{}}}
 \subsection{Method \code{p_expression_2()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_expression_2(
- 
-    doc = "expression : expression NAME\\n                                              | expression NUM",
+  doc =
+    "expression : expression NAME\\n                                              | expression NUM",
   p
 )}\if{html}{\out{</div>}}
 }
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_expression_3"></a>}}
-\if{latex}{\out{\hypertarget{method-p_expression_3}{}}}
+\if{html}{\out{<a id="method-Parser-p_expression_3"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_expression_3}{}}}
 \subsection{Method \code{p_expression_3()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_expression_3(
- 
-    doc = "expression : expression ',' NAME\\n                                              | expression ',' NUM",
+  doc =
+    "expression : expression ',' NAME\\n                                              | expression ',' NUM",
   p
 )}\if{html}{\out{</div>}}
 }
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_expression_4"></a>}}
-\if{latex}{\out{\hypertarget{method-p_expression_4}{}}}
+\if{html}{\out{<a id="method-Parser-p_expression_4"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_expression_4}{}}}
 \subsection{Method \code{p_expression_4()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_expression_4(
- 
-    doc = "expression : expression ',' NEWLINE NAME\\n                                              | expression ',' NEWLINE NUM",
+  doc =
+    "expression : expression ',' NEWLINE NAME\\n                                              | expression ',' NEWLINE NUM",
   p
 )}\if{html}{\out{</div>}}
 }
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_comp_expression_1"></a>}}
-\if{latex}{\out{\hypertarget{method-p_comp_expression_1}{}}}
+\if{html}{\out{<a id="method-Parser-p_comp_expression_1"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_comp_expression_1}{}}}
 \subsection{Method \code{p_comp_expression_1()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_comp_expression_1(
- 
-    doc = "comp_expression : NAME\\n                                                        | NUM",
+  doc =
+    "comp_expression : NAME\\n                                                        | NUM",
   p
 )}\if{html}{\out{</div>}}
 }
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_comp_expression_2"></a>}}
-\if{latex}{\out{\hypertarget{method-p_comp_expression_2}{}}}
+\if{html}{\out{<a id="method-Parser-p_comp_expression_2"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_comp_expression_2}{}}}
 \subsection{Method \code{p_comp_expression_2()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_comp_expression_2(
- 
-    doc = "comp_expression : comp_expression NUM\\n                                                        | comp_expression NAME",
+  doc =
+    "comp_expression : comp_expression NUM\\n                                                        | comp_expression NAME",
   p
 )}\if{html}{\out{</div>}}
 }
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_comp_expression_3"></a>}}
-\if{latex}{\out{\hypertarget{method-p_comp_expression_3}{}}}
+\if{html}{\out{<a id="method-Parser-p_comp_expression_3"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_comp_expression_3}{}}}
 \subsection{Method \code{p_comp_expression_3()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_comp_expression_3(
@@ -354,8 +354,8 @@ pages for those functions for details.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_comp_expression_4"></a>}}
-\if{latex}{\out{\hypertarget{method-p_comp_expression_4}{}}}
+\if{html}{\out{<a id="method-Parser-p_comp_expression_4"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_comp_expression_4}{}}}
 \subsection{Method \code{p_comp_expression_4()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_comp_expression_4(
@@ -366,8 +366,8 @@ pages for those functions for details.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_comp_expression_5"></a>}}
-\if{latex}{\out{\hypertarget{method-p_comp_expression_5}{}}}
+\if{html}{\out{<a id="method-Parser-p_comp_expression_5"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_comp_expression_5}{}}}
 \subsection{Method \code{p_comp_expression_5()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_comp_expression_5(
@@ -378,8 +378,8 @@ pages for those functions for details.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_comp_expression_6"></a>}}
-\if{latex}{\out{\hypertarget{method-p_comp_expression_6}{}}}
+\if{html}{\out{<a id="method-Parser-p_comp_expression_6"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_comp_expression_6}{}}}
 \subsection{Method \code{p_comp_expression_6()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_comp_expression_6(
@@ -390,8 +390,8 @@ pages for those functions for details.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-p_error"></a>}}
-\if{latex}{\out{\hypertarget{method-p_error}{}}}
+\if{html}{\out{<a id="method-Parser-p_error"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-p_error}{}}}
 \subsection{Method \code{p_error()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Parser$p_error(p)}\if{html}{\out{</div>}}
@@ -399,8 +399,8 @@ pages for those functions for details.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-Parser-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-Parser-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
