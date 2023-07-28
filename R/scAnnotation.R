@@ -522,7 +522,7 @@ pointDRPlot <- function(cell.annotation, value,
                        mapping = aes(x = .data[[coor.names[1]]],
                                      y = .data[[coor.names[2]]],
                                      fill = fill.value[sel.cell]),
-                       shape = 21, size = 0.8, stroke = 0.2, color = "white") +
+                       shape = 21, size = 0.8, stroke = 0.2, color = "lightgrey") +
             coord_fixed(ratio = ratio) +
             ggplot_config(base.size = 6) +
             labs(x = coor.label[1], y = coor.label[2]) +

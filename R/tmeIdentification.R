@@ -418,7 +418,7 @@ runCellSubtypeClassify <- function(expr,
     #                             savePath,
     #                             celltype.list,
     #                             umap.plot)
-    cat("[", paste0(Sys.time()), "] -----: Generation of similarity maps\n")
+    cat("[", paste0(Sys.time()), "] -----: generation of similarity maps\n")
     similarity.matrix <- similarityCalculation(fine.labels, savePath)
 
     return(list(fine.labels = fine.labels,
