@@ -23,7 +23,7 @@ For old version of `scCancer`, see https://github.com/wguo-research/scCancer.
 
 R version: >= 3.5.0
 
-We have test scCancer2 on R 4.0.5 (Recommend) and R 4.2.0
+We have test scCancer2 on R 4.0.5 (Recommend) and R 4.2.0 (Workable in most samples)
 
 R tools need to be previously installed: https://cran.r-project.org/bin/windows/Rtools/
 
@@ -43,6 +43,7 @@ checkPkg <- function(pkg){
 # Some frequently used packages
 if(!checkPkg("BiocManager")) install.packages("BiocManager")
 if(!checkPkg("devtools")) install.packages("devtools")
+# Our Seurat version: 4.0.2
 if(!checkPkg("Seurat")) BiocManager::install("Seurat")
 if(!checkPkg("Biobase")) BiocManager::install("Biobase")
 if(!checkPkg("GSVA")) BiocManager::install("GSVA")
