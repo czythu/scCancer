@@ -23,11 +23,11 @@ For old version of `scCancer`, see https://github.com/wguo-research/scCancer.
 
 R version: >= 3.5.0
 
-We have test scCancer2 on R 4.0.5 and R 4.2.0
+We have test scCancer2 on R 4.0.5 (Recommend) and R 4.2.0
 
 R tools need to be previously installed: https://cran.r-project.org/bin/windows/Rtools/
 
-To avoid the issue of version conflicts in R packages, we highly recommend that you install a brand new R environment and switch it in anaconda or RStudio.
+To avoid the version conflicts of R packages, we highly recommend that you install a brand new R environment and switch it in anaconda or RStudio.
 
 ### Quick start of scCancer2
 
@@ -84,7 +84,7 @@ you may download and install the source package from https://github.com/immunoge
 devtools::install_github("czythu/scCancer")
 library(scCancer)
 # Run demos
-# ...... See .rmd file
+# ...... See vignettes/scCancer2.rmd
 ```
 
 See [scCancer2.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) for demos.
@@ -110,20 +110,20 @@ suppressWarnings(load_all())
 suppressWarnings(document())
 library(scCancer)
 # Run demos
-# ...... See .rmd file
+# ...... See vignettes/scCancer2.rmd
 ```
 
-(c) We have uploaded 5 recommended data sets, including 2 large-scale published datasets (multi-sample) and 3 unpublished data (single-sample).
-
-[`CRC-example-immune (Source: GSE146771)`](https://cloud.tsinghua.edu.cn/f/dc6178e9a37746cf9f11/?dl=1)
-
-[`PAC-example-tumor (Source: CRA001160)`](https://cloud.tsinghua.edu.cn/f/a7b70953a42048ccb231/?dl=1)
+(c) We have uploaded 5 recommended data sets, including 3 unpublished data (single-sample) and 2 large-scale published datasets (multi-sample).
 
 [`KC-example-tumor`](https://cloud.tsinghua.edu.cn/f/6b29aab86fc94340832e/?dl=1)
 
 [`PAC-example-normal`](https://cloud.tsinghua.edu.cn/f/3f4715952407477b8b3a/?dl=1)
 
 [`Organoid-example-epithelial`](https://cloud.tsinghua.edu.cn/f/5519909386244a058255/?dl=1)
+
+[`CRC-example-immune (Source: GSE146771)`](https://cloud.tsinghua.edu.cn/f/dc6178e9a37746cf9f11/?dl=1)
+
+[`PAC-example-tumor (Source: CRA001160)`](https://cloud.tsinghua.edu.cn/f/a7b70953a42048ccb231/?dl=1)
 
 ## A Python module for malignant cell identification
 
@@ -136,6 +136,8 @@ The 5 recommended data sets above can be served as query data sets.
 The trained model: [`sc_xgboost_alldata.model`](https://github.com/czythu/scCancer_MicroEnv/tree/master/MalignantCellIdentification/model). It has been integrated into the R package.
 
 The basic processing steps are relied on package `scanpy`, `sklearn` and `xgboost`.
+
+Due to the differences between Seurat and scanpy and the parameters setting at the preprocessing steps, the results of malignant cell identification are slightly different in R and Python.
 
 ## Report Generation for scRNA-seq analysis
 
