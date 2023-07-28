@@ -151,7 +151,7 @@ predSubType_Scoring <- function(expr,
         # Split test dataset with rough labels
         testdata <- test_set[which(test_set$rough.labels == celltype),]
         if(dim(testdata)[1] < 100){
-            cat(celltype, " not enough for subtype annotation. Skip!")
+            cat(celltype, " not enough for subtype annotation. Skip!\n")
             return(NULL)
         }
         barcodes <- rownames(testdata)
