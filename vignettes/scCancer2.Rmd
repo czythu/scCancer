@@ -33,7 +33,7 @@ library(scCancer)
 
 # Install scCancer directly
 ```{r}
-# devtools::install_github("czythu/scCancer")
+devtools::install_github("czythu/scCancer")
 library(scCancer)
 ```
 

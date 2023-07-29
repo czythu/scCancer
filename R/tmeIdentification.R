@@ -163,6 +163,7 @@ predSubType_Scoring <- function(expr,
         pdf(file = file.path(savePath, paste0("umap-", celltype, ".pdf")),
             width = 6, height = 5)
         subtypes.predict <- lapply(file.path1, function(model.path){
+            gc()
             message(model.path)
             index <- which(file.path1 == model.path)
             model.ref <- read.csv(model.path)
