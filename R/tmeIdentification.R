@@ -366,10 +366,10 @@ similarityCalculation <- function(fine.labels, savePath){
             # Heatmap and Hierarchical clustering
             plot.title <- paste0("similarity map of ", celltype)
             # small similarity map
-            pdf.size = 15
-            if(dim(similarity.mar)[1] <= 4^2){
-                pdf.size = 8
-            }
+            # pdf.size = 15
+            # if(dim(similarity.mar)[1] <= 4^2){
+            #     pdf.size = 8
+            # }
             # pdf(file = file.path(savePath, paste0("similarity-", celltype, ".pdf")),
             #     width = pdf.size, height = pdf.size)
             pdf.path <- file.path(savePath, paste0("similarity-", celltype, ".pdf"))

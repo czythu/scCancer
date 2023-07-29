@@ -1810,9 +1810,9 @@ runScAnnotation <- function(dataPath,
         saveRDS(cell.annotation, file = file.path(savePath, "rough-cell-annotation.RDS"))
         saveRDS(expr$Cell.Type, file = file.path(savePath, "rough-labels.RDS"))
     }
-    # else{
-    #     expr$Cell.Type <- readRDS(roughlabel.path)
-    # }
+    else{
+        expr$Cell.Type <- readRDS(roughlabel.path)
+    }
     ## --------- cell subtype ---------
     if(bool.runCellSubtypeClassify){
         if(is.null(celltype.list)){
