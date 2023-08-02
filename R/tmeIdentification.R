@@ -160,8 +160,10 @@ predSubType_Scoring <- function(expr,
         file.path1 <- paste0(folder.path1, list.files(folder.path1))
         file.path2 <- paste0(folder.path2, list.files(folder.path2))
         # Different classification principles: Several lists of subtype
-        pdf(file = file.path(savePath, paste0("umap-", celltype, ".pdf")),
-            width = 6, height = 5)
+        if(umap.plot){
+            pdf(file = file.path(savePath, paste0("umap-", celltype, ".pdf")),
+                width = 6, height = 5)
+        }
         subtypes.predict <- lapply(file.path1, function(model.path){
             gc()
             message(model.path)
@@ -214,7 +216,9 @@ predSubType_Scoring <- function(expr,
             file.remove(file.path)
             return(likelihood)
         })
-        dev.off()
+        if (umap.plot){
+            dev.off()
+        }
         cat("[", paste0(Sys.time()), "] -----: ", celltype, " subtype annotation finished\n")
         subtypes.predict <- data.frame(matrix(unlist(subtypes.predict),
                                               nrow = length(subtypes.predict),
