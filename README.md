@@ -23,7 +23,7 @@ For old version of `scCancer`, see https://github.com/wguo-research/scCancer.
 
 R version: >= 3.5.0
 
-We have test scCancer2 on R 4.0.5 (Recommend) and R 4.2.0 (Workable in most samples)
+We have test scCancer2 on R 4.0.5 (Recommended) and R 4.2.0 (Workable in most samples)
 
 R tools need to be previously installed: https://cran.r-project.org/bin/windows/Rtools/
 
@@ -31,7 +31,7 @@ To avoid the version conflicts of R packages, we highly recommend that you insta
 
 ### Quick start of scCancer2
 
-1. Dependency installation
+#### Dependency installation
 
 You can install the dependencies from the following steps. After installing them successfully, you can run the demos.
 
@@ -52,12 +52,12 @@ if(!checkPkg("ComplexHeatmap")) BiocManager::install("ComplexHeatmap")
 if(!checkPkg("markdown")) install.packages("markdown")
 if(!checkPkg("R.utils")) install.packages("R.utils")
 
-# Algorithms integrated in scCancer1.0
+# Algorithms integrated in scCancer
 if(!checkPkg("NNLM")) devtools::install_github("linxihui/NNLM")
 if(!checkPkg("harmony")) install.packages("harmony")
 if(!checkPkg("liger")) install.packages("rliger")
 
-# Algorithms integrated in scCancer2.0
+# Algorithms newly integrated in scCancer2
 if(!checkPkg("xgboost")) install.packages("xgboost")
 if(!checkPkg("DESeq2")) BiocManager::install("DESeq2")
 # https://cole-trapnell-lab.github.io/garnett/docs/
@@ -76,12 +76,14 @@ https://bioconductor.org/packages/release/bioc/html/edgeR.html
 We also noticed that directly installing harmony from CRAN might meet this bug: [github/harmony/issues/](https://github.com/immunogenomics/harmony/issues/159),
 you may download and install the source package from https://github.com/immunogenomics/harmony/releases/tag/0.1. to run `scCombination` with harmony method smoothly.
 
-2. If you have already installed the above dependencies, you have 2 ways to run scCancer2.0:
+#### Run scCancer2
+
+If you have already installed the above dependencies, you have 2 ways to run scCancer2:
 
 (a) Recommended: if you want to completely update scCancer to the next version:
 
 ```R
-# install scCancer2.0
+# install scCancer2
 devtools::install_github("czythu/scCancer")
 library(scCancer)
 # Run demos
@@ -127,14 +129,14 @@ library(scCancer)
 [`PAC-example-tumor (Source: CRA001160)`](https://cloud.tsinghua.edu.cn/f/a7b70953a42048ccb231/?dl=1)
 
 
-## R module for scRNA-seq analysis
+### R module for newly implemented scRNA-seq analysis
 
 If you have a processed dataset (matrix or Seurat object), you can use cell subtype annotation and malignant cell identification module alone.
 
-scStatistics and scAnnotation are not needed. See [cellSubtypeAnno.Rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) and [malignantCellIden.Rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) in vignettes folder for tutorials.
+`scStatistics` and `scAnnotation` are not needed. See [cellSubtypeAnno.Rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) and [malignantCellIden.Rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) in vignettes folder for tutorials.
 
 
-## A Python module for malignant cell identification
+### A Python module for malignant cell identification
 
 If you are only interested in identifying malignant cells in your own samples or want to reproduce Figure4 in our manuscript, we highly recommend using the pipeline [Figure4.ipynb](https://github.com/czythu/scCancer_MicroEnv/tree/master/MalignantCellIdentification)
 
@@ -148,7 +150,7 @@ The basic processing steps are relied on package `scanpy`, `sklearn` and `xgboos
 
 Due to the differences between Seurat and scanpy and the parameters setting at the preprocessing steps, the results of malignant cell identification are slightly different in R and Python.
 
-## Report Generation for scRNA-seq analysis
+### Report Generation for scRNA-seq analysis
 
 1. The results of cell subtype annotation are stored in folder: cellSubtypeAnno/
 
@@ -171,3 +173,6 @@ devtools::install_github("Miaoyx323/stCancer")
 See [stCancer.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) for demos.
 
 ## Citation
+
+[1] Wenbo Guo, Dongfang Wang, Shicheng Wang, Yiran Shan, Changyi Liu, Jin Gu, scCancer: a package for automated processing of single-cell RNA-seq data in cancer, Briefings in Bioinformatics, bbaa127, https://doi.org/10.1093/bib/bbaa127
+
