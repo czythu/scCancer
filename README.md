@@ -126,6 +126,14 @@ library(scCancer)
 
 [`PAC-example-tumor (Source: CRA001160)`](https://cloud.tsinghua.edu.cn/f/a7b70953a42048ccb231/?dl=1)
 
+
+## R module for scRNA-seq analysis
+
+If you have a processed dataset (matrix or Seurat object), you can use cell subtype annotation and malignant cell identification module alone.
+
+scStatistics and scAnnotation are not needed. See [cellSubtypeAnno.Rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) and [malignantCellIden.Rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) in vignettes folder for tutorials.
+
+
 ## A Python module for malignant cell identification
 
 If you are only interested in identifying malignant cells in your own samples or want to reproduce Figure4 in our manuscript, we highly recommend using the pipeline [Figure4.ipynb](https://github.com/czythu/scCancer_MicroEnv/tree/master/MalignantCellIdentification)

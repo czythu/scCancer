@@ -1,5 +1,5 @@
 ---
-title: "Cell sub-type annotation"
+title: "Cell sub-type annotation for liver cell atlases"
 author: "Zeyu Chen"
 date: "2023-08-02"
 output: html_document
@@ -16,28 +16,24 @@ suppressMessages(library(scCancer))
 suppressMessages(library(dplyr))
 ```
 
+# Set related parameters
 ```{r}
 annoPath <- 'D:/scCancer-data/Liver/'
-authors <- c("Ma2022", "Zhang2019", "Lu2022", "Xue2022", "Zheng2017",
-             "Sun2021", "Liu2023", "Losic2020", "Ma2021")
 metadata <- readRDS(file.path(annoPath, "metadata-HCC.RDS"))
-```
-
-
-```{r}
-author <- authors[1]
-folder.name <- author
-expr <- readRDS(file.path(annoPath, folder.name, paste0(author, ".RDS")))
-rough.labels <- metadata[[author]]$level1
-```
-
-
-```{r}
 default.list <- c("T.cells", "Myeloid.cells", "B.cells", "Fibroblast", "Endothelial")
 submodel.path <- system.file("csv", package = "scCancer")
 markers.path <- system.file("txt", package = "scCancer")
 ```
 
+# Load one test sample (Seurat object)
+```{r}
+author <- "Ma2022"
+folder.name <- author
+expr <- readRDS(file.path(annoPath, folder.name, paste0(author, ".RDS")))
+rough.labels <- metadata[[author]]$level1
+```
+
+# Rough label annotation
 ```{r}
 t.results <- predCellType(expr@assays[["RNA"]]@data)
 expr$Cell.Type <- t.results$type.pred
@@ -47,18 +43,104 @@ expr$Cell.Type %>%
 celltype.list <- intersect(unique(expr$Cell.Type), default.list)
 ```
 
+# Fine label annotation
 ```{r}
 folder.name <- author
 if(!dir.exists(file.path(annoPath, folder.name))){
     dir.create(file.path(annoPath, folder.name), recursive = T)
 }
-runCellSubtypeClassify(expr = expr,
-                       submodel.path = submodel.path,
-                       markers.path = markers.path,
-                       savePath = file.path(annoPath, folder.name),
-                       celltype.list = celltype.list,
-                       dropout.modeling = FALSE,
-                       unknown.cutoff = 0.3,
-                       umap.plot = F)
+t.results <- runCellSubtypeClassify(expr = expr,
+                                    submodel.path = submodel.path,
+                                    markers.path = markers.path,
+                                    savePath = file.path(annoPath, folder.name),
+                                    celltype.list = celltype.list,
+                                    dropout.modeling = FALSE,
+                                    unknown.cutoff = 0.3,
+                                    umap.plot = F)
+saveRDS(t.results[["fine.labels"]], file = file.path(annoPath, folder.name, "fine-labels.RDS"))
+saveRDS(t.results[["similarity.matrix"]], file = file.path(annoPath, folder.name, "similarity-matrix.RDS"))
+```
+
+# Loop for all samples
+```{r}
+authors <- c("Ma2022", "Zhang2019", "Lu2022", "Zheng2017",
+             "Sun2021", "Liu2023", "Losic2020", "Ma2021")
+annoPath <- 'D:/scCancer-data/Liver/'
+# metadata <- readRDS(file.path(annoPath, "metadata-HCC.RDS"))
+default.list <- c("T.cells", "Myeloid.cells", "B.cells", "Fibroblast", "Endothelial")
+submodel.path <- system.file("csv", package = "scCancer")
+markers.path <- system.file("txt", package = "scCancer")
+for (author in authors){
+    gc()
+    print(author)
+    folder.name <- author
+    expr <- readRDS(file.path(annoPath, folder.name, paste0(author, ".RDS")))
+    # rough.labels <- metadata[[author]]$level1
+    default.list <- c("T.cells", "Myeloid.cells", "B.cells", "Fibroblast", "Endothelial")
+    submodel.path <- system.file("csv", package = "scCancer")
+    markers.path <- system.file("txt", package = "scCancer")
+    t.results <- predCellType(expr@assays[["RNA"]]@data)
+    expr$Cell.Type <- t.results$type.pred
+    saveRDS(expr$Cell.Type, file = file.path(annoPath, folder.name, "rough-labels.RDS"))
+    expr$Cell.Type %>%
+                gsub("T.cells.CD4", "T.cells", .) %>%
+                gsub("T.cells.CD8", "T.cells", .) -> expr$Cell.Type
+    celltype.list <- intersect(unique(expr$Cell.Type), default.list)
+    if(!dir.exists(file.path(annoPath, folder.name))){
+        dir.create(file.path(annoPath, folder.name), recursive = T)
+    }
+    results <- runCellSubtypeClassify(expr = expr,
+                                      submodel.path = submodel.path,
+                                      markers.path = markers.path,
+                                      savePath = file.path(annoPath, folder.name),
+                                      celltype.list = celltype.list,
+                                      dropout.modeling = FALSE,
+                                      unknown.cutoff = 0.3,
+                                      umap.plot = F)
+                           
+    saveRDS(results[["fine.labels"]], file = file.path(annoPath, folder.name, "fine-labels.RDS"))
+    saveRDS(results[["similarity.matrix"]], file = file.path(annoPath, folder.name, "similarity-matrix.RDS"))
+}
+```
+
+# Large sample (Xue2022)
+```{r}
+author <- "Xue2022"
+for (i in seq(1,2)){
+    gc()
+    print(i)
+    folder.name <- author
+    expr <- readRDS(file.path(annoPath, folder.name, paste0(author, "-", i, ".RDS")))
+    # rough.labels <- metadata[[author]]$level1
+    default.list <- c("T.cells", "Myeloid.cells", "B.cells", "Fibroblast", "Endothelial")
+    submodel.path <- system.file("csv", package = "scCancer")
+    markers.path <- system.file("txt", package = "scCancer")
+    t.results <- predCellType(expr@assays[["RNA"]]@data)
+    expr$Cell.Type <- t.results$type.pred
+    expr$Cell.Type %>%
+                gsub("T.cells.CD4", "T.cells", .) %>%
+                gsub("T.cells.CD8", "T.cells", .) -> expr$Cell.Type
+    celltype.list <- intersect(unique(expr$Cell.Type), default.list)
+    if(!dir.exists(file.path(annoPath, folder.name))){
+        dir.create(file.path(annoPath, folder.name), recursive = T)
+    }
+    saveRDS(expr$Cell.Type, file = file.path(annoPath, folder.name, "rough-labels-", i, ".RDS"))
+    results <- runCellSubtypeClassify(expr = expr,
+                                      submodel.path = submodel.path,
+                                      markers.path = markers.path,
+                                      savePath = file.path(annoPath, folder.name),
+                                      celltype.list = celltype.list,
+                                      dropout.modeling = FALSE,
+                                      unknown.cutoff = 0.3,
+                                      umap.plot = F)
+                           
+    saveRDS(results[["fine.labels"]], file = file.path(annoPath, folder.name, "fine-labels-", i, ".RDS"))
+    saveRDS(results[["similarity.matrix"]], file = file.path(annoPath, folder.name, "similarity-matrix-", i, ".RDS"))
+}
+```
+
+# Integrate fine labels and similarity maps
+```{r}
+
 ```
 
