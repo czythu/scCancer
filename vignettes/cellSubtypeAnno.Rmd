@@ -106,7 +106,7 @@ for (author in authors){
 # Large sample (Xue2022)
 ```{r}
 author <- "Xue2022"
-for (i in seq(1,2)){
+for (i in seq(1,4)){
     gc()
     print(i)
     folder.name <- author
@@ -124,7 +124,7 @@ for (i in seq(1,2)){
     if(!dir.exists(file.path(annoPath, folder.name))){
         dir.create(file.path(annoPath, folder.name), recursive = T)
     }
-    saveRDS(expr$Cell.Type, file = file.path(annoPath, folder.name, "rough-labels-", i, ".RDS"))
+    saveRDS(expr$Cell.Type, file = file.path(annoPath, folder.name, paste0("rough-labels-", i, ".RDS")))
     results <- runCellSubtypeClassify(expr = expr,
                                       submodel.path = submodel.path,
                                       markers.path = markers.path,
@@ -134,13 +134,27 @@ for (i in seq(1,2)){
                                       unknown.cutoff = 0.3,
                                       umap.plot = F)
                            
-    saveRDS(results[["fine.labels"]], file = file.path(annoPath, folder.name, "fine-labels-", i, ".RDS"))
-    saveRDS(results[["similarity.matrix"]], file = file.path(annoPath, folder.name, "similarity-matrix-", i, ".RDS"))
+    saveRDS(results[["fine.labels"]], file = file.path(annoPath, folder.name, paste0("fine-labels-", i, ".RDS")))
+    saveRDS(results[["similarity.matrix"]], file = file.path(annoPath, folder.name, paste0("similarity-matrix-", i, ".RDS")))
 }
 ```
 
 # Integrate fine labels and similarity maps
 ```{r}
-
+default.list <- c("T.cells", "Myeloid.cells", "B.cells", "Fibroblast", "Endothelial")
+authors <- c("Ma2022", "Zhang2019", "Lu2022", "Zheng2017",
+             "Sun2021", "Liu2023", "Losic2020", "Ma2021")
+all.list <- list()
+for (celltype in default.list){
+    all.labels <- c()
+    for (author in authors){
+        fine.labels <- readRDS(file.path(annoPath, author, "fine-labels.RDS"))[[celltype]]
+        # fine.labels <- cbind(fine.labels, real.labels)
+        all.labels <- rbind(all.labels, fine.labels)
+    }
+    all.list[[celltype]] <- all.labels
+}
+saveRDS(all.list, file.path(annoPath, "integrated-finelabels.RDS"))
+similarityCalculation(all.list, annoPath)
 ```
 

@@ -879,7 +879,7 @@ SimilarityHeatmap <- function(similarity.mar,
                        clustering_method = "ward.D",
                        color=colorRampPalette(c("#FFFFD4", "#FED98E", "#FE9929", "#D95F0E"))(50),
                        main = paste0(celltype, " similarity map"),
-                       fontsize = 11,
+                       fontsize = 9.5,
                        display_numbers = TRUE,
                        number_format = "%.2f",
                        filename = pdf.path)
