@@ -1619,7 +1619,7 @@ plotCellInteraction <- function(stat.df, cell.annotation){
 #' @importFrom markdown markdownToHTML
 #' @importFrom pheatmap pheatmap
 #' @importFrom stringr str_c
-#' @importFrom dplyr "%>%"
+#' @importFrom dplyr %>%
 runScAnnotation <- function(dataPath,
                             statPath,
                             savePath = NULL,
