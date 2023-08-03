@@ -1615,11 +1615,11 @@ plotCellInteraction <- function(stat.df, cell.annotation){
 #' @return A results list with all useful objects used in the function.
 #' @export
 #'
-#' @import Matrix knitr ggplot2 Seurat dplyr
+#' @import Matrix knitr ggplot2 Seurat
 #' @importFrom markdown markdownToHTML
 #' @importFrom pheatmap pheatmap
 #' @importFrom stringr str_c
-#'
+#' @importFrom dplyr "%>%"
 runScAnnotation <- function(dataPath,
                             statPath,
                             savePath = NULL,
