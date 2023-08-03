@@ -1615,7 +1615,7 @@ plotCellInteraction <- function(stat.df, cell.annotation){
 #' @return A results list with all useful objects used in the function.
 #' @export
 #'
-#' @import Matrix knitr ggplot2 Seurat
+#' @import Matrix knitr ggplot2 Seurat dplyr
 #' @importFrom markdown markdownToHTML
 #' @importFrom pheatmap pheatmap
 #' @importFrom stringr str_c
