@@ -97,7 +97,7 @@ for (author in authors){
                                       dropout.modeling = FALSE,
                                       unknown.cutoff = 0.3,
                                       umap.plot = F)
-                           
+
     saveRDS(results[["fine.labels"]], file = file.path(annoPath, folder.name, "fine-labels.RDS"))
     saveRDS(results[["similarity.matrix"]], file = file.path(annoPath, folder.name, "similarity-matrix.RDS"))
 }
@@ -154,7 +154,36 @@ for (celltype in default.list){
     }
     all.list[[celltype]] <- all.labels
 }
-saveRDS(all.list, file.path(annoPath, "integrated-finelabels.RDS"))
-similarityCalculation(all.list, annoPath)
+saveRDS(all.list, file.path(annoPath, "integrated-finelabels-Others.RDS"))
+all.matrix <- similarityCalculation(all.list, annoPath)
+```
+
+```{r}
+author <- "Xue2022"
+all.list <- list()
+for (celltype in default.list){
+    all.labels <- c()
+    for (i in seq(1, 4)){
+        fine.labels <- readRDS(file.path(annoPath, author, paste0("fine-labels-", i, ".RDS")))[[celltype]]
+        # fine.labels <- cbind(fine.labels, real.labels)
+        all.labels <- rbind(all.labels, fine.labels)
+    }
+    all.list[[celltype]] <- all.labels
+}
+saveRDS(all.list, file.path(annoPath, author, "integrated-finelabels-Xue2022.RDS"))
+all.matrix <- similarityCalculation(all.list, file.path(annoPath, author))
+saveRDS(all.matrix, file.path(annoPath, author, "integrated-similaritymatrix-Xue2022.RDS"))
+```
+
+```{r}
+label1 <- readRDS(file.path(annoPath, "integrated-finelabels-Others.RDS"))
+label2 <- readRDS(file.path(annoPath, "Xue2022", "integrated-finelabels-Xue2022.RDS"))
+fine.labels <- list()
+for (celltype in default.list){
+    fine.labels[[celltype]] <- rbind(label1[[celltype]], label2[[celltype]])
+}
+saveRDS(fine.labels, file.path(annoPath, "integrated-finelabels.RDS"))
+all.matrix <- similarityCalculation(fine.labels, annoPath)
+saveRDS(all.matrix, file.path(annoPath, "integrated-similaritymatrix.RDS"))
 ```
 
