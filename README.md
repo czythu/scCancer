@@ -117,6 +117,8 @@ library(scCancer)
 ```
 
 (c) We have uploaded 5 recommended data sets, including 3 unpublished data (single-sample) and 2 large-scale published datasets (multi-sample).
+The first three data sets are recommended for reproducing the whole pipeline because there are fewer samples for faster operation. 
+The last two data sets are recommended for cell subtype annotation task because there are more cell types and richer cell numbers.
 
 [`KC-example-tumor`](https://cloud.tsinghua.edu.cn/f/6b29aab86fc94340832e/?dl=1)
 
@@ -127,7 +129,6 @@ library(scCancer)
 [`CRC-example-immune (Source: GSE146771)`](https://cloud.tsinghua.edu.cn/f/dc6178e9a37746cf9f11/?dl=1)
 
 [`PAC-example-tumor (Source: CRA001160)`](https://cloud.tsinghua.edu.cn/f/a7b70953a42048ccb231/?dl=1)
-
 
 ### R module for newly implemented scRNA-seq analysis
 
