@@ -23,7 +23,7 @@ For old version of `scCancer`, see https://github.com/wguo-research/scCancer.
 
 R version: >= 3.5.0
 
-We have test scCancer2 on R 4.0.5 (Recommended) and R 4.2.0 (Workable in most samples)
+We have test scCancer2 on R 4.0.5 (Recommended), R 4.1.1 (Recommended) and R 4.2.0 (Workable in most samples)
 
 R tools need to be previously installed: https://cran.r-project.org/bin/windows/Rtools/
 
