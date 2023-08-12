@@ -65,7 +65,7 @@ BiocManager::install(c('DelayedArray', 'DelayedMatrixStats', 'org.Hs.eg.db', 'or
 if(!checkPkg("garnett")) devtools::install_github("cole-trapnell-lab/garnett")
 ```
 
-Notice1: if errors occur when installing "NNLM" or "edgeR", you may install them from the .tar.gz file:
+Notice1: If errors occur when installing "NNLM" or "edgeR", you may install them from the .tar.gz file:
 
 https://cran.r-project.org/src/contrib/Archive/NNLM/
 
@@ -73,14 +73,14 @@ https://bioconductor.org/packages/release/bioc/html/edgeR.html
 
 Notice2: We recommend you installing old version of Matrix package, for example: version 1.4.1 in https://cran.r-project.org/src/contrib/Archive/Matrix/
 
-Notice3: directly installing harmony from CRAN might meet this bug when running `scCombination`: [github/harmony/issues/](https://github.com/immunogenomics/harmony/issues/159),
+Notice3: Directly installing harmony from CRAN might meet this bug when running `scCombination`: [github/harmony/issues/](https://github.com/immunogenomics/harmony/issues/159),
 you may download and install the source package from https://github.com/immunogenomics/harmony/releases/tag/0.1. to run `scCombination` with harmony method smoothly.
 
 #### Run scCancer2
 
 If you have already installed the above dependencies, you have 2 ways to run scCancer2:
 
-(a) Recommended: if you want to completely update scCancer to the next version:
+(a) Recommended (if you want to completely update scCancer to the next version):
 
 ```R
 # install scCancer2
@@ -116,7 +116,8 @@ library(scCancer)
 # ...... See vignettes/scCancer2.rmd
 ```
 
-(c) We have uploaded 5 recommended data sets, including 3 unpublished data (single-sample) and 2 large-scale published datasets (multi-sample).
+#### Data sets
+We have uploaded 5 recommended data sets, including 3 unpublished data (single-sample) and 2 large-scale published datasets (multi-sample).
 The first three data sets are recommended for reproducing the whole pipeline because there are fewer samples for faster operation. 
 The last two data sets are recommended for cell subtype annotation task because there are more cell types and richer cell numbers.
 
