@@ -191,9 +191,11 @@ predSubType_Scoring <- function(expr,
                                       metadata = label.predict,
                                       col.name = "cell.subtype")
                 tt.expr$cell.subtype[which(is.na(tt.expr$cell.subtype))] <- "NA"
-                colors.assigned <- getDefaultColors(length(unique(label.predict)))
-                colors.assigned <- c(colors.assigned, "#c1cdcd")
-                names(colors.assigned) <- c(unique(label.predict), "NA")
+                uni.labels <- unique(label.predict)
+                uni.labels <- uni.labels[which(uni.labels != "unknown")]
+                colors.assigned <- getDefaultColors(length(uni.labels))
+                colors.assigned <- c(colors.assigned, "#838b8b", "#c1cdcd")
+                names(colors.assigned) <- c(uni.labels, "unknown", "NA")
                 if(celltype == "T.cells" | celltype == "Myeloid.cells"){
                     legend.size <- 10
                 }
