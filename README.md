@@ -46,7 +46,7 @@ checkPkg <- function(pkg){
 if(!checkPkg("BiocManager")) install.packages("BiocManager")
 if(!checkPkg("devtools")) install.packages("devtools")
 # Our Seurat version: 4.0.2 or 4.1.1
-if(!checkPkg("Seurat")) BiocManager::install("Seurat", version = "4.1.1")
+if(!checkPkg("Seurat")) BiocManager::install("Seurat")
 if(!checkPkg("Biobase")) BiocManager::install("Biobase")
 if(!checkPkg("GSVA")) BiocManager::install("GSVA")
 if(!checkPkg("pheatmap")) BiocManager::install("pheatmap")
@@ -75,7 +75,12 @@ https://cran.r-project.org/src/contrib/Archive/NNLM/
 
 https://bioconductor.org/packages/release/bioc/html/edgeR.html
 
-Notice2: We recommend you installing old version of Matrix package, for example: version 1.4.1 in https://cran.r-project.org/src/contrib/Archive/Matrix/
+Notice2: We recommend you installing old version of Seurat and Matrix package, download in https://cran.r-project.org/src/contrib/Archive/, 
+```R
+install.packages("spatstat.core_1.65-0.tar.gz", repos = NULL, type = "source")
+install.packages("Seurat_4.1.1.tar.gz", repos = NULL, type = "source")
+install.packages("Matrix_1.4-1.tar.gz", repos = NULL, type = "source")
+```
 
 Notice3: Directly installing harmony from CRAN might meet this bug when running `scCombination`: [github/harmony/issues/](https://github.com/immunogenomics/harmony/issues/159),
 you may download and install the source package from https://github.com/immunogenomics/harmony/releases/tag/0.1. to run `scCombination` with harmony method smoothly.
