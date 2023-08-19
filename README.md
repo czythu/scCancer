@@ -54,22 +54,6 @@ BiocManager::install(c('DelayedArray', 'DelayedMatrixStats', 'org.Hs.eg.db', 'or
 if(!checkPkg("garnett")) devtools::install_github("cole-trapnell-lab/garnett")
 ```
 
-Notice1: If errors occur when installing "NNLM" or "edgeR", you may install them from the .tar.gz file:
-
-https://cran.r-project.org/src/contrib/Archive/NNLM/
-
-https://bioconductor.org/packages/release/bioc/html/edgeR.html
-
-Notice2: We recommend you installing old version of Seurat and Matrix package, download in https://cran.r-project.org/src/contrib/Archive/.
-```R
-install.packages("spatstat.core_1.65-0.tar.gz", repos = NULL, type = "source")
-install.packages("Seurat_4.1.1.tar.gz", repos = NULL, type = "source")
-install.packages("Matrix_1.4-1.tar.gz", repos = NULL, type = "source")
-```
-
-Notice3: Directly installing harmony from CRAN might meet this bug when running `scCombination`: [github/harmony/issues/](https://github.com/immunogenomics/harmony/issues/159),
-you may download and install the source package from https://github.com/immunogenomics/harmony/releases/tag/0.1. to run `scCombination` with harmony method smoothly.
-
 #### Run scCancer2
 
 If you have already installed the above dependencies, you have 2 ways to run scCancer2:
@@ -110,6 +94,22 @@ library(scCancer)
 # Run demos
 # ...... See vignettes/scCancer2.rmd
 ```
+
+Notice1: If errors occur when installing "NNLM" or "edgeR", you may install them from the .tar.gz file:
+
+https://cran.r-project.org/src/contrib/Archive/NNLM/
+
+https://bioconductor.org/packages/release/bioc/html/edgeR.html
+
+Notice2: We recommend you installing old version of Seurat and Matrix package, download in https://cran.r-project.org/src/contrib/Archive/.
+```R
+install.packages("spatstat.core_1.65-0.tar.gz", repos = NULL, type = "source")
+install.packages("Seurat_4.1.1.tar.gz", repos = NULL, type = "source")
+install.packages("Matrix_1.4-1.tar.gz", repos = NULL, type = "source")
+```
+
+Notice3: Directly installing harmony from CRAN might meet this bug when running `scCombination`: [github/harmony/issues/](https://github.com/immunogenomics/harmony/issues/159),
+you may download and install the source package from https://github.com/immunogenomics/harmony/releases/tag/0.1. to run `scCombination` with harmony method smoothly.
 
 #### Data sets
 We have uploaded 5 recommended data sets, including 3 unpublished data (single-sample) and 2 large-scale published datasets (multi-sample).
