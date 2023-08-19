@@ -23,9 +23,9 @@ For old version of `scCancer`, see https://github.com/wguo-research/scCancer.
 
 We have test scCancer2 on:
 
-1. R version 4.0.5 (2021-03-31), Platform: x86_64-w64-mingw32/x64 (64-bit), Running under: Windows 10 x64 (build 22621).
+`R version 4.0.5` (2021-03-31), Platform: x86_64-w64-mingw32/x64 (64-bit), Running under: Windows 10 x64 (build 22621).
 
-2. R version 4.1.1 (2021-08-10), Platform: x86_64-conda-linux-gnu (64-bit), Running under: CentOS Linux 7 (Core).
+`R version 4.1.1` (2021-08-10), Platform: x86_64-conda-linux-gnu (64-bit), Running under: CentOS Linux 7 (Core).
 
 In windows, R tools need to be previously installed: https://cran.r-project.org/bin/windows/Rtools/
 
