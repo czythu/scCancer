@@ -21,9 +21,16 @@ For old version of `scCancer`, see https://github.com/wguo-research/scCancer.
 
 ### System Requirements
 
-We have test scCancer2 on R 4.0.5 (Recommended), R 4.1.1 (Recommended) and R 4.2.0 (Workable in most samples)
+We have test scCancer2 on:
 
+R version 4.0.5 (2021-03-31)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 22621)
 R tools need to be previously installed: https://cran.r-project.org/bin/windows/Rtools/
+
+R version 4.1.1 (2021-08-10)
+Platform: x86_64-conda-linux-gnu (64-bit)
+Running under: CentOS Linux 7 (Core)
 
 To avoid the version conflicts of R packages, we recommend that you install a brand new R environment and switch it in anaconda or RStudio.
 
@@ -42,7 +49,7 @@ checkPkg <- function(pkg){
 if(!checkPkg("BiocManager")) install.packages("BiocManager")
 if(!checkPkg("devtools")) install.packages("devtools")
 # Our Seurat version: 4.0.2 or 4.1.1
-if(!checkPkg("Seurat")) BiocManager::install("Seurat")
+if(!checkPkg("Seurat")) BiocManager::install("Seurat", version = "4.1.1")
 if(!checkPkg("Biobase")) BiocManager::install("Biobase")
 if(!checkPkg("GSVA")) BiocManager::install("GSVA")
 if(!checkPkg("pheatmap")) BiocManager::install("pheatmap")
@@ -84,6 +91,7 @@ If you have already installed the above dependencies, you have 2 ways to run scC
 
 ```R
 # install scCancer2
+# Remember to skip all updates in the following step.
 devtools::install_github("czythu/scCancer")
 library(scCancer)
 # Run demos
