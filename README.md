@@ -112,8 +112,8 @@ install.packages("Matrix_1.4-1.tar.gz", repos = NULL, type = "source")
 
 #### Data sets
 We have uploaded 5 recommended data sets, including 3 unpublished data (single-sample) and 2 large-scale published datasets (multi-sample).
-The first three data sets are recommended for reproducing the whole pipeline because there are fewer samples for faster operation. 
-The last two data sets are recommended for cell subtype annotation task because there are more cell types and richer cell numbers.
+The first 3 data sets are recommended for reproducing the whole pipeline because there are fewer samples for faster operation. 
+The last 2 data sets are recommended for cell subtype annotation task because there are more cell types and richer cell numbers.
 
 [`KC-example-tumor`](https://cloud.tsinghua.edu.cn/f/6b29aab86fc94340832e/?dl=1)
 
@@ -130,7 +130,6 @@ The last two data sets are recommended for cell subtype annotation task because 
 If you have a processed dataset (matrix or Seurat object), you can use cell subtype annotation and malignant cell identification module alone.
 
 `scStatistics` and `scAnnotation` are not needed. See [cellSubtypeAnno.Rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) and [malignantCellIden.Rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) in vignettes folder for tutorials.
-
 
 ### A Python module for malignant cell identification
 

@@ -13,6 +13,10 @@ suppressMessages(library(pheatmap))
 suppressMessages(library(ComplexHeatmap))
 ```
 
+```{r}
+devtools::install_github("navinlabcode/copykat")
+devtools::install_github("Miaoyx323/stCancer")
+```
 
 ```{r}
 # library(devtools)
