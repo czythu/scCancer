@@ -188,14 +188,15 @@ predSubType_Scoring <- function(expr,
             if(umap.plot){
                 names(label.predict) <- barcodes
                 tt.expr <- AddMetaData(object = t.expr,
-                                      metadata = label.predict,
-                                      col.name = "cell.subtype")
+                                       metadata = label.predict,
+                                       col.name = "cell.subtype")
                 tt.expr$cell.subtype[which(is.na(tt.expr$cell.subtype))] <- "NA"
                 uni.labels <- unique(label.predict)
                 uni.labels <- uni.labels[which(uni.labels != "unknown")]
                 colors.assigned <- getDefaultColors(length(uni.labels))
                 colors.assigned <- c(colors.assigned, "#838b8b", "#c1cdcd")
                 names(colors.assigned) <- c(uni.labels, "unknown", "NA")
+                tt.expr$cell.subtype <- factor(tt.expr$cell.subtype, levels = names(colors.assigned))
                 if(celltype == "T.cells" | celltype == "Myeloid.cells"){
                     legend.size <- 10
                 }

@@ -34,8 +34,12 @@ library(scCancer)
 # Install scCancer directly
 ```{r}
 devtools::install_github("czythu/scCancer")
+```
+
+```{r}
 library(scCancer)
 ```
+
 
 # Data processing for filtered_bc_matrix/
 ## GSE140228:.mtx, .tsv.gz file
@@ -79,18 +83,18 @@ generate10Xdata(matrix = matrix.sub,
 
 # scStatistics
 ```{r}
-path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
+# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
 # path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE140228/"
 # path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
-# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/STAD-example/"
+path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/STAD-example/"
 dataPath <- file.path(path, "data")
 # A path containing the scStatistics results
 statPath <- file.path(path, "result")
 # The sample name
-sampleName <- "CRC-example"
+# sampleName <- "CRC-example"
 # sampleName <- "KC-example"
 # sampleName <- "PDAC-example"
-# sampleName <- "STAD-example"
+sampleName <- "STAD-example"
 # The author name or a string used to mark the report.
 authorName <- "G-Lab@THU"
 # A path used to save the results files

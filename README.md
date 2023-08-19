@@ -45,10 +45,10 @@ checkPkg <- function(pkg){
 # Some frequently used packages
 if(!checkPkg("BiocManager")) install.packages("BiocManager")
 if(!checkPkg("devtools")) install.packages("devtools")
-
 if(!checkPkg("NNLM")) devtools::install_github("linxihui/NNLM")
 # https://cole-trapnell-lab.github.io/garnett/docs/
 if(!checkPkg("monocle")) BiocManager::install(c("monocle"))
+# https://bioconductor.org/packages/release/bioc/html/edgeR.html
 if(!checkPkg("edgeR")) BiocManager::install(c("edgeR"))
 BiocManager::install(c('DelayedArray', 'DelayedMatrixStats', 'org.Hs.eg.db', 'org.Mm.eg.db'))
 if(!checkPkg("garnett")) devtools::install_github("cole-trapnell-lab/garnett")
@@ -65,8 +65,6 @@ If you have already installed the above dependencies, you have 2 ways to run scC
 # Remember to skip all updates in the following step.
 devtools::install_github("czythu/scCancer")
 library(scCancer)
-# Run demos
-# ...... See vignettes/scCancer2.rmd
 ```
 
 See [scCancer2.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) for demos.
@@ -91,25 +89,24 @@ library(devtools)
 suppressWarnings(load_all())
 suppressWarnings(document())
 library(scCancer)
-# Run demos
-# ...... See vignettes/scCancer2.rmd
 ```
 
-Notice1: If errors occur when installing "NNLM" or "edgeR", you may install them from the .tar.gz file:
+Notice1: If errors occur when installing dependencies ("usethis", "hdf5r", "pbkrtest", "locfit", ...), you may install them from the .tar.gz file. 
+Pay attention to the relationship between the release time of the R package and the release time of R-base.
 
-https://cran.r-project.org/src/contrib/Archive/NNLM/
+Notice2: Directly installing harmony from CRAN might meet this bug when running `scCombination`: [github/harmony/issues/](https://github.com/immunogenomics/harmony/issues/159).
+You may download and install the source package from https://github.com/immunogenomics/harmony/releases/tag/0.1. to run `scCombination` with harmony method smoothly.
 
-https://bioconductor.org/packages/release/bioc/html/edgeR.html
+Notice3: We recommend you installing specific version of Seurat and Matrix package. 
 
-Notice2: We recommend you installing old version of Seurat and Matrix package, download in https://cran.r-project.org/src/contrib/Archive/.
+We have tried: Seurat 4.1.1 and Matrix 1.4.1; Seurat 4.3.0 and Matrix 1.6.1
+
+Download in https://cran.r-project.org/src/contrib/Archive/ and install from local:
 ```R
 install.packages("spatstat.core_1.65-0.tar.gz", repos = NULL, type = "source")
 install.packages("Seurat_4.1.1.tar.gz", repos = NULL, type = "source")
 install.packages("Matrix_1.4-1.tar.gz", repos = NULL, type = "source")
 ```
-
-Notice3: Directly installing harmony from CRAN might meet this bug when running `scCombination`: [github/harmony/issues/](https://github.com/immunogenomics/harmony/issues/159),
-you may download and install the source package from https://github.com/immunogenomics/harmony/releases/tag/0.1. to run `scCombination` with harmony method smoothly.
 
 #### Data sets
 We have uploaded 5 recommended data sets, including 3 unpublished data (single-sample) and 2 large-scale published datasets (multi-sample).
