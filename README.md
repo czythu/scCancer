@@ -45,23 +45,8 @@ checkPkg <- function(pkg){
 # Some frequently used packages
 if(!checkPkg("BiocManager")) install.packages("BiocManager")
 if(!checkPkg("devtools")) install.packages("devtools")
-# Our Seurat version: 4.0.2 or 4.1.1
-if(!checkPkg("Seurat")) BiocManager::install("Seurat")
-if(!checkPkg("Biobase")) BiocManager::install("Biobase")
-if(!checkPkg("GSVA")) BiocManager::install("GSVA")
-if(!checkPkg("pheatmap")) BiocManager::install("pheatmap")
-if(!checkPkg("ComplexHeatmap")) BiocManager::install("ComplexHeatmap")
-if(!checkPkg("markdown")) install.packages("markdown")
-if(!checkPkg("R.utils")) install.packages("R.utils")
 
-# Algorithms integrated in scCancer
 if(!checkPkg("NNLM")) devtools::install_github("linxihui/NNLM")
-if(!checkPkg("harmony")) install.packages("harmony")
-if(!checkPkg("liger")) install.packages("rliger")
-
-# Algorithms newly integrated in scCancer2
-if(!checkPkg("xgboost")) install.packages("xgboost")
-if(!checkPkg("DESeq2")) BiocManager::install("DESeq2")
 # https://cole-trapnell-lab.github.io/garnett/docs/
 if(!checkPkg("monocle")) BiocManager::install(c("monocle"))
 if(!checkPkg("edgeR")) BiocManager::install(c("edgeR"))
@@ -75,7 +60,7 @@ https://cran.r-project.org/src/contrib/Archive/NNLM/
 
 https://bioconductor.org/packages/release/bioc/html/edgeR.html
 
-Notice2: We recommend you installing old version of Seurat and Matrix package, download in https://cran.r-project.org/src/contrib/Archive/, 
+Notice2: We recommend you installing old version of Seurat and Matrix package, download in https://cran.r-project.org/src/contrib/Archive/.
 ```R
 install.packages("spatstat.core_1.65-0.tar.gz", repos = NULL, type = "source")
 install.packages("Seurat_4.1.1.tar.gz", repos = NULL, type = "source")

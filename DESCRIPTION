@@ -50,6 +50,7 @@ Imports:
     rliger,
 	monocle,
 	edgeR,
+	DESeq2,
 	DelayedArray,
 	DelayedMatrixStats,
 	org.Hs.eg.db,
