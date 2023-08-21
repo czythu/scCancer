@@ -162,6 +162,7 @@ anno.results <- runScAnnotation(
 samples <- c('GSE146771', 'CRA001160')
 # samples <- c("STAD-ascites-1", "STAD-ascites-2", "STAD-example")
 for (sample in samples){
+    gc()
     print(sample)
     path <- paste0("D:/scCancer-data/SubtypeAnno/Demo-pipeline/", sample)
     dataPath <- file.path(path, "data")

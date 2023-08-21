@@ -93,7 +93,7 @@ suppressWarnings(document())
 library(scCancer)
 ```
 
-Notice1: If errors occur when installing dependencies ("usethis", "hdf5r", "pbkrtest", "locfit", ...), you may install them from the .tar.gz file. 
+Notice1: If errors occur when installing dependencies ("usethis", "hdf5r", "pbkrtest", "locfit", ...), you may install them from CRAN or source file. 
 Pay attention to the relationship between the release time of the R package and the release time of R-base.
 
 Notice2: Directly installing harmony from CRAN might meet this bug when running `scCombination`: [github/harmony/issues/](https://github.com/immunogenomics/harmony/issues/159).
@@ -105,6 +105,7 @@ We have tried: Seurat 4.1.1 and Matrix 1.4.1; Seurat 4.3.0 and Matrix 1.6.1
 
 Download in https://cran.r-project.org/src/contrib/Archive/ and install from local:
 ```R
+# An example
 install.packages("spatstat.core_1.65-0.tar.gz", repos = NULL, type = "source")
 install.packages("Seurat_4.1.1.tar.gz", repos = NULL, type = "source")
 install.packages("Matrix_1.4-1.tar.gz", repos = NULL, type = "source")
