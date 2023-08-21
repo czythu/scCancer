@@ -17,9 +17,9 @@ For old version of `scCancer`, see https://github.com/wguo-research/scCancer.
 ## Overview of scCancer2
 ![image](https://github.com/czythu/scCancer/blob/master/inst/Overview.png)
 
-## Package Installation and Quick Start for scRNA-seq analysis
+## Package installation and quick start for scRNA-seq analysis
 
-### System Requirements
+### System requirements
 
 We have test scCancer2 on:
 
@@ -126,13 +126,13 @@ The last 2 data sets are recommended for cell subtype annotation task because th
 
 [`PAC-example-tumor (Source: CRA001160)`](https://cloud.tsinghua.edu.cn/f/a7b70953a42048ccb231/?dl=1)
 
-### R module for newly implemented scRNA-seq analysis
+### R module for newly implemented scRNA-seq analysis modules
 
 If you have a processed dataset (matrix or Seurat object), you can use cell subtype annotation and malignant cell identification module alone.
 
 `scStatistics` and `scAnnotation` are not needed. See [cellSubtypeAnno.Rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) and [malignantCellIden.Rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) in vignettes folder for tutorials.
 
-### A Python module for malignant cell identification
+### Python module for malignant cell identification
 
 If you are only interested in identifying malignant cells in your own samples or want to reproduce Figure4 in our manuscript, we highly recommend using the pipeline [Figure4.ipynb](https://github.com/czythu/scCancer_MicroEnv/tree/master/MalignantCellIdentification)
 
@@ -146,13 +146,13 @@ The basic processing steps are relied on package `scanpy`, `sklearn` and `xgboos
 
 Due to the differences between Seurat and scanpy and the parameters setting at the preprocessing steps, the results of malignant cell identification are slightly different in R and Python.
 
-### Report Generation for scRNA-seq analysis
+### Report generation for scRNA-seq analysis
 
 1. The results of cell subtype annotation are stored in folder: cellSubtypeAnno/
 
 2. The results of malignant cell identification by machine learning method are directly insert into original report (report-scAnno.html).
 
-## Package Installation and Quick Start for spatial transcriptome analysis
+## Package installation and quick start for spatial transcriptome analysis
 
 See https://github.com/Miaoyx323/stCancer for details.
 
