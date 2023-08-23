@@ -170,5 +170,7 @@ See [stCancer.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) fo
 
 ## Citation
 
-[1] Wenbo Guo, Dongfang Wang, Shicheng Wang, Yiran Shan, Changyi Liu, Jin Gu, scCancer: a package for automated processing of single-cell RNA-seq data in cancer, Briefings in Bioinformatics, bbaa127, https://doi.org/10.1093/bib/bbaa127
+[1]Zeyu Chen, Yuxin Miao, Zhiyuan Tan, Qifan Hu, Yanhong Wu, Wenbo Guo, Jin Gu, scCancer2: data-driven in-depth annotations of the tumor 1 microenvironment at single-level resolution, biorxiv, https://doi.org/10.1101/2023.08.22.554137
+
+[2] Wenbo Guo, Dongfang Wang, Shicheng Wang, Yiran Shan, Changyi Liu, Jin Gu, scCancer: a package for automated processing of single-cell RNA-seq data in cancer, Briefings in Bioinformatics, bbaa127, https://doi.org/10.1093/bib/bbaa127
 
