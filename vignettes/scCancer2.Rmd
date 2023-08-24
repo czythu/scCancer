@@ -158,6 +158,7 @@ anno.results <- runScAnnotation(
 #              'YS2306057_BD_230615', 'cc001', 'cc002',
 #              '20200208-PAC-CRR034524-N5-Normal',
 #              '20200208-PAC-CRR034523-N4-Normal', '20180625-HCC-P4-Tumor-New',
+#              '20190913-HCC-P6-Normal', '20190913-HCC-P7-Normal',
 #              'YS2306057_AV_230615')
 samples <- c('GSE146771', 'CRA001160')
 # samples <- c("STAD-ascites-1", "STAD-ascites-2", "STAD-example")
@@ -196,7 +197,7 @@ for (sample in samples){
         unknown.cutoff = 0.3,
         subtype.umap = T,
         bool.runMalignancy = T,
-        malignancy.method = "xgboost", # or "inferCNV", "both", recommend "both" for sample < 10000 cells
+        malignancy.method = "both", # or "inferCNV", "both", recommend "both" for sample < 10000 cells
         bool.intraTumor = T,
         bool.runCellCycle = T,
         bool.runStemness = T,

@@ -32,6 +32,8 @@ We have test scCancer2 on:
 In windows, R tools need to be previously installed: https://cran.r-project.org/bin/windows/Rtools/
 
 To avoid the version conflicts of R packages, we recommend that you install a brand new R environment and switch it in anaconda or RStudio.
+Specifically, if you have successfully installed an old version of scCancer, there is no need to create a new environment. 
+The upgrade can be completed in the original environment by following the steps below.
 
 ### Quick start of scCancer2
 
