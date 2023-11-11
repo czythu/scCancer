@@ -763,7 +763,38 @@ visualization_pipeline <- function(dataset,
   return(list(object = object, plot = p))
 }
 
-#' Heatmap of classification result.
+
+#' Confusion matrix
+#' @export
+confusion <- function(name.reference, name.prediction,
+                      label, predict){
+
+    x <- matrix(nrow = length(name.prediction), ncol=length(name.reference))
+    x[is.na(x)] <- 0
+    colnames(x) <- name.reference
+    rownames(x) <- name.prediction
+    for (i in 1:length(predict)){
+        col <- which(name.reference == label[i])    # truth
+        row <- which(name.prediction == predict[i]) # predict
+        x[row, col] <- x[row, col] + 1
+    }
+
+    if(!is.numeric(x)){
+        stop('input should be numeric, not ',mode(x),
+             call. = F)
+    }
+
+    # matrix output
+    # [,1] [,2] [,3]
+    # [1,]    9    0    0
+    # [2,]    1    8    0
+    # [3,]    0    2   10
+
+    return(as.matrix(x))
+}
+
+
+#' Visualization of classification result.
 #' @name ConfusionMatrix
 #' @usage ConfusionMatrix(label.name, label, predict)
 #' @param label.name A vector of the sorted unique labels
@@ -779,50 +810,113 @@ ConfusionMatrix <- function(name.reference, name.prediction,
                             normalize=F,
                             font.size=20/.pt){
 
-  x <- matrix(nrow = length(name.prediction), ncol=length(name.reference))
-  x[is.na(x)] <- 0
-  colnames(x) <- name.reference
-  rownames(x) <- name.prediction
-  for (i in 1:length(predict)){
-    col <- which(name.reference == label[i])    #truth
-    row <- which(name.prediction == predict[i])  #predict
-    x[row, col] <- x[row, col] + 1
-  }
 
-  if(!is.table(x)){
-    x = as.table(x)
-  }
-  if(!is.numeric(x)){
-    stop('input should be numeric, not ',mode(x),
-         call. = F)
-  }
+    x <- confusion(name.reference, name.prediction, label, predict)
+    x <- as.table(x)
 
-  if(normalize){
-    # x = round(prop.table(x,1), 2)
-    x = round(prop.table(x,2), 2)
-    mar = as.data.frame(x)
-  }
-  else{
-    mar = as.data.frame(x)
-  }
-  mytheme <- theme(plot.title=element_text(
-    face="bold.italic", size=12, color="darkblue"),
-    axis.title=element_text(face="bold.italic", size=10, color="darkblue"),
-    axis.text=element_text(face="bold", size=8, color="darkblue"),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    panel.background=element_rect(fill="white",color="darkblue"),
-    panel.grid.minor.x=element_blank(),
-    legend.position="right")
-  ggplot(mar, aes(mar[,2],mar[,1])) +
-    geom_tile(aes(fill=Freq),color='black') +
-    scale_fill_gradientn(colours = c('gray98','steelblue1','midnightblue'))+
-    geom_label(aes(label = Freq), size=font.size) +
-    labs(title = title, fill='',x=xlab,y=ylab) +
-    ylim(rev(levels(mar[,2]))) +
-    scale_y_discrete(expand=c(0,0)) +
-    scale_x_discrete(expand=c(0,0)) +
-    mytheme
+    if(normalize){
+        # x = round(prop.table(x,1), 2)
+        x <- round(prop.table(x,2), 2)
+    }
+    mar <- as.data.frame(x)
+    mytheme <- theme(plot.title=element_text(
+        face="bold.italic", size=12, color="darkblue"),
+        axis.title=element_text(face="bold.italic", size=10, color="darkblue"),
+        axis.text=element_text(face="bold", size=8, color="darkblue"),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        panel.background=element_rect(fill="white",color="darkblue"),
+        panel.grid.minor.x=element_blank(),
+        legend.position="right")
+    ggplot(mar, aes(mar[,2],mar[,1])) +
+        geom_tile(aes(fill=Freq),color='black') +
+        scale_fill_gradientn(colours = c('gray98','steelblue1','midnightblue'))+
+        geom_label(aes(label = Freq), size=font.size) +
+        labs(title = title, fill='',x=xlab,y=ylab) +
+        ylim(rev(levels(mar[,2]))) +
+        scale_y_discrete(expand=c(0,0)) +
+        scale_x_discrete(expand=c(0,0)) +
+        mytheme
 }
+
+
+#' Kappa index for multi-classification.
+#' @export
+Kappa <- function(confusion_matrix){
+
+    # input:
+    # [,1] [,2] [,3]
+    # [1,]    0    2   10
+    # [2,]    1    8    0
+    # [3,]    9    0    0
+
+    # confusion_matrix <- confusion_matrix[rev(seq(1,nrow(confusion_matrix))),]
+
+    # matrix used for kappa index
+    # [,1] [,2] [,3]
+    # [1,]    9    0    0
+    # [2,]    1    8    0
+    # [3,]    0    2   10
+
+    pe_rows <- rowSums(confusion_matrix)
+    pe_cols <- colSums(confusion_matrix)
+    sum_total <- sum(pe_cols)
+    pe <- (pe_rows %*% pe_cols) / sum_total^2
+    po <- sum(diag(confusion_matrix)) / sum_total
+    kappa.index <- (po - pe) / (1 - pe)
+
+    message("Kappa index: ", kappa.index[1,1])
+
+    return (kappa.index[1,1])
+}
+
+
+# stratified 5 fold cross-validation
+stratify_5fold <- function(all.barcodes, label, nfold=5){
+    celltypes <- unique(label)
+    index.list <- vector(mode = "list", length = length(celltypes))
+    for (c in 1:length(celltypes)){
+        set.seed(c)
+        # barcodes for every cell type
+        barcodes <- all.barcodes[which(label == celltypes[c])]
+        # group length = barcode / fold
+        group.length <- ceiling(length(barcodes) / nfold)
+        # barcodes remaining
+        remain <- seq(1, length(barcodes))
+        ID <- c()
+        # matrix
+        barcodes.select <- matrix(nrow = nfold, ncol = group.length)
+        index.select <- matrix(nrow = nfold, ncol = group.length)
+        # barcodes.select <- c(barcodes.select, sample(barcodes, group.length))
+
+        for (j in seq(1, nfold)) {
+            if(j < nfold){
+                ID <- sort(sample(length(remain), group.length))
+                barcodes.select[j,1:length(remain[ID])] <- barcodes[sort(remain[ID])]
+                index.select[j,1:length(remain[ID])] <- which(all.barcodes %in% barcodes[sort(remain[ID])])
+                remain <- sort(remain[-ID])
+            }
+            else{
+                barcodes.select[j,1:length(remain)] <- barcodes[sort(remain)]
+                index.select[j,1:length(remain)] <- which(all.barcodes %in% barcodes[sort(remain)])
+            }
+        }
+        index.list[[c]] <- index.select
+    }
+    names(index.list) <- celltypes
+    # return(index.list)
+
+    index <- matrix(nrow = nfold, ncol = ceiling(length(all.barcodes) / nfold) + 1)
+    for (j in seq(from = 1, to = nfold)){
+        barcodes.select <- c()
+        for (c in 1:length(celltypes)){
+            barcodes.select <- c(barcodes.select, index.list[[c]][j,])
+        }
+        index[j,1:length(barcodes.select)] <- barcodes.select
+    }
+    return(index)
+
+}
+
 
 
 #' @export
