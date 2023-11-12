@@ -905,7 +905,8 @@ stratify_5fold <- function(all.barcodes, label, nfold=5){
     names(index.list) <- celltypes
     # return(index.list)
 
-    index <- matrix(nrow = nfold, ncol = ceiling(length(all.barcodes) / nfold) + 1)
+    # Size enough for indexes
+    index <- matrix(nrow = nfold, ncol = floor(length(all.barcodes) / nfold) + length(celltypes))
     for (j in seq(from = 1, to = nfold)){
         barcodes.select <- c()
         for (c in 1:length(celltypes)){
