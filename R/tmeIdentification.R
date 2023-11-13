@@ -259,11 +259,11 @@ predSubType <- function(expr,
     # c("T.cells", "Myeloid.cells", "B.cells", "Fibroblast", "Endothelial")
     finelabels.list <- lapply(celltype.list, function(celltype){
         t.expr <- expr
-        message(celltype)
+        cat("[", paste0(Sys.time()), "] -----: ", celltype, "annotation\n")
         # Split test dataset with rough labels
         testdata <- test_set[which(test_set$rough.labels == celltype),]
         if(dim(testdata)[1] < 100){
-            cat(celltype, " not enough for subtype annotation. Skip!\n")
+            cat(celltype, "not enough for subtype annotation. Skip!\n")
             return(NULL)
         }
         barcodes <- rownames(testdata)
@@ -285,7 +285,7 @@ predSubType <- function(expr,
                 next
             }
             celltype.seq <- index - start.index[[substr(model.celltype, 1, 1)]] + 1
-            cat("[", paste0(Sys.time()), "] -----: ", marker.files[celltype.seq])
+            cat("[", paste0(Sys.time()), "] -----: ", marker.files[celltype.seq], "\n")
             suppressWarnings(result <- MarkerScore(test_set = testdata,
                                                    marker_file_path = toString(marker.files[celltype.seq]),
                                                    cutoff = unknown.cutoff))
@@ -338,7 +338,7 @@ predSubType <- function(expr,
         if (umap.plot){
             dev.off()
         }
-        cat("[", paste0(Sys.time()), "] -----: ", celltype, " subtype annotation finished\n")
+        cat("[", paste0(Sys.time()), "] -----: ", celltype, "subtype annotation finished\n")
         colnames(subtypes.predict) <- barcodes
         # delete first row (all NAs)
         subtypes.predict <- subtypes.predict[-1,]
