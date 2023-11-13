@@ -234,7 +234,7 @@ predSubType_Scoring <- function(expr,
     return(finelabels.list)
 }
 
-
+#' @export
 #' predSubType with ensemble learning
 #' @param test_set An expression matrix.
 #' Rows should be cells and the last column should be "rough label".
