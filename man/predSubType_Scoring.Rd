@@ -32,7 +32,7 @@ The default is NULL and all marker files prepared in this package will be used.}
 Rows should be cells and the last column should be "rough label".}
 }
 \value{
-A list of fine.labels containing all possible celltypes
+A list of fine.labels containing all possible celltypes and likelihood
 }
 \description{
 predSubType_Scoring (Old version, scoring)

@@ -1823,19 +1823,18 @@ runScAnnotation <- function(dataPath,
         if(is.null(submodel.path)){
             # if(subtypeClassifyMethod == "Scoring"){
             #     submodel.path <- system.file("csv", package = "scCancer")
-            #     # submodel.path <- system.file("csv", package = "scCancer2")
             # }
             # else{
             #     submodel.path <- file.path(system.file("rds", package = "scCancer"),
             #                                "cellSubtypeTemplates-XGBoost.rds")
-            #     # submodel.path <- file.path(system.file("rds", package = "scCancer2"), "cellSubtypeTemplates-XGBoost.rds")
             #     folder.name <- "cellSubtypeAnno-XGBoost"
             # }
-            submodel.path <- system.file("csv", package = "scCancer")
+
+            # submodel.path <- system.file("csv", package = "scCancer")
+            submodel.path <- file.path(system.file("rds", package = "scCancer"), "cellSubtypeTemplates.rds")
         }
         if(is.null(markers.path)){
             markers.path <- system.file("txt", package = "scCancer")
-            # markers.path <- system.file("txt", package = "scCancer2")
         }
         if(!dir.exists(file.path(savePath, folder.name))){
             dir.create(file.path(savePath, folder.name), recursive = T)

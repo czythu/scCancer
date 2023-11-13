@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{ConfusionMatrix}
 \alias{ConfusionMatrix}
-\title{Heatmap of classification result.}
+\title{Visualization of classification result.}
 \usage{
 ConfusionMatrix(label.name, label, predict)
 }
@@ -17,5 +17,5 @@ ConfusionMatrix(label.name, label, predict)
 A heatmap for the confusion matrix of the classification result.
 }
 \description{
-Heatmap of classification result.
+Visualization of classification result.
 }

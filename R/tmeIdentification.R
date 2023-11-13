@@ -133,7 +133,7 @@ trainAnnoModel <- function(expr,
 #' @param unknown.cutoff A threshold for assignment of unknown label. Default is 0.3.
 #' @inheritParams runScAnnotation
 #'
-#' @return A list of fine.labels containing all possible celltypes
+#' @return A list of fine.labels containing all possible celltypes and likelihood
 
 predSubType_Scoring <- function(expr,
                         submodel.path,
@@ -231,6 +231,121 @@ predSubType_Scoring <- function(expr,
                     normalized.likelihood = normalized.likelihood))
     })
     names(finelabels.list) <- celltype.list
+    return(finelabels.list)
+}
+
+
+#' predSubType with ensemble learning
+#' @param test_set An expression matrix.
+#' Rows should be cells and the last column should be "rough label".
+#' @param unknown.cutoff A threshold for assignment of unknown label. Default is 0.3.
+#' @inheritParams runScAnnotation
+#'
+#' @return A list of fine.labels containing all possible celltypes
+
+predSubType <- function(expr,
+                        submodel.path,
+                        markers.path,
+                        savePath,
+                        celltype.list,
+                        dropout.modeling,
+                        unknown.cutoff,
+                        umap.plot){
+    test_set <- data.frame(t(expr@assays$RNA@data))
+    test_set$rough.labels <- expr$Cell.Type
+    model.list <- readRDS(submodel.path)
+    start.index <- c(17, 12, 1, 8, 4)
+    names(start.index) <- c("T", "M", "B", "F", "E")
+    # c("T.cells", "Myeloid.cells", "B.cells", "Fibroblast", "Endothelial")
+    finelabels.list <- lapply(celltype.list, function(celltype){
+        t.expr <- expr
+        message(celltype)
+        # Split test dataset with rough labels
+        testdata <- test_set[which(test_set$rough.labels == celltype),]
+        if(dim(testdata)[1] < 100){
+            cat(celltype, " not enough for subtype annotation. Skip!\n")
+            return(NULL)
+        }
+        barcodes <- rownames(testdata)
+        folder.path <- file.path(markers.path, celltype)
+        marker.files <- file.path(folder.path, list.files(folder.path))
+        subtypes.predict <- matrix(nrow = 1, ncol = length(barcodes))
+        # Different classification principles: Several lists of subtype
+        if(umap.plot){
+            pdf(file = file.path(savePath, paste0("umap-", celltype, ".pdf")),
+                width = 6, height = 5)
+        }
+        for(index in 1:length(model.list)){
+            gc()
+            model <- model.list[[index]]
+            dataset.name <- names(model.list)[index]
+            model.celltype <- strsplit(dataset.name, split = "_")[[1]][1]
+            # "T", "M", "B", "E", "F"
+            if(substr(model.celltype, 1, 1) != substr(celltype, 1, 1)){
+                next
+            }
+            celltype.seq <- index - start.index[[substr(model.celltype, 1, 1)]] + 1
+            cat("[", paste0(Sys.time()), "] -----: ", marker.files[celltype.seq])
+            suppressWarnings(result <- MarkerScore(test_set = testdata,
+                                                   marker_file_path = toString(marker.files[celltype.seq]),
+                                                   cutoff = unknown.cutoff))
+            # Boosting(5 models)
+            label.predict <- matrix(nrow = length(model[["models"]]), ncol = length(barcodes))
+            # Construct testdata
+            for(i in 1:length(model[["models"]])){
+                weak.model <- model[["models"]][[i]]
+                # cell.type <- row.names(weak.model)
+                model.ref <- as.data.frame(t(weak.model))
+                # colnames(model.ref) <- cell.type
+                output <- Test(model.ref, lambda, testdata,
+                               weighted.markers = result[["markers"]],
+                               dropout.modeling = dropout.modeling,
+                               average.expr = result[["average"]])
+                label.predict[i,] <- output[["predict"]]
+                label.predict[i,] <- paste0(label.predict[i,], "(", celltype.seq, ")")
+                label.predict[i,] <- AssignUnknown(NULL, label.predict[i,], result[["unknown"]])[["predict.unknown"]]
+            }
+            label.predict <- ensemble_XGBoost(label.predict)
+            subtypes.predict <- rbind(subtypes.predict, label.predict)
+
+            if(umap.plot){
+                names(label.predict) <- barcodes
+                tt.expr <- AddMetaData(object = t.expr,
+                                       metadata = label.predict,
+                                       col.name = "cell.subtype")
+                tt.expr$cell.subtype[which(is.na(tt.expr$cell.subtype))] <- "NA"
+                uni.labels <- unique(label.predict)
+                uni.labels <- uni.labels[which(uni.labels != "unknown")]
+                colors.assigned <- getDefaultColors(length(uni.labels))
+                colors.assigned <- c(colors.assigned, "#838b8b", "#c1cdcd")
+                names(colors.assigned) <- c(uni.labels, "unknown", "NA")
+                tt.expr$cell.subtype <- factor(tt.expr$cell.subtype, levels = names(colors.assigned))
+                if(celltype == "T.cells" | celltype == "Myeloid.cells"){
+                    legend.size <- 10
+                }
+                else{
+                    legend.size <- 12
+                }
+                print(DimPlot(tt.expr, group.by = "cell.subtype",
+                              repel = TRUE, label = FALSE,
+                              cols = colors.assigned)+
+                          theme(legend.position = "right",
+                                legend.text = element_text(size = legend.size)))
+                rm(tt.expr)
+                # print(visualization_pipeline(testdata, label.predict)[["plot"]])
+            }
+        }
+        if (umap.plot){
+            dev.off()
+        }
+        cat("[", paste0(Sys.time()), "] -----: ", celltype, " subtype annotation finished\n")
+        colnames(subtypes.predict) <- barcodes
+        # delete first row (all NAs)
+        subtypes.predict <- subtypes.predict[-1,]
+        return(t(subtypes.predict))
+    })
+    names(finelabels.list) <- celltype.list
+    saveRDS(finelabels.list, file.path(savePath, "fine-labels.RDS"))
     return(finelabels.list)
 }
 
@@ -409,7 +524,29 @@ runCellSubtypeClassify <- function(expr,
                                    umap.plot){
     # message("[", Sys.time(), "] -----: TME cell subtypes annotation")
     cat("[", paste0(Sys.time()), "] -----: TME cell subtypes annotation\n")
-    fine.labels <- predSubType_Scoring(expr = expr,
+
+    # Version1
+    # fine.labels <- predSubType_Scoring(expr = expr,
+    #                            submodel.path = submodel.path,
+    #                            markers.path = markers.path,
+    #                            savePath = savePath,
+    #                            celltype.list = celltype.list,
+    #                            dropout.modeling = dropout.modeling,
+    #                            unknown.cutoff = unknown.cutoff,
+    #                            umap.plot = umap.plot)
+    # fine.labels <- lapply(fine.labels, function(label){
+    #     return(label[["label"]])
+    # })
+
+    # Version2
+    # fine.labels <- predSubType_XGBoost(expr,
+    #                             submodel.path,
+    #                             savePath,
+    #                             celltype.list,
+    #                             umap.plot)
+
+    # Current Version
+    fine.labels <- predSubType(expr = expr,
                                submodel.path = submodel.path,
                                markers.path = markers.path,
                                savePath = savePath,
@@ -418,14 +555,8 @@ runCellSubtypeClassify <- function(expr,
                                unknown.cutoff = unknown.cutoff,
                                umap.plot = umap.plot)
 
-    fine.labels <- lapply(fine.labels, function(label){
-        return(label[["label"]])
-    })
-    # fine.labels <- predSubType_XGBoost(expr,
-    #                             submodel.path,
-    #                             savePath,
-    #                             celltype.list,
-    #                             umap.plot)
+
+
     cat("[", paste0(Sys.time()), "] -----: generation of similarity maps\n")
     similarity.matrix <- similarityCalculation(fine.labels, savePath)
 
