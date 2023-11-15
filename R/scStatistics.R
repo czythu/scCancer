@@ -809,8 +809,8 @@ runScStatistics <- function(dataPath, savePath,
         # results$cell.manifest <- cell.manifest.all
     }
 
+    saveRDS(results, file = file.path(savePath, "scStatistics-results.RDS"))
     cat("[", paste0(Sys.time()), "] END: Finish scStatistics\n\n")
-
     return(results)
 }
 
