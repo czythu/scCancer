@@ -234,13 +234,16 @@ predSubType_Scoring <- function(expr,
     return(finelabels.list)
 }
 
-#' @export
-#' predSubType (with ensemble learning)
+
+#' predSubType
+#'
+#' Predict cell subtype with ensemble learning.
 #' @param test_set An expression matrix.
 #' Rows should be cells and the last column should be "rough label".
 #' @param unknown.cutoff A threshold for assignment of unknown label. Default is 0.3.
 #' @inheritParams runScAnnotation
 #'
+#' @export
 #' @return A list of fine.labels containing all possible celltypes
 
 predSubType <- function(expr,
@@ -382,7 +385,7 @@ ensemble_XGBoost <- function(label.matrix){
 }
 
 
-#' predSubType_XGBoost (XGBoost version)
+#' predSubType_XGBoost
 #' @param test_set An expression matrix.
 #' Rows should be cells and the last column should be "rough label".
 #' @inheritParams runScAnnotation
