@@ -197,7 +197,7 @@ for (sample in samples){
         unknown.cutoff = 0.3,
         subtype.umap = T,
         bool.runMalignancy = T,
-        malignancy.method = "both", # or "inferCNV", "both", recommend "both" for sample < 10000 cells
+        malignancy.method = "xgboost", # or "inferCNV", "both", recommend "both" for sample < 10000 cells
         bool.intraTumor = T,
         bool.runCellCycle = T,
         bool.runStemness = T,

@@ -254,7 +254,7 @@ predSubType <- function(expr,
     test_set <- data.frame(t(expr@assays$RNA@data))
     test_set$rough.labels <- expr$Cell.Type
     model.list <- readRDS(submodel.path)
-    start.index <- c(17, 12, 1, 8, 4)
+    start.index <- c(18, 12, 1, 8, 4)
     names(start.index) <- c("T", "M", "B", "F", "E")
     # c("T.cells", "Myeloid.cells", "B.cells", "Fibroblast", "Endothelial")
     finelabels.list <- lapply(celltype.list, function(celltype){
