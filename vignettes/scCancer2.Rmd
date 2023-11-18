@@ -160,8 +160,8 @@ anno.results <- runScAnnotation(
 #              '20200208-PAC-CRR034523-N4-Normal', '20180625-HCC-P4-Tumor-New',
 #              '20190913-HCC-P6-Normal', '20190913-HCC-P7-Normal',
 #              'YS2306057_AV_230615')
-samples <- c('GSE146771', 'CRA001160')
-# samples <- c("STAD-ascites-1", "STAD-ascites-2", "STAD-example")
+# samples <- c('GSE146771', 'CRA001160')
+samples <- c("STAD-ascites-1", "STAD-ascites-2", "STAD-example")
 for (sample in samples){
     gc()
     print(sample)
