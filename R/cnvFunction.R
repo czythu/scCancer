@@ -440,20 +440,23 @@ plotMalignancy <- function(cell.annotation,
     ## scatter plot of malignancy
     p.malignType.Point <- pointDRPlot(cell.annotation, value = "Malign.type",
                                       coor.names = coor.names,
-                                      colors = c("malignant" = "#f57e87", "nonMalignant" = "#66d5a5"),
+                                      # colors = c("malignant" = "#f57e87", "nonMalignant" = "#66d5a5"),
+                                      colors = c("malignant" = "#9467BD", "nonMalignant" = '#2CA02C'),
                                       legend.position = "right",
                                       legend.title = "Malignancy\n type")
 
     p.malignScore.Point <- pointDRPlot(cell.annotation, value = "Malign.score",
                                        coor.names = coor.names,
-                                       colors = c("white", "#f57e87"),
+                                       # colors = c("white", "#f57e87"),
+                                       colors = c("white", "#9467BD")
                                        discrete = F,
                                        limit.quantile = 0.1,
                                        legend.position = "right",
                                        legend.title = "Malignancy\n score")
 
     p.malignType.bar <- clusterBarPlot(cell.annotation = cell.annotation,
-                                       cell.colors = c("malignant" = "#f57e87", "nonMalignant" = "#66d5a5"),
+                                       # cell.colors = c("malignant" = "#f57e87", "nonMalignant" = "#66d5a5"),
+                                       cell.colors = c("malignant" = "#9467BD", "nonMalignant" = '#2CA02C'),
                                        sel.col = "Malign.type",
                                        legend.title = "Malignancy type")
 
