@@ -448,7 +448,7 @@ plotMalignancy <- function(cell.annotation,
     p.malignScore.Point <- pointDRPlot(cell.annotation, value = "Malign.score",
                                        coor.names = coor.names,
                                        # colors = c("white", "#f57e87"),
-                                       colors = c("white", "#9467BD")
+                                       colors = c("white", "#9467BD"),
                                        discrete = F,
                                        limit.quantile = 0.1,
                                        legend.position = "right",
