@@ -873,11 +873,11 @@ Kappa <- function(confusion_matrix){
 
 
 # stratified 5 fold cross-validation
-stratify_5fold <- function(all.barcodes, label, nfold=5){
+stratify_5fold <- function(all.barcodes, label, random.seed=0, nfold=5){
     celltypes <- unique(label)
     index.list <- vector(mode = "list", length = length(celltypes))
     for (c in 1:length(celltypes)){
-        set.seed(c)
+        set.seed(c + random.seed)
         # barcodes for every cell type
         barcodes <- all.barcodes[which(label == celltypes[c])]
         # group length = barcode / fold
