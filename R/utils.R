@@ -731,6 +731,8 @@ checkCombArguments <- function(argList){
 #' with rows being cells, and columns being genes.
 #' The last column should be "label".
 #' @param label groundtruth or output of scibet function Test.
+#'
+#' @import Seurat
 visualization_pipeline <- function(dataset,
                                  label=NULL,
                                  normalize=TRUE,
