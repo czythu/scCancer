@@ -5,6 +5,10 @@ date: "2023-08-02"
 output: html_document
 ---
 
+# This tutorial will be updated soon...
+## We have updated the cell subtype template file (from .csv files to .rds file)
+## You may refer to scCancer2.rmd (set other modules as "FALSE" for using cell type and cell subtype annotation only.)
+
 ```{r}
 rm(list = ls())
 gc()

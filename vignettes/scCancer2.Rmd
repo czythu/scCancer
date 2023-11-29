@@ -86,7 +86,8 @@ generate10Xdata(matrix = matrix.sub,
 # path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
 # path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE140228/"
 # path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
-path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/STAD-example/"
+# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/STAD-example/"
+path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/20180416-HCC-P2-Tumor/"
 dataPath <- file.path(path, "data")
 # A path containing the scStatistics results
 statPath <- file.path(path, "result")
@@ -171,6 +172,7 @@ samples <- c('cc001', 'cc002', 'cc003', 'cc006', 'CC009', 'icc010',
 samples <- c('20200208-PAC-CRR034523-N4-Normal','20200208-PAC-CRR034524-N5-Normal',
              '20200215-HCC-Pt13c-Tumor', '20200217-LUAD-LX684-Tumor',
              'cc001', 'cc002', 'cc003', "STAD-ascites-1", "STAD-ascites-2", "STAD-example")
+samples <- c('20190913-HCC-P8-Normal', '20190913-HCC-P6-Normal', '20190913-HCC-P7-Normal')
 for (sample in samples){
     gc()
     print(sample)
