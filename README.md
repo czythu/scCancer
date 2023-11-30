@@ -35,6 +35,9 @@ To avoid the version conflicts of R packages, we recommend that you install a br
 Specifically, if you have successfully installed an old version of scCancer, there is no need to create a new environment. 
 The upgrade can be completed in the original environment by following the steps below.
 
+`Important`: scCancer2 is not compatible with Seurat5 due to the significant adjustment to the data structure in the latest version of Seurat. 
+Users need to install Seurat4 or Seurat3 manually before install scCancer2 (See Notice3 for details).
+
 ### Quick start of scCancer2
 
 #### Dependency installation
@@ -49,6 +52,7 @@ checkPkg <- function(pkg){
 # Some frequently used packages
 if(!checkPkg("BiocManager")) install.packages("BiocManager")
 if(!checkPkg("devtools")) install.packages("devtools")
+
 if(!checkPkg("NNLM")) devtools::install_github("linxihui/NNLM")
 # https://cole-trapnell-lab.github.io/garnett/docs/
 if(!checkPkg("monocle")) BiocManager::install(c("monocle"))
@@ -56,6 +60,9 @@ if(!checkPkg("monocle")) BiocManager::install(c("monocle"))
 if(!checkPkg("edgeR")) BiocManager::install(c("edgeR"))
 BiocManager::install(c('DelayedArray', 'DelayedMatrixStats', 'org.Hs.eg.db', 'org.Mm.eg.db'))
 if(!checkPkg("garnett")) devtools::install_github("cole-trapnell-lab/garnett")
+
+# Install Seurat with specific version
+## See Notice3
 ```
 
 #### Run scCancer2
@@ -66,7 +73,8 @@ If you have already installed the above dependencies, you have 2 ways to run scC
 
 ```R
 # install scCancer2
-# Remember to skip all updates in the following step.
+## Make sure you have already installed Seurat4 or Seurat3.
+## Remember to skip all updates in the following step.
 devtools::install_github("czythu/scCancer")
 library(scCancer)
 ```
