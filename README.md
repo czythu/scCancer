@@ -62,7 +62,9 @@ BiocManager::install(c('DelayedArray', 'DelayedMatrixStats', 'org.Hs.eg.db', 'or
 if(!checkPkg("garnett")) devtools::install_github("cole-trapnell-lab/garnett")
 
 # Install Seurat with specific version
-## See Notice3
+# See Notice3 or try the tutorial from https://satijalab.org/seurat/articles/install_v5
+install.packages('remotes')
+remotes::install_version(package = 'Seurat', version = package_version('4.3.0'))
 ```
 
 #### Run scCancer2
