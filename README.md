@@ -60,11 +60,13 @@ if(!checkPkg("monocle")) BiocManager::install(c("monocle"))
 if(!checkPkg("edgeR")) BiocManager::install(c("edgeR"))
 BiocManager::install(c('DelayedArray', 'DelayedMatrixStats', 'org.Hs.eg.db', 'org.Mm.eg.db'))
 if(!checkPkg("garnett")) devtools::install_github("cole-trapnell-lab/garnett")
+```
 
+```R
 # Install Seurat with specific version
 # See Notice3 or try the tutorial from https://satijalab.org/seurat/articles/install_v5
-install.packages('remotes')
-remotes::install_version(package = 'Seurat', version = package_version('4.3.0'))
+if(!checkPkg("remotes")) install.packages("remotes")
+if(!checkPkg("Seurat")) remotes::install_version(package = "Seurat", version = package_version('4.3.0'))
 ```
 
 #### Run scCancer2
