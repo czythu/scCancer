@@ -71,9 +71,7 @@ generate10Xdata(matrix = matrix.sub,
 ## DEMO2(Stromal cell), CRA001160
 ```{r}
 path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
-# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE148673/"
 matrix <- readRDS(paste0(path, "data/ori/CRA001160_expression_sparse.rds"))
-# matrix <- t(readRDS(paste0(path, "data/ori/PAAD_GSE148673_expression.h5.RDS")))
 gene.list <- read.table(paste0(system.file("txt", package = "scCancer"), "/single_cell_features.tsv"))[,1:2]
 index <- which(rownames(matrix) %in% gene.list$V2)
 matrix.sub <- matrix[index,]
@@ -88,8 +86,7 @@ generate10Xdata(matrix = matrix.sub,
 # path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
 # path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE140228/"
 # path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
-# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/STAD-example/"
-path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/20180416-HCC-P2-Tumor/"
+path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/STAD-example/"
 dataPath <- file.path(path, "data")
 # A path containing the scStatistics results
 statPath <- file.path(path, "result")
@@ -124,7 +121,7 @@ anno.results <- runScAnnotation(
     authorName = authorName,
     sampleName = sampleName,
     geneSet.method = "average",
-    vars.to.regress = c("nCount_RNA", "mito.percent"),
+    # vars.to.regress = c("nCount_RNA", "mito.percent"),
     bool.runDiffExpr = F,
     bool.runCellClassify = T,
     bool.runCellSubtypeClassify = T,
@@ -136,7 +133,7 @@ anno.results <- runScAnnotation(
     unknown.cutoff = 0.3,
     subtype.umap = T,
     bool.runMalignancy = T,
-    malignancy.method = "xgboost", # or "inferCNV", "both", recommend "both" for sample < 10000 cells
+    malignancy.method = "xgboost", # "xgboost", "inferCNV", "both", recommend "both" for sample < 10000 cells
     bool.intraTumor = T,
     bool.runCellCycle = T,
     bool.runStemness = T,
