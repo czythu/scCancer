@@ -71,7 +71,9 @@ generate10Xdata(matrix = matrix.sub,
 ## DEMO2(Stromal cell), CRA001160
 ```{r}
 path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
+# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE148673/"
 matrix <- readRDS(paste0(path, "data/ori/CRA001160_expression_sparse.rds"))
+# matrix <- t(readRDS(paste0(path, "data/ori/PAAD_GSE148673_expression.h5.RDS")))
 gene.list <- read.table(paste0(system.file("txt", package = "scCancer"), "/single_cell_features.tsv"))[,1:2]
 index <- which(rownames(matrix) %in% gene.list$V2)
 matrix.sub <- matrix[index,]
