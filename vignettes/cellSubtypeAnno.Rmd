@@ -5,9 +5,6 @@ date: "2023-08-02"
 output: html_document
 ---
 
-# This tutorial will be updated soon...
-## We have updated the cell subtype template file (from .csv files to .rds file)
-## You may refer to scCancer2.rmd (set other modules as "FALSE" for using cell type and cell subtype annotation only.)
 
 ```{r}
 rm(list = ls())
@@ -25,7 +22,8 @@ suppressMessages(library(dplyr))
 annoPath <- 'D:/scCancer-data/Liver/'
 metadata <- readRDS(file.path(annoPath, "metadata-HCC.RDS"))
 default.list <- c("T.cells", "Myeloid.cells", "B.cells", "Fibroblast", "Endothelial")
-submodel.path <- system.file("csv", package = "scCancer")
+# submodel.path <- system.file("csv", package = "scCancer")
+submodel.path <- file.path(system.file("rds", package = "scCancer"), "cellSubtypeTemplates.rds")
 markers.path <- system.file("txt", package = "scCancer")
 ```
 
@@ -70,19 +68,19 @@ saveRDS(t.results[["similarity.matrix"]], file = file.path(annoPath, folder.name
 authors <- c("Ma2022", "Zhang2019", "Lu2022", "Zheng2017",
              "Sun2021", "Liu2023", "Losic2020", "Ma2021")
 annoPath <- 'D:/scCancer-data/Liver/'
+folder.name <- author
 # metadata <- readRDS(file.path(annoPath, "metadata-HCC.RDS"))
 default.list <- c("T.cells", "Myeloid.cells", "B.cells", "Fibroblast", "Endothelial")
-submodel.path <- system.file("csv", package = "scCancer")
+# submodel.path <- system.file("csv", package = "scCancer")
+submodel.path <- file.path(system.file("rds", package = "scCancer"), "cellSubtypeTemplates.rds")
 markers.path <- system.file("txt", package = "scCancer")
+
 for (author in authors){
     gc()
     print(author)
     folder.name <- author
     expr <- readRDS(file.path(annoPath, folder.name, paste0(author, ".RDS")))
     # rough.labels <- metadata[[author]]$level1
-    default.list <- c("T.cells", "Myeloid.cells", "B.cells", "Fibroblast", "Endothelial")
-    submodel.path <- system.file("csv", package = "scCancer")
-    markers.path <- system.file("txt", package = "scCancer")
     t.results <- predCellType(expr@assays[["RNA"]]@data)
     expr$Cell.Type <- t.results$type.pred
     saveRDS(expr$Cell.Type, file = file.path(annoPath, folder.name, "rough-labels.RDS"))
@@ -96,7 +94,7 @@ for (author in authors){
     results <- runCellSubtypeClassify(expr = expr,
                                       submodel.path = submodel.path,
                                       markers.path = markers.path,
-                                      savePath = file.path(annoPath, folder.name),
+                                      savePath = file.path(savePath, folder.name),
                                       celltype.list = celltype.list,
                                       dropout.modeling = FALSE,
                                       unknown.cutoff = 0.3,
