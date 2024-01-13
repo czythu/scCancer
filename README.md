@@ -1,5 +1,7 @@
 # scCancer2
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10477297.svg)](https://doi.org/10.5281/zenodo.10477297)
+
 ## Introduction
 
 We updated our R toolkit, `scCancer`, based on massive single-cell transcriptome and spatial transcriptome data.
