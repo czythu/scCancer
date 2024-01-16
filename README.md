@@ -2,6 +2,9 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10477297.svg)](https://doi.org/10.5281/zenodo.10477297)
 
+## News
+Jan. 12, 2024: scCancer2 was accepted by _Bioinformatics_ !
+
 ## Introduction
 
 We updated our R toolkit, `scCancer`, based on massive single-cell transcriptome and spatial transcriptome data.
@@ -186,7 +189,7 @@ See [stCancer.rmd](https://github.com/czythu/scCancer/blob/master/vignettes/) fo
 
 ## Citation
 
-[1] Zeyu Chen, Yuxin Miao, Zhiyuan Tan, Qifan Hu, Yanhong Wu, Wenbo Guo, Jin Gu, bioRxiv 2023.08.22.554137; doi: https://doi.org/10.1101/2023.08.22.554137
+[1] Zeyu Chen, Yuxin Miao, Zhiyuan Tan, Qifan Hu, Yanhong Wu, Xinqi Li, Wenbo Guo, Jin Gu, Bioinformatics, btae028, doi:  https://doi.org/10.1093/bioinformatics/btae028 
 
 [2] Wenbo Guo, Dongfang Wang, Shicheng Wang, Yiran Shan, Changyi Liu, Jin Gu, scCancer: a package for automated processing of single-cell RNA-seq data in cancer, Briefings in Bioinformatics, bbaa127, https://doi.org/10.1093/bib/bbaa127
 
