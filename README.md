@@ -5,6 +5,8 @@
 ## News
 Jan. 12, 2024: scCancer2 was accepted by _Bioinformatics_ !
 
+Jan. 18, 2024: scCancer2 was published online: https://doi.org/10.1093/bioinformatics/btae028
+
 ## Introduction
 
 We updated our R toolkit, `scCancer`, based on massive single-cell transcriptome and spatial transcriptome data.
