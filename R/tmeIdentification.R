@@ -242,7 +242,7 @@ predSubType_Scoring <- function(expr,
 #' Rows should be cells and the last column should be "rough label".
 #' @param unknown.cutoff A threshold for assignment of unknown label. Default is 0.3.
 #' @inheritParams runScAnnotation
-#' @import ggpubr
+#' @importFrom ggpubr ggarrange
 #' @export
 #' @return A list of fine.labels containing all possible celltypes
 
