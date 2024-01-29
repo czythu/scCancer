@@ -242,7 +242,7 @@ predSubType_Scoring <- function(expr,
 #' Rows should be cells and the last column should be "rough label".
 #' @param unknown.cutoff A threshold for assignment of unknown label. Default is 0.3.
 #' @inheritParams runScAnnotation
-#'
+#' @import ggpubr
 #' @export
 #' @return A list of fine.labels containing all possible celltypes
 
@@ -274,10 +274,11 @@ predSubType <- function(expr,
         marker.files <- file.path(folder.path, list.files(folder.path))
         subtypes.predict <- matrix(nrow = 1, ncol = length(barcodes))
         # Different classification principles: Several lists of subtype
-        if(umap.plot){
-            pdf(file = file.path(savePath, paste0("umap-", celltype, ".pdf")),
-                width = 6, height = 5)
-        }
+        # if(umap.plot){
+        #     pdf(file = file.path(savePath, paste0("umap-", celltype, ".pdf")),
+        #         width = 6, height = 5)
+        # }
+        plot.list <- list()
         for(index in 1:length(model.list)){
             gc()
             model <- model.list[[index]]
@@ -324,21 +325,28 @@ predSubType <- function(expr,
                 names(colors.assigned) <- c(uni.labels, "unknown", "NA")
                 tt.expr$cell.subtype <- factor(tt.expr$cell.subtype, levels = names(colors.assigned))
                 if(celltype == "T.cells" | celltype == "Myeloid.cells"){
-                    legend.size <- 10
+                    legend.size <- 8
                 }
                 else{
-                    legend.size <- 12
+                    legend.size <- 10
                 }
-                print(DimPlot(tt.expr, group.by = "cell.subtype",
-                              repel = TRUE, label = FALSE,
-                              cols = colors.assigned)+
-                          theme(legend.position = "right",
-                                legend.text = element_text(size = legend.size)))
+                plot.list[[celltype.seq]] <- DimPlot(tt.expr, group.by = "cell.subtype",
+                                                     repel = TRUE, label = FALSE, cols = colors.assigned)+
+                    theme(legend.position = "right", legend.text = element_text(size = legend.size))
+                # print(DimPlot(tt.expr, group.by = "cell.subtype",
+                #               repel = TRUE, label = FALSE,
+                #               cols = colors.assigned)+
+                #           theme(legend.position = "right",
+                #                 legend.text = element_text(size = legend.size)))
                 rm(tt.expr)
                 # print(visualization_pipeline(testdata, label.predict)[["plot"]])
             }
         }
         if (umap.plot){
+            pdf(file = file.path(savePath, paste0("umap-", celltype, ".pdf")),
+                width = 5 * length(plot.list), height = 3.5)
+            plot.all <- ggarrange(plotlist = plot.list, ncol = length(plot.list))
+            print(plot.all)
             dev.off()
         }
         cat("[", paste0(Sys.time()), "] -----: ", celltype, "subtype annotation finished\n")
@@ -412,8 +420,8 @@ predSubType_XGBoost <- function(expr,
         testdata <- as.matrix(testdata)
         subtypes.predict <- matrix(nrow = 1, ncol = length(barcodes))
         # Different classification principles: Several lists of subtype
-        pdf(file = file.path(savePath, paste0("umap-", celltype, ".pdf")),
-            width = 7, height = 7)
+        # pdf(file = file.path(savePath, paste0("umap-", celltype, ".pdf")), width = 7, height = 7)
+        plot.list <- list()
         for(index in 1:length(models)){
             model <- models[[index]]
             dataset.name <- names(models)[index]
@@ -442,13 +450,19 @@ predSubType_XGBoost <- function(expr,
                 tt.expr <- AddMetaData(object = t.expr,
                                        metadata = label.predict,
                                        col.name = "cell.subtype")
-                print(DimPlot(tt.expr, group.by = "cell.subtype",
-                              repel = TRUE, label = FALSE, label.size = 3))
+                plot.list[[index]] <- DimPlot(tt.expr, group.by = "cell.subtype",
+                             repel = TRUE, label = FALSE, label.size = 3)
+                # print(DimPlot(tt.expr, group.by = "cell.subtype",
+                #               repel = TRUE, label = FALSE, label.size = 3))
                 rm(tt.expr)
                 # print(visualization_pipeline(testdata, label.predict)[["plot"]])
             }
             subtypes.predict <- rbind(subtypes.predict, label.predict)
         }
+        pdf(file = file.path(savePath, paste0("umap-", celltype, ".pdf")),
+            width = 4 * length(plot.list), height = 4)
+        plot.all <- ggarrange(plotlist = plot.list, ncol = length(plot.list))
+        print(plot.all)
         dev.off()
         cat("[", paste0(Sys.time()), "] -----: ", celltype, " subtype annotation finished\n")
         subtypes.predict <- subtypes.predict[-1,]
