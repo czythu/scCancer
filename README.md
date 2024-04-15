@@ -155,13 +155,13 @@ If you have a processed dataset (matrix or Seurat object), you can use cell subt
 
 ### Python module for malignant cell identification
 
-If you are only interested in identifying malignant cells in your own samples or want to reproduce Figure4 in our manuscript, we highly recommend using the pipeline [Figure4.ipynb](https://github.com/czythu/scCancer_MicroEnv/tree/master/MalignantCellIdentification)
+If you are only interested in identifying malignant cells in your own samples or want to reproduce Figure4 in our manuscript, we highly recommend using the pipeline [malig-pred.ipynb](https://github.com/czythu/scCancer/blob/master/vignettes/malig-pred.ipynb)
 
 The constructed reference data set will be uploaded later.
 
 The 5 recommended data sets above can be served as query data sets.
 
-The trained model: [`sc_xgboost_alldata.model`](https://github.com/czythu/scCancer_MicroEnv/tree/master/MalignantCellIdentification/model). It has been integrated into the R package.
+The trained model: [`sc_xgboost.model`](https://github.com/czythu/scCancer/tree/master/inst/txt/sc_xgboost.model). It has been integrated into the R package.
 
 The basic processing steps are relied on package `scanpy`, `sklearn` and `xgboost`.
 
