@@ -87,15 +87,16 @@ generate10Xdata(matrix = matrix.sub,
 # path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE146771/"
 # path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/GSE140228/"
 # path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/CRA001160/"
-path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/STAD-example/"
+# path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/STAD-example/"
+path <- "D:/scCancer-data/SubtypeAnno/Demo-pipeline/KC-example/"
 dataPath <- file.path(path, "data")
 # A path containing the scStatistics results
 statPath <- file.path(path, "result")
 # The sample name
 # sampleName <- "CRC-example"
-# sampleName <- "KC-example"
+sampleName <- "KC-example"
 # sampleName <- "PDAC-example"
-sampleName <- "STAD-example"
+# sampleName <- "STAD-example"
 # The author name or a string used to mark the report.
 authorName <- "G-Lab@THU"
 # A path used to save the results files
@@ -107,6 +108,7 @@ stat.results <- runScStatistics(
     savePath = savePath,
     sampleName = sampleName,
     authorName = authorName,
+    bool.runSoupx = F,
     genReport = T
 )
 ```
@@ -134,7 +136,7 @@ anno.results <- runScAnnotation(
     unknown.cutoff = 0.3,
     subtype.umap = T,
     bool.runMalignancy = T,
-    malignancy.method = "xgboost", # "xgboost", "inferCNV", "both", recommend "both" for sample < 10000 cells
+    malignancy.method = "both", # "xgboost", "inferCNV", "both", recommend "both" for sample < 10000 cells
     bool.intraTumor = T,
     bool.runCellCycle = T,
     bool.runStemness = T,
