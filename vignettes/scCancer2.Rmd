@@ -125,7 +125,7 @@ anno.results <- runScAnnotation(
     sampleName = sampleName,
     geneSet.method = "average",
     # vars.to.regress = c("nCount_RNA", "mito.percent"),
-    bool.runDiffExpr = F,
+    bool.runDiffExpr = T,
     bool.runCellClassify = T,
     bool.runCellSubtypeClassify = T,
     subtypeClassifyMethod = "Scoring",
@@ -141,7 +141,7 @@ anno.results <- runScAnnotation(
     bool.runCellCycle = T,
     bool.runStemness = T,
     bool.runGeneSets = T,
-    bool.runExprProgram = F,
+    bool.runExprProgram = T,
     bool.runInteraction = T,
     genReport = T
 )
