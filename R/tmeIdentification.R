@@ -513,7 +513,7 @@ similarityCalculation <- function(fine.labels, savePath){
             # pdf(file = file.path(savePath, paste0("similarity-", celltype, ".pdf")),
             #     width = pdf.size, height = pdf.size)
             pdf.path <- file.path(savePath, paste0("similarity-", celltype, ".pdf"))
-            p <- SimilarityHeatmap(similarity.mar, celltype, pdf.path)
+            p <- try(SimilarityHeatmap(similarity.mar, celltype, pdf.path))
             # if(dev.cur() > 1){
             #     dev.off()
             # }
