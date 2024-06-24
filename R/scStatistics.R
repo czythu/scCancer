@@ -547,6 +547,7 @@ bgDetScatter <- function(gene.manifest){
 #' @param mix.anno A vector to indicate the prefix of genes from different species.
 #' The default is c("human" = "hg19", "mouse" = "mm10").
 #' @param bg.spec.genes A list of backgroud specific genes, which are used to remove ambient genes' influence.
+#' @param bool.filterhighUMI A logical value indicating whether to filter cells with extremely high nUMI
 #' @param bool.runSoupx A logical value indicating whether to estimate contamination fraction by SoupX.
 #' @param genReport A logical value indicating whether to generate a .html/.md report (suggest to set TRUE).
 #'
@@ -573,6 +574,7 @@ runScStatistics <- function(dataPath, savePath,
                             hg.mm.thres = 0.6,
                             mix.anno = c("human" = "hg19", "mouse" = "mm10"),
                             bg.spec.genes = NULL,
+                            bool.filterhighUMI = T,
                             bool.runSoupx = F,
                             genReport = T){
 
@@ -630,7 +632,9 @@ runScStatistics <- function(dataPath, savePath,
     cell.manifest <- subset(cell.manifest, droplet.type == "cell")
     cell.threshold <- calcThres(cell.manifest,
                                 values = c("nUMI", "nGene", "mito.percent", "ribo.percent", "diss.percent"))
-
+    if (bool.filterhighUMI == F){
+        cell.threshold$nUMI <- max(cell.manifest[["nUMI"]])
+    }
     p.nUMI <- histPlot(cell.manifest, value = "nUMI", xlines = c(cell.threshold$nUMI))
     p.nGene <- histPlot(cell.manifest, value = "nGene", xlines = c(200, cell.threshold$nGene))
     ggsave(filename = file.path(savePath, "figures/nUMI-distr.png"),

@@ -149,6 +149,11 @@ prepareSeurat <- function(dataPath, statPath, savePath,
     }else{
         cells.select <- subset(cell.manifest, droplet.type == "cell")$barcodes
     }
+
+    # manifest.sub <- cell.manifest[cells.select,]
+    # cells.select <- manifest.sub$barcodes[order(manifest.sub$nUMI, decreasing=T)[1:10000]]
+    # print(length(cells.select))
+
     if(bool.filter.gene){
         genes.select <- filterGene(gene.manifest,
                                    anno.filter = anno.filter,

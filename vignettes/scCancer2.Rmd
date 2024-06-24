@@ -1,7 +1,7 @@
 ---
 title: "scCancer2-TMEIdentification"
 author: "Zeyu Chen"
-date: '2023-07-04'
+date: '2024-6-23'
 output: html_document
 ---
 
@@ -211,7 +211,8 @@ for (sample in samples){
         unknown.cutoff = 0.3,
         subtype.umap = T,
         bool.runMalignancy = T,
-        malignancy.method = "both", # "xgboost", or "inferCNV", "both", recommend "both" for sample < 10000 cells
+        # "xgboost", or "inferCNV", "both", recommend "both" for human sample < 10000 cells
+        malignancy.method = "both", 
         bool.intraTumor = T,
         bool.runCellCycle = T,
         bool.runStemness = T,
@@ -221,5 +222,65 @@ for (sample in samples){
         genReport = T
     )
 }
+```
+
+# Mouse scRNA-seq
+```{r}
+samples <- c('240171A_17_14D_W0',
+             '240171B_17_14C_W1',
+             # '240171C_17_14A_W2',
+             '240171D_17_14B_W3')
+
+for (sample in samples){
+  gc()
+  print(sample)
+  path <- file.path("D:/KPC/data/processed", sample)
+  dataPath <- file.path(path, "outs")
+  
+  statPath <- file.path(path, "results")
+  sampleName <- sample
+  authorName <- "G-Lab@THU"
+  savePath <- file.path(path, "results")
+  
+  # stat.results <- runScStatistics(
+  #   dataPath = dataPath,
+  #   savePath = savePath,
+  #   species = "mouse",
+  #   sampleName = sampleName,
+  #   authorName = authorName,
+  #   bool.filterhighUMI = F)
+
+  anno.results <- runScAnnotation(
+    dataPath = dataPath,
+    statPath = statPath,
+    savePath = savePath,
+    authorName = authorName,
+    sampleName = sampleName,
+    geneSet.method = "average",
+    vars.to.regress = c("nCount_RNA", "mito.percent", "ribo.percent"),
+    bool.runDiffExpr = T,
+    species = "mouse",
+    genome = "mm10",
+    bool.runCellClassify = T,
+    bool.runCellSubtypeClassify = F,
+    subtypeClassifyMethod = "Scoring",
+    celltype.list = NULL,
+    ct.templates = NULL,
+    submodel.path = NULL,
+    markers.path = NULL,
+    unknown.cutoff = 0.3,
+    subtype.umap = F,
+    bool.runMalignancy = T,
+    malignancy.method = "inferCNV",
+    bool.intraTumor = T,
+    bool.runCellCycle = T,
+    bool.runStemness = T,
+    bool.runGeneSets = T,
+    bool.runExprProgram = T, # False to save time
+    bool.runInteraction = T,
+    genReport = T
+  )
+}
+
 ```
 
