@@ -86,7 +86,8 @@ prepareSeurat <- function(dataPath, statPath, savePath,
                           bool.rmContamination = T,
                           # contamination.fraction = NULL,
                           vars.add.meta = c("mito.percent", "ribo.percent", "diss.percent"),
-                          vars.to.regress = c("nCount_RNA", "mito.percent", "ribo.percent")){
+                          vars.to.regress = c("nCount_RNA", "mito.percent", "ribo.percent"),
+                          bool.keephighUMI = F){
     raw.data = T
     data.path <- get10Xpath(dataPath, raw.data = raw.data)
     if(is.null(data.path)){
@@ -150,9 +151,12 @@ prepareSeurat <- function(dataPath, statPath, savePath,
         cells.select <- subset(cell.manifest, droplet.type == "cell")$barcodes
     }
 
-    # manifest.sub <- cell.manifest[cells.select,]
-    # cells.select <- manifest.sub$barcodes[order(manifest.sub$nUMI, decreasing=T)[1:10000]]
-    # print(length(cells.select))
+    if(bool.keephighUMI){
+        manifest.sub <- cell.manifest[cells.select,]
+        cells.select <- manifest.sub$barcodes[order(manifest.sub$nUMI, decreasing=T)[1:10000]]
+        print(length(cells.select))
+    }
+
 
     if(bool.filter.gene){
         genes.select <- filterGene(gene.manifest,
