@@ -1638,6 +1638,7 @@ runScAnnotation <- function(dataPath,
                             bool.filter.gene = T,
                             anno.filter = c("mitochondrial", "ribosome", "dissociation"),
                             nCell.min = 3, bgPercent.max = 1,
+                            bool.keephighUMI = F,
                             bool.rmContamination = F,
                             # contamination.fraction = NULL,
                             vars.add.meta = c("mito.percent", "ribo.percent", "diss.percent"),
@@ -1721,7 +1722,8 @@ runScAnnotation <- function(dataPath,
         bool.rmContamination = bool.rmContamination,
         # contamination.fraction = contamination.fraction,
         vars.add.meta = vars.add.meta,
-        vars.to.regress = vars.to.regress
+        vars.to.regress = vars.to.regress,
+        bool.keephighUMI = bool.keephighUMI
     )
     expr <- t.results$expr
     gene.manifest <- t.results$gene.manifest
